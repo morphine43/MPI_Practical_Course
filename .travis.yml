@@ -1,0 +1,24 @@
+language:
+  - c++
+
+os:
+  - linux
+
+compiler:
+  - gcc
+  - g++
+  - clang
+
+before_install:
+  - test -n $CC && unset CC
+
+install:
+  - sudo apt-get install libcr-dev mpich2 mpich2-doc
+
+script:
+  - mkdir build
+  - cd build
+  - cmake -D CMAKE_BUILD_TYPE=Release ..
+  - make -j4
+
+  - mpirun -np 4 ./modules/test_task/test_task

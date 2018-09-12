@@ -8,7 +8,7 @@ if( MPI_COMPILE_FLAGS )
 endif( MPI_COMPILE_FLAGS )
 
 if( MPI_LINK_FLAGS )
-  set_target_properties( ${PROJECT_NAME} PROPERTIES LINK_FLAGS "${MPI_LINK_FLAGS}" )
+    set_target_properties( ${PROJECT_NAME} PROPERTIES LINK_FLAGS "${MPI_LINK_FLAGS}" )
 endif( MPI_LINK_FLAGS )
 
 target_link_libraries( ${PROJECT_NAME} ${MPI_LIBRARIES} )

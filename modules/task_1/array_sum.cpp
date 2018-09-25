@@ -1,27 +1,20 @@
 #include <mpi.h>
 #include <iostream>
 #include <assert.h>
-#define arrSize 2
+#define arrSize 100
+#define MainProc 0
 //Q?
 //Запуск с командной строки
 //Запуск из студии
 //Отладка
+// -np при запуску или -n
+// когда собирается exe?
 int main(int argc, char* argv[])
 {
 	int status, rank, size;
-	int** arr = new int*[arrSize];
-	
-		for (int i = 0; i < arrSize; i++)
-		{
-			arr[i] = new int[arrSize];
-			// init
-			for (int j = 0; j < arrSize; j++)
-			{
-				arr[i][j] = 1;
-			//	std::cout << arr[i][j] << " ";
-			}
-		//	std::cout << std::endl;
-		}
+	int* arr = new int[arrSize];
+	int* buff;
+	int nProc;
 
 	status = MPI_Init(&argc, &argv);
 	assert(status == MPI_SUCCESS);
@@ -34,38 +27,60 @@ int main(int argc, char* argv[])
 
 	/*std::cout << "Process #" << rank << '\n';
 	std::cout << "Count process: " << size << '\n';*/
-	int sum[2] = { 0,0 };
+	int partialSum = 0;
 	int arrSum = 0;
-	if (rank == 0)
-	{
-		/*for (int i = 0; i < arrSize; i++)
-			sum += arr[0][i];*/
-		MPI_Send(arr[0],arrSize, MPI_INT, 1, 0, MPI_COMM_WORLD);
-		MPI_Send(arr[1], arrSize, MPI_INT, 2, 1, MPI_COMM_WORLD);
-		MPI_Recv(&sum[0], 1, MPI_INT, 1, 2, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
-		MPI_Recv(&sum[1], 1, MPI_INT, 2, 3, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
-	}
-	else 
-		if (rank == 1)
+	nProc = arrSize / size;
+	buff = new int[nProc];
+	//Отправка
+	if (rank == MainProc)
+	{	
+		for (int i = 0; i < arrSize; i++)
 		{
-			MPI_Recv(arr[0], arrSize, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
-			for (int i = 0; i < arrSize; i++)
-				sum[0] += arr[0][i];
-			MPI_Send(&sum[0], 1, MPI_INT, 0, 2, MPI_COMM_WORLD);
+				arr[i] = 1;
+		}
+
+		for (int i = 1; i < size; i++)
+		{
+			MPI_Send(&arr[i*nProc], nProc, MPI_INT, i, 0, MPI_COMM_WORLD);
 
 		}
-		else 
-			if (rank == 2)
-			{
-				MPI_Recv(arr[0], arrSize, MPI_INT, 0, 1, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
-				for (int i = 0; i < arrSize; i++)
-					sum[1] += arr[0][i];
-				MPI_Send(&sum[1], 1, MPI_INT, 0, 3, MPI_COMM_WORLD);
-			}
-		
+
+	}//принятие
+	else 
+		{   
+			MPI_Recv(buff, nProc, MPI_INT, MainProc, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+			std::cout << "Process #" << rank << '\n';
+			std::cout << "nProc = " << nProc << std::endl;
+			for (int i = 0; i < nProc; i++)
+				partialSum += buff[i];
+		}
+
+
+	if (rank == MainProc)
+	{	
+		for (int i = 0; i < nProc; i++)
+			partialSum += arr[i];
+		arrSum += partialSum;
+		for (int i = 1; i < size; i++)
+		{
+			MPI_Recv(&partialSum, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+			arrSum += partialSum;
+		}
+		std::cout << arrSum << std::endl;
+	}
+	else
+	{
+		MPI_Send(&partialSum, 1, MPI_INT, MainProc, 0, MPI_COMM_WORLD);
+	}
+
+
+	//Освобождение памяти
+	if (rank == 0)
+	{ 
+		delete[] arr;
+
+	}
 	status = MPI_Finalize();
 	assert(status == MPI_SUCCESS);
-	arrSum = sum[0] + sum[1];
-	std::cout << arrSum << std::endl;
 	return 0;
 }

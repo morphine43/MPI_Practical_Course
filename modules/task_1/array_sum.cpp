@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
 		for (int i = 1; i < nProc - 1; i++)
 			status = MPI_Send(&arr[i*N], N, MPI_INT, i, i, MPI_COMM_WORLD);
 
-		if (size != 1) // sending last part separetely in case if arrSize % size != 0
+		if (size != 1) // sending last part separately in case if arrSize % size != 0
 		    MPI_Send(&arr[N*(nProc - 1)], arrSize - N * (nProc - 1), MPI_INT, nProc - 1, nProc - 1, MPI_COMM_WORLD);
 	
 

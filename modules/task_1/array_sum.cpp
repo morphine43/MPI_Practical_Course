@@ -3,19 +3,12 @@
 #include <assert.h>
 
 #define MainProc 0
-//Q?
-//Запуск с командной строки
-//Запуск из студии
-//Отладка
-// -np при запуску или -n
-// когда собирается exe?
-
 int main(int argc, char* argv[])
 {   
 	// mpi variables
 	int status, rank, size;
 	double t1, t2;
-	//usual variavles
+	//usual variables
 	int  column,
 		rows,
 		arrSize,

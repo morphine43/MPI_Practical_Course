@@ -19,8 +19,8 @@ int main(int argc, char* argv[])
 	int *arr, //matrix
 		*buff; // buffer for message exchanging
 	//init
-	rows = (atoi(argv[1]) > 0) ? atoi(argv[1]) : 1;
-	column = (atoi(argv[2]) > 0) ? atoi(argv[2]) : 1;
+	rows = 10;//(atoi(argv[1]) > 0) ? atoi(argv[1]) : 10;
+	column = 10; //(atoi(argv[2]) > 0) ? atoi(argv[2]) : 10;
 	arrSize = rows * column;
 
 	//mpi part

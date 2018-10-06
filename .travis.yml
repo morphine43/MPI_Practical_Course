@@ -23,4 +23,4 @@ script:
   - make -j4
 
   - mpirun -np 4 ./modules/test_task/test_task
-  - mpirun -np 4 ./modules/task_1/vikhrev_array_sum/vikhrev_array_sum
+  - mpirun -np 4 ./modules/task_1/vikhrev_array_sum/vikhrev_array_sum 10 10

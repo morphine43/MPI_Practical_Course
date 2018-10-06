@@ -2,6 +2,8 @@
 #include <mpi.h>
 #include <string>
 #include <ctime>
+#include <cstdlib>
+#include <assert.h>
 
 using namespace std;
 
@@ -18,9 +20,6 @@ int main(int argc, char *argv[])
 
 	myVector = new double[size];
 	
-	
-  
-
 	// for parallel block
 	double myResult = 0;  
 	double startTime = 0;
@@ -45,12 +44,10 @@ int main(int argc, char *argv[])
 		std::cout << "Error: MPI_Init";
 	}
 
-   
 	// Description of the communicator
 	// communicator manages groups of parallel processes
 	MPI_Comm_size(MPI_COMM_WORLD, &numProcs); // determining the number of processes in a group
 	MPI_Comm_rank(MPI_COMM_WORLD, &myId); // determining the rank of a process in a group
-
 	
 	if (myId == 0) { 
 		
@@ -81,7 +78,6 @@ int main(int argc, char *argv[])
 	}
 
 	MPI_Reduce(&mySum, &myResult, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-
     
 	if (myId == 0) {
 	     remainderDiv = size % numProcs;

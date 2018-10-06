@@ -1,59 +1,108 @@
 #include <iostream>
 #include <mpi.h>
-
-const int SIZE = 10000;
+#include <string>
+#include <ctime>
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
-	double myVector[SIZE];
-	int myId, numProcs;
+	srand(time(0));
+
+	double* myVector;
+	int size;
+	
+	string sizeStr;
+	sizeStr = argv[1];
+	size = atoi(sizeStr.c_str()); 
+
+	myVector = new double[size];
+	
+	
+  
+
+	// for parallel block
+	double myResult = 0;  
 	double startTime = 0;
 	double endTime;
-
-	for (int i = 0; i < SIZE; i++) {
-		myVector[i] = 1;
-	}
-
-	int flag; // Флаг инциализации
-	MPI_Status status;
+	double myTime = 0;
 	double mySum = 0;
-	double myResult = 0;
+	int remainderDiv = 0;
+	int flag;
+	int myId, numProcs;
 
-	MPI_Init(&argc, &argv); // Инциализируем MPI-окружение
-	MPI_Initialized(&flag); // Проверка
+	// for line block
+	double myResult_ = 0; 
+	double startTime_ = 0;
+	double endTime_ = 0;
+	double myTime_ = 0;
+	
+	// Initialize the MPI environment
+
+	MPI_Init(&argc, &argv); 
+	MPI_Initialized(&flag); // check
 	if (!flag) {
 		std::cout << "Error: MPI_Init";
 	}
 
-	// Описание коммуникатора
-	// Коммуникатор управляет группами параллельных процеcсов
-	MPI_Comm_size(MPI_COMM_WORLD, &numProcs); // Определение количество процессов в группе
-	MPI_Comm_rank(MPI_COMM_WORLD, &myId); // Определение ранга процесса в группе
+   
+	// Description of the communicator
+	// communicator manages groups of parallel processes
+	MPI_Comm_size(MPI_COMM_WORLD, &numProcs); // determining the number of processes in a group
+	MPI_Comm_rank(MPI_COMM_WORLD, &myId); // determining the rank of a process in a group
 
 	
 	if (myId == 0) { 
-	startTime = MPI_Wtime();
+		
+		for (int i = 0; i < size; i++) {
+			myVector[i] = (double)(rand()%5) / ((double)(rand()%10) + 1);
+		}
+		//*LINE BLOCK*
+		startTime_ = MPI_Wtime();
+	    for (int i = 0; i < size; i++) {
+			myResult_ += myVector[i];
+		}
+	    endTime_ = MPI_Wtime();
+		cout << endl << "*LINE*" << endl;
+		cout << "Result: " << myResult_ << endl;
+		myTime_ = endTime_ - startTime_;
+		cout << "Time: " << myTime_ << " sec" << endl;
+		//*END
+
+		//*PARALLEL BLOCK*
+	startTime = MPI_Wtime(); // started counting time in 0 proccess
+	
 	}
 
-	MPI_Bcast(&myVector[SIZE / numProcs * myId], SIZE / numProcs, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
-	for (int i = SIZE / numProcs * myId; i < SIZE / numProcs + SIZE / numProcs * myId; i++) {
+	MPI_Bcast(myVector, size , MPI_DOUBLE, 0, MPI_COMM_WORLD);
+	
+	for (int i = size / numProcs * myId; i < size / numProcs + size / numProcs * myId; i++) {
 		mySum += myVector[i];
 	}
 
 	MPI_Reduce(&mySum, &myResult, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
-
+    
 	if (myId == 0) {
-		cout << "Result: " << myResult << endl;
-		endTime = MPI_Wtime();
-		cout << "Time: " << (endTime - startTime) << " sec" << endl;
-		//system("pause");
-	}
+	     remainderDiv = size % numProcs;
+		 if (remainderDiv) {
+			for (int i = 0; i < remainderDiv; i++)
+				myResult += myVector[size - remainderDiv  + i];
+		 }
 
+		//Parallel Results 
+		endTime = MPI_Wtime();
+		cout << endl <<"*PARALLEL*" << endl;
+		cout << "Result: " << myResult << endl;
+		myTime = endTime - startTime;
+		cout << "Time: " << myTime << " sec" << endl << endl;
+	}
+	
 
 	MPI_Finalize();
+	//*END PARALLEL BLOCK*
+	
+	delete[]myVector;
 
+	return 0;
 }

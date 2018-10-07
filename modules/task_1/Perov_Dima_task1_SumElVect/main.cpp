@@ -9,7 +9,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-	srand(time(0));
+	srand((int)time(0));
 
 	double* myVector;
 	int size;

@@ -46,3 +46,5 @@ build_script:
   - cmd: msbuild ALL_BUILD.vcxproj
 
   - cmd: mpiexec.exe -np 4 modules\test_task\%configuration%\test_task.exe
+  - cmd: mpiexec.exe -np 4 modules\task_1\Perov_Dima_task1_SumElVect\%configuration%\Perov_Dima_task1_SumElVect.exe 10000   
+

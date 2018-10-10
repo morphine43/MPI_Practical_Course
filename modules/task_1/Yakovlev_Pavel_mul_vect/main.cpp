@@ -1,0 +1,126 @@
+#include <iostream>
+#include <mpi.h>
+#include <string>
+#include <ctime>
+#include <cstdlib>
+#include <assert.h>
+
+using namespace std;
+
+int main (int argc, char* argv[])
+{
+    srand((int)time(NULL));
+
+    int rank, CountP, flag;
+    if (argc < 2) 
+    {
+        cout << "Error";
+        return -1;
+    }
+
+    int sizev = atoi(argv[1]);
+    if (sizev <= 0)
+    {
+        cout << "Error";
+        return -1;
+    }
+
+    double *v1,*v2;
+    MPI_Status status;   
+    double MultVec = 0;
+    double tempSum = 0;
+    double Time_begin = 0;
+    double Time_end = 0;
+
+    MPI_Init (&argc, &argv);
+    MPI_Initialized(&flag);
+	if (!flag) 
+    {
+		cout << "Error";
+        return -1;
+	}
+    MPI_Comm_size(MPI_COMM_WORLD, &CountP);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    
+    if (rank == 0)
+    {
+        
+        v1 = new double[sizev];
+        v2 = new double[sizev];
+        for (int i = 0;i<sizev;i++)
+        {
+            v1[i] = rand()%100-0;
+            v2[i] = rand()%100-0;
+        }
+
+        if (sizev < 21)
+        {
+            for (int i = 0; i<sizev; i++)
+            {
+                cout <<" "<<v1[i];
+            }
+            cout << endl;
+            for (int i = 0; i<sizev; i++)
+            {
+                cout <<" "<<v2[i];
+            }
+            cout << endl;
+        }
+
+        //  --------------  Line  --------------------
+        Time_begin = MPI_Wtime();
+        for (int i = 0; i<sizev;i++)
+            MultVec += v1[i]*v2[i];
+        Time_end = MPI_Wtime();
+        cout << "Line_Result = " << MultVec << endl;
+        cout << "Line_Time = " << Time_end - Time_begin << endl;
+        MultVec = 0;
+
+        // --------------  Parrallel  -------------
+        Time_begin = MPI_Wtime();
+        for (int i = 0; i < CountP-2; i++)
+        {
+            MPI_Send(v1+i*(sizev/(CountP-1)), sizev/(CountP-1), MPI_DOUBLE,i+1,0,MPI_COMM_WORLD);
+            MPI_Send(v2+i*(sizev/(CountP-1)), sizev/(CountP-1), MPI_DOUBLE,i+1,0,MPI_COMM_WORLD);
+        }
+        MPI_Send((v1+(CountP-2)*(sizev/(CountP-1))), (sizev - (CountP-2)*sizev/(CountP-1)), MPI_DOUBLE, (CountP-1), 0, MPI_COMM_WORLD);
+        MPI_Send((v2+(CountP-2)*(sizev/(CountP-1))), (sizev - (CountP-2)*sizev/(CountP-1)), MPI_DOUBLE, (CountP-1), 0, MPI_COMM_WORLD);
+
+        for (int i = 0; i < CountP-1; i++)
+        {
+            MPI_Recv(&tempSum,1,MPI_DOUBLE,i+1,0,MPI_COMM_WORLD,&status);
+            MultVec += tempSum;  
+        }
+        Time_end = MPI_Wtime();
+
+        cout << "\nParallel_Result = " << MultVec << endl;
+        cout << "Parallel_Time = " << Time_end - Time_begin << endl;
+    }
+    else
+        if (rank == 1 || rank == 2)
+        {
+            v1 = new double[sizev/(CountP-1)];
+            v2 = new double[sizev/(CountP-1)];
+            MPI_Recv(v1,sizev/(CountP-1),MPI_DOUBLE,0,0,MPI_COMM_WORLD,&status);  
+            MPI_Recv(v2,sizev/(CountP-1),MPI_DOUBLE,0,0,MPI_COMM_WORLD,&status);
+            for (int i = 0; i < sizev/(CountP-1); i++)
+                tempSum += v1[i]*v2[i]; 
+            MPI_Send(&tempSum, 1, MPI_DOUBLE,0,0,MPI_COMM_WORLD);
+        } 
+        else
+        {
+            v1 = new double[sizev - (CountP-2)*sizev/(CountP-1)];
+            v2 = new double[sizev - (CountP-2)*sizev/(CountP-1)];
+            MPI_Recv(v1,sizev - (CountP-2)*sizev/(CountP-1),MPI_DOUBLE,0,0,MPI_COMM_WORLD,&status);  
+            MPI_Recv(v2,sizev - (CountP-2)*sizev/(CountP-1),MPI_DOUBLE,0,0,MPI_COMM_WORLD,&status);
+            for (int i = 0; i < sizev - (CountP-2)*sizev/(CountP-1); i++)
+                tempSum += v1[i]*v2[i]; 
+            MPI_Send(&tempSum, 1, MPI_DOUBLE,0,0,MPI_COMM_WORLD);
+        }
+    MPI_Finalize();
+
+    delete[]v1;
+    delete[]v2;
+    
+    return 0;
+}

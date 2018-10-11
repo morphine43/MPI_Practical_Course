@@ -12,3 +12,4 @@ if( MPI_LINK_FLAGS )
 endif( MPI_LINK_FLAGS )
 
 target_link_libraries( ${PROJECT_NAME} ${MPI_LIBRARIES} )
+

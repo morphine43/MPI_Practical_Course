@@ -12,7 +12,10 @@ int main(int argc, char *argv[])
 	int ProcNum, ProcRank;
 	double stime = 0.0;
 	double etime = 0.0;
+	double stime_ = 0.0;
+	double etime_ = 0.0;
 	int nword = 0;
+	int nword_ = 0;
 	int nresword = 0;
 	int residue = 0;
 
@@ -30,17 +33,16 @@ int main(int argc, char *argv[])
 		cout << "1 process" << endl;
 		cout << "Number words: " << nword << endl;
 		cout << "Time: " << etime - stime << " sec" << endl;
-		nword = 0;
-		stime = MPI_Wtime();
+		stime_ = MPI_Wtime();
 	}
 
 	MPI_Bcast(&s, len, MPI_CHAR, 0, MPI_COMM_WORLD);
 
 	for (int i = len / ProcNum * ProcRank; i < len / ProcNum + len / ProcNum * ProcRank; i++)
 		if (s[i] == ' ')
-			nword++;
+			nword_++;
 
-	MPI_Reduce(&nword, &nresword, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+	MPI_Reduce(&nword_, &nresword, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
 	if (ProcRank == 0)
 	{
@@ -49,10 +51,10 @@ int main(int argc, char *argv[])
 			for (int i = len - residue; i < len; i++)
 				if (s[i] == ' ')
 					nresword++;
-		etime = MPI_Wtime();
+		etime_ = MPI_Wtime();
 		cout << ProcNum << " process" << endl;
 		cout << "Number words: " << nresword << endl;
-		cout << "Time: " << etime - stime << " sec" << endl;
+		cout << "Time: " << etime_ - stime_ << " sec" << endl;
 	}
 
 	MPI_Finalize();

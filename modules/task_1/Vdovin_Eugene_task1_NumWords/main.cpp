@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 		stime = MPI_Wtime();
 	}
 
-	MPI_Bcast(s, len, MPI_CHAR, 0, MPI_COMM_WORLD);
+	MPI_Bcast(&s, len, MPI_CHAR, 0, MPI_COMM_WORLD);
 
 	for (int i = len / ProcNum * ProcRank; i < len / ProcNum + len / ProcNum * ProcRank; i++)
 		if (s[i] = ' ')

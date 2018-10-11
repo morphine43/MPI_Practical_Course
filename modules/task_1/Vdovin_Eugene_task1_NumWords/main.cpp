@@ -6,7 +6,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-	string s = "hngb hjnhgb jhbjgb hjbbj hhh hhhhjbvhg  hjbjbjgb j j jjjjj";
+	string s = "hngb hjnhgb jhbjgb hjbbj hhh hhhhjbvhg hjbjbjgb j j jjjjj";
 	int len = s.length();
 
 	int ProcNum, ProcRank;
@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
 		for (int i = 0; i < len; i++)
 			if (s[i] == ' ')
 				nword++;
+		nword++;
 		etime = MPI_Wtime();
 		cout << "1 process" << endl;
 		cout << "Number words: " << nword << endl;
@@ -51,6 +52,7 @@ int main(int argc, char *argv[])
 			for (int i = len - residue; i < len; i++)
 				if (s[i] == ' ')
 					nresword++;
+		nresword++;
 		etime_ = MPI_Wtime();
 		cout << ProcNum << " process" << endl;
 		cout << "Number words: " << nresword << endl;

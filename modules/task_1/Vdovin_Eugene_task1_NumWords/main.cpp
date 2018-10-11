@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 	MPI_Bcast(&s, len, MPI_CHAR, 0, MPI_COMM_WORLD);
 
 	for (int i = len / ProcNum * ProcRank; i < len / ProcNum + len / ProcNum * ProcRank; i++)
-		if (s[i] = ' ')
+		if (s[i] == ' ')
 			nword++;
 
 	MPI_Reduce(&nword, &nresword, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);

@@ -1,13 +1,13 @@
 #include <iostream>
 #include <mpi.h>
-#include <string>
+#include <string.h>
 #include <ctime>
 using namespace std;
 
 int main(int argc, char *argv[])
 {
-	string s = "hngb hjnhgb jhbjgb hjbbj hhh hhhhjbvhg hjbjbjgb j j jjjjj";
-	int len = s.length();
+	char *s = argv[1];
+	int len = strlen(s);
 
 	int ProcNum, ProcRank;
 	double stime = 0.0;
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 		stime_ = MPI_Wtime();
 	}
 
-	MPI_Bcast(&s, len, MPI_CHAR, 0, MPI_COMM_WORLD);
+	MPI_Bcast(s, len, MPI_CHAR, 0, MPI_COMM_WORLD);
 
 	for (int i = len / ProcNum * ProcRank; i < len / ProcNum + len / ProcNum * ProcRank; i++)
 		if (s[i] == ' ')

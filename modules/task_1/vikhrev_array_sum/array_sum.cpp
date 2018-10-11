@@ -51,9 +51,9 @@ int main(int argc, char* argv[])
 	{	
 		//init arr
 		arr = new double[arrSize];
-		srand((unsigned)time(NULL));
+		std::srand((unsigned)time(NULL));
 		for (int i = 0; i < arrSize; i++)
-			arr[i] = (rand()%100)/100.0;
+			arr[i] = (std::rand()%100)/100.0;
 		
 		if (arrSize < OutputSize)
 		{

@@ -1,13 +1,50 @@
 #include <iostream>
 #include <mpi.h>
 #include <string.h>
+#include <string>
 #include <ctime>
 using namespace std;
 
+double rank_number(const double a, const int i)
+{
+	double b = 1;
+	for (int j = 0; j < i; j++)
+		b *= a;
+	return b;
+}
+
+double converter_in_number(const string &s)
+{
+	int len = s.length();
+	double a = 0.0;
+	int i = 0;
+	for (i = 0; ((i < len) && (s[i] != '.')); i++)
+		a = a * 10.0 + (s[i] - '0');
+	int j = i;
+	if (s[j] == '.')
+		for (i = j + 1; i < len; i++)
+			a = a + (s[i] - '0') / (rank_number(10.0, (i - j)));
+	return a;
+}
+
 int main(int argc, char *argv[])
 {
-	char *s = argv[1];
-	int len = strlen(s);
+	srand((int)time(0));
+
+	string size = argv[1];
+	string l = "qwertyuiop asdfghjkl zxcvbnm";
+	int lenl = l.length();
+	int len = converter_in_number(size);
+	len = len * 3;
+	char* s = new char[len + 1];
+	int k = 0;
+	while (k < len - 2)
+	{
+		s[k] = 'a';
+		s[k + 1] = l[rand() % lenl];
+		s[k + 2] = 'a';
+		k = k + 3;
+	}
 
 	int ProcNum, ProcRank;
 	double stime = 0.0;
@@ -25,6 +62,7 @@ int main(int argc, char *argv[])
 
 	if (ProcRank == 0)
 	{
+
 		stime = MPI_Wtime();
 		for (int i = 0; i < len; i++)
 			if (s[i] == ' ')
@@ -60,5 +98,6 @@ int main(int argc, char *argv[])
 	}
 
 	MPI_Finalize();
+	delete[] s;
 	return 0;
 }

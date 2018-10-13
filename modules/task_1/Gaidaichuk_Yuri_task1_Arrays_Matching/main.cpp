@@ -103,27 +103,19 @@ int main (int argc, char* argv[])
 				std::cout<< '\n';
 				//std::cout<< "Count = " << matchCount <<'\n';
 			}
-<<<<<<< HEAD
 			
 			////////////////////////////////count2
 			starttime2 = MPI_Wtime();
 			
-=======
-
->>>>>>> 08ace2145a3a87e1ede6c98f8a6304eabe8ac069
 			for(int i = 1; i <= size - 1; i++){
 				MPI_Send(arr1 + x * i, x, MPI_INT, i, 0, MPI_COMM_WORLD);
 				MPI_Send(arr2 + x * i, x, MPI_INT, i, 0, MPI_COMM_WORLD);
 			}
 			
 			int parallelMatchCount = 0;
-<<<<<<< HEAD
-
-=======
 			
 			////////////////////////////////count2
 			starttime2 = MPI_Wtime();
->>>>>>> 08ace2145a3a87e1ede6c98f8a6304eabe8ac069
 			for(int i = 0; i < x; i ++){
 				if(arr1[i] == arr2[i])
 				{
@@ -141,11 +133,8 @@ int main (int argc, char* argv[])
 			
 			if(parallelMatchCount == matchCount){
 				std::cout << "Success. Count = "<< matchCount << 
-<<<<<<< HEAD
 				"\n Sequense returns " << matchCount <<"\n" <<
 				"\n Parallel returns " << parallelMatchCount << " \n" <<
-=======
->>>>>>> 08ace2145a3a87e1ede6c98f8a6304eabe8ac069
 				"\n Sequense takes " << endtime1 - starttime1 << " seconds \n" <<
 				"\n Parallel takes " << endtime2 - starttime2 << " seconds \n" <<
 				'\n';

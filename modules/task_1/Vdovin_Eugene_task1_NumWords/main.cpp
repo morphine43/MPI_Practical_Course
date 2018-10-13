@@ -3,6 +3,8 @@
 #include <string.h>
 #include <string>
 #include <ctime>
+#include <cstdlib>
+#include <assert.h>
 using namespace std;
 
 double rank_number(const double a, const int i)
@@ -41,7 +43,7 @@ int main(int argc, char *argv[])
 	while (k < len - 2)
 	{
 		s[k] = 'a';
-		s[k + 1] = l[rand() % lenl];
+		s[k + 1] = l[(int)(rand() % lenl)];
 		s[k + 2] = 'a';
 		k = k + 3;
 	}

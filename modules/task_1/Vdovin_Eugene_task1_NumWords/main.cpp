@@ -7,25 +7,13 @@
 #include <assert.h>
 using namespace std;
 
-double rank_number(const double a, const int i)
-{
-	double b = 1;
-	for (int j = 0; j < i; j++)
-		b *= a;
-	return b;
-}
-
-double converter_in_number(const string &s)
+int converter_in_number(const string &s)
 {
 	int len = s.length();
-	double a = 0.0;
+	int a = 0;
 	int i = 0;
-	for (i = 0; ((i < len) && (s[i] != '.')); i++)
-		a = a * 10.0 + (s[i] - '0');
-	int j = i;
-	if (s[j] == '.')
-		for (i = j + 1; i < len; i++)
-			a = a + (s[i] - '0') / (rank_number(10.0, (i - j)));
+	for (i = 0; (i < len); i++)
+		a = a * 10 + (s[i] - '0');
 	return a;
 }
 

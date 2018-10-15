@@ -13,10 +13,10 @@ int main (int argc, char* argv[])
 	int partres = 0,//Part of result
 		result = 0; //Number of wrong-ordered pairs of elements in array
 	int tasksize;	//Number of pairs to check for each process
-	double* vect;	//Processed vector
+	double* vect = NULL;	//Processed vector
 	int vSize;		//Size of processed vector
-	double wtime;	//Work Time
-	double* buf;	//Buffer for message receiving
+	double wtime = 0;	//Work Time
+	double* buf = NULL;	//Buffer for message receiving
 
 	//MPI initializing
     status = MPI_Init (&argc, &argv);

@@ -37,10 +37,7 @@ int computeForOneRrocessor(int x){
 	}
 	return matchCount;
 }
-int errorMessage(){
-	cout << "Error";
-	return 1;
-}
+
 int main (int argc, char* argv[])
 
 {
@@ -48,22 +45,24 @@ int main (int argc, char* argv[])
 	int x = atoi(argv[1]);
 	int matchCount = 0;
 
-		
 	double starttime1, endtime1, starttime2, endtime2;
    
     status = MPI_Init (&argc, &argv);//assert(status == MPI_SUCCESS);
 	if (status != MPI_SUCCESS) {  
-		return errorMessage(); 
+		cout<<"ERROR\n";
+		return 1;
 	}
 	
     status = MPI_Comm_rank (MPI_COMM_WORLD, &rank);//assert(status == MPI_SUCCESS);
 	if (status != MPI_SUCCESS) {  
-		return errorMessage(); 
+		cout<<"ERROR\n";
+		return 1;
 	}
 
     status = MPI_Comm_size (MPI_COMM_WORLD, &size);//assert(status == MPI_SUCCESS);
 	if (status != MPI_SUCCESS) {  
-		return errorMessage(); 
+		cout<<"ERROR\n";
+		return 1;
 	}
 	
 	if(size == 1){

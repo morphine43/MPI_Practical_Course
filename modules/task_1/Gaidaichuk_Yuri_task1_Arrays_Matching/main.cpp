@@ -49,19 +49,19 @@ int main (int argc, char* argv[])
    
     status = MPI_Init (&argc, &argv);//assert(status == MPI_SUCCESS);
 	if (status != MPI_SUCCESS) {  
-		cout<<"ERROR\n";
+		std::cout<<"ERROR\n";
 		return 1;
 	}
 	
     status = MPI_Comm_rank (MPI_COMM_WORLD, &rank);//assert(status == MPI_SUCCESS);
 	if (status != MPI_SUCCESS) {  
-		cout<<"ERROR\n";
+		std::cout<<"ERROR\n";
 		return 1;
 	}
 
     status = MPI_Comm_size (MPI_COMM_WORLD, &size);//assert(status == MPI_SUCCESS);
 	if (status != MPI_SUCCESS) {  
-		cout<<"ERROR\n";
+		std::cout<<"ERROR\n";
 		return 1;
 	}
 	

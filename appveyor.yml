@@ -51,3 +51,4 @@ build_script:
   - cmd: mpiexec.exe -np 4 modules\task_1\Yakovlev_Pavel_mul_vect\%configuration%\Yakovlev_Pavel_mul_vect.exe 100000
   - cmd: mpiexec.exe -np 4 modules\task_1\Vdovin_Eugene_task1_NumWords\%configuration%\Vdovin_Eugene_task1_NumWords.exe 3000000
   - cmd: mpiexec.exe -np 4 modules\task_1\Gaidaichuk_Yuri_task1_Arrays_Matching\%configuration%\Gaidaichuk_Yuri_task1_Arrays_Matching.exe 10000
+  

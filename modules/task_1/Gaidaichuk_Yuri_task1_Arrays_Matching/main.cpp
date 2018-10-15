@@ -40,7 +40,7 @@ int computeForOneRrocessor(int x){
 int main (int argc, char* argv[])
 
 {
-    int status, rank, size;
+    int status = 0, rank = 0, size = 0;
 	int x = atoi(argv[1]);
 	int matchCount = 0;
 

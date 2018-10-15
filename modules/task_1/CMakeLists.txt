@@ -4,3 +4,4 @@ add_subdirectory( vikhrev_array_sum )
 add_subdirectory( Yakovlev_Pavel_mul_vect )
 add_subdirectory( Vdovin_Eugene_task1_NumWords )
 add_subdirectory( Gaidaichuk_Yuri_task1_Arrays_Matching )
+

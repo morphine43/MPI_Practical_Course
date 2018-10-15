@@ -80,9 +80,10 @@ int main (int argc, char* argv[])
 	}
 
 	//Collecting partial results into process 0
-	status = MPI_Reduce(&partres, &result, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+	status = MPI_Reduce(&partres, &result, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 	if (status != MPI_SUCCESS) { cout << "Error while reducing";  return -1; }
 	//End of parallel part
+
 
 	//Output parallel results in process 0
 	if (procId == 0) 
@@ -92,6 +93,11 @@ int main (int argc, char* argv[])
 		cout << "Parallel time: " << wtime << endl;
 		cout << "-------------------------------" << endl;
 	}
+
+	if (procId == 0)
+		delete[] vect;
+	else
+		delete[] buf;
 
     status = MPI_Finalize();
     assert(status == MPI_SUCCESS);

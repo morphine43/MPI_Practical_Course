@@ -1,6 +1,6 @@
 #include <mpi.h>
 #include <iostream>
-#include <assert.h>
+#include <cstdlib>
 #include <ctime>
 
 using namespace std;
@@ -100,8 +100,8 @@ int main (int argc, char* argv[])
 		delete[] buf;
 
     status = MPI_Finalize();
-    assert(status == MPI_SUCCESS);
-
+	if (status != MPI_SUCCESS)
+	{ cout << "Error while MPI Finilizing";  return -1; }
 
     return 0;
 }

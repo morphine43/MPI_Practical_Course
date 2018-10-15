@@ -37,6 +37,10 @@ int computeForOneRrocessor(int x){
 	}
 	return matchCount;
 }
+int errorMessage(){
+	cout << "Error;
+	return 1;
+}
 int main (int argc, char* argv[])
 
 {
@@ -47,16 +51,20 @@ int main (int argc, char* argv[])
 		
 	double starttime1, endtime1, starttime2, endtime2;
    
-    status = MPI_Init (&argc, &argv);
-    assert(status == MPI_SUCCESS);
-
-    status = MPI_Comm_rank (MPI_COMM_WORLD, &rank);
-    assert(status == MPI_SUCCESS);
-
-    status = MPI_Comm_size (MPI_COMM_WORLD, &size);
-    assert(status == MPI_SUCCESS);
+    status = MPI_Init (&argc, &argv);//assert(status == MPI_SUCCESS);
+	if (status != MPI_SUCCESS) {  
+		return errorMessage(); 
+	}
 	
-	//std::cout << "Count process: " << size << '\n';
+    status = MPI_Comm_rank (MPI_COMM_WORLD, &rank);//assert(status == MPI_SUCCESS);
+	if (status != MPI_SUCCESS) {  
+		return errorMessage(); 
+	}
+
+    status = MPI_Comm_size (MPI_COMM_WORLD, &size);//assert(status == MPI_SUCCESS);
+	if (status != MPI_SUCCESS) {  
+		return errorMessage(); 
+	}
 	
 	if(size == 1){
 		std::cout<<"One processor result = " << computeForOneRrocessor(x) << '\n';

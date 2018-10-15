@@ -38,7 +38,7 @@ int computeForOneRrocessor(int x){
 	return matchCount;
 }
 int errorMessage(){
-	cout << "Error;
+	cout << "Error";
 	return 1;
 }
 int main (int argc, char* argv[])

@@ -114,8 +114,7 @@ int main (int argc, char* argv[])
 			
 			int parallelMatchCount = 0;
 			
-			////////////////////////////////count2
-			starttime2 = MPI_Wtime();
+
 			for(int i = 0; i < x; i ++){
 				if(arr1[i] == arr2[i])
 				{

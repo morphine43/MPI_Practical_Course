@@ -16,7 +16,7 @@ void Initialization(int *x,int N)
 } 
 
 int main(int argc, char* argv[]){ 
-	int ProcRank, ProcNum, ProcSum = 0, N=10000; 
+	int ProcRank, ProcNum, N=10000; 
 	int *x = new int[N]; 
 	MPI_Status Status; 
 

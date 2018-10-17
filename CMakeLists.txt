@@ -7,14 +7,14 @@ if( MPI_FOUND )
     include_directories( ${MPI_INCLUDE_PATH} )
 endif( MPI_FOUND )
 
-############ test functionality ############
-if ( NOT MSVC )
-    find_package( OpenCV REQUIRED )
-    if( OpenCV_FOUND )
-        message(STATUS "OpenCV - Found")
-        include_directories( ${OpenCV_INCLUDE_DIRS} )
-    endif( OpenCV_FOUND )
-endif( NOT MSVC )
-############################################
+if ( UNIX )
+    set(CMAKE_C_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -Werror")
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -Werror")
+endif( UNIX )
+
+if ( MSVC )
+    set(CMAKE_C_FLAGS  "${CMAKE_CXX_FLAGS} /WX")
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /WX")
+endif( MSVC )
 
 add_subdirectory(modules)

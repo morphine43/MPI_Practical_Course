@@ -1,3 +1,8 @@
 message(STATUS "Task 1")
 add_subdirectory( Perov_Dima_task1_SumElVect )
 add_subdirectory( Druzhinin_Alexei_task1_MinElVect )
+add_subdirectory( vikhrev_array_sum )
+add_subdirectory( Yakovlev_Pavel_mul_vect )
+add_subdirectory( Vdovin_Eugene_task1_NumWords )
+add_subdirectory( Repin_Vladimir_Wrong_Order_Count )
+add_subdirectory( Gaidaichuk_Yuri_task1_Arrays_Matching )

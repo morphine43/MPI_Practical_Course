@@ -1,7 +1,7 @@
 project( ndanilov_rows_matrix_sum )
 
 message( STATUS "-- " ${PROJECT_NAME} )
-add_executable( ${PROJECT_NAME} array_sum.cpp )
+add_executable( ${PROJECT_NAME} main.cpp )
 
 if( MPI_COMPILE_FLAGS )
     set_target_properties( ${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${MPI_COMPILE_FLAGS}" )

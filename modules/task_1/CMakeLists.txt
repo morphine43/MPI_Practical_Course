@@ -5,4 +5,5 @@ add_subdirectory( Yakovlev_Pavel_mul_vect )
 add_subdirectory( Vdovin_Eugene_task1_NumWords )
 add_subdirectory( Repin_Vladimir_Wrong_Order_Count )
 add_subdirectory( Gaidaichuk_Yuri_task1_Arrays_Matching )
+add_subdirectory( Zolotareva_Olesya_task1_MiddleValueVect )
 

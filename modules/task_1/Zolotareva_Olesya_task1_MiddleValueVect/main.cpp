@@ -24,6 +24,7 @@ int main(int argc, char* argv[]){
 	MPI_Comm_size(MPI_COMM_WORLD,&ProcNum); 
 	MPI_Comm_rank(MPI_COMM_WORLD,&ProcRank); 
 	int ParallelSum = 0; 
+	double ParallelTimeStart=0;
 	int tempSum = 0; 
 	if ( ProcRank == 0 ) 
 	{ 
@@ -46,7 +47,7 @@ int main(int argc, char* argv[]){
 
 		//parallel v 
 
-		double ParallelTimeStart = MPI_Wtime(); 
+		ParallelTimeStart = MPI_Wtime(); 
 		int p = N/ProcNum; 
 		for(int i=1;i<ProcNum-1;i++) 
 		{ 

@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
 		for (i = 0; i < mtrx_size; i++)
 			matrix[i] = (std::rand() % 100);
 
-		if (mtrx_size < OutputSize) {
+		if (mtrx_size < MAX_OUTPUT_SIZE) {
 			for (i = 0; i < mtrx_size; i++) {
 				std::cout << matrix[i] << " ";
 

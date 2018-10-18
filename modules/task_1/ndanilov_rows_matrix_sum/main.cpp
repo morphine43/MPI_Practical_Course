@@ -66,7 +66,6 @@ int main(int argc, char* argv[])
 		goto err_exit;
 	}
 
-
 	proc_num = (rows >= size) ? size : rows;
 	rows_num = ROWS_NUM;
 
@@ -197,10 +196,16 @@ int main(int argc, char* argv[])
 	}
 
 	/* Memory free */
-	if (rank == 0)
+	if (rank == MASTER_PROCESS_ID) {
 		delete[] matrix;
-	else
+		delete[] result_vector;
 		delete[] part_of_matrix;
+		delete[] part_of_vector;
+	}
+	else {
+		delete[] part_of_matrix;
+		delete[] part_of_vector;
+	}
 
 	status = MPI_Finalize();
 	if (status)

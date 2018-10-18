@@ -24,8 +24,12 @@ int main(int argc, char* argv[]){
 	MPI_Comm_size(MPI_COMM_WORLD,&ProcNum); 
 	MPI_Comm_rank(MPI_COMM_WORLD,&ProcRank); 
 	int ParallelSum = 0; 
+	double ParallelTimeStart=0;
 	int tempSum = 0; 
+<<<<<<< HEAD
 	double ParallelTimeStart=0; 
+=======
+>>>>>>> ca997a5cfadd97fe3e2933c9ef30343e7697af8a
 	if ( ProcRank == 0 ) 
 	{ 
 		Initialization(x,N); 

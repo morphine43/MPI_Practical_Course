@@ -25,7 +25,7 @@ int main(int argc, char* argv[]){
 	MPI_Comm_rank(MPI_COMM_WORLD,&ProcRank); 
 	int ParallelSum = 0; 
 	int tempSum = 0; 
-	double ParallelTimeStart; 
+	double ParallelTimeStart=0; 
 	if ( ProcRank == 0 ) 
 	{ 
 		Initialization(x,N); 

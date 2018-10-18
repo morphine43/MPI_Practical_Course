@@ -28,4 +28,4 @@ script:
   - mpirun -np 4 ./modules/task_1/Vdovin_Eugene_task1_NumWords/Vdovin_Eugene_task1_NumWords 3000000
   - mpirun -np 4 ./modules/task_1/Repin_Vladimir_Wrong_Order_Count/Repin_Vladimir_Wrong_Order_Count 100000
   - mpirun -np 4 ./modules/task_1/Gaidaichuk_Yuri_task1_Arrays_Matching/Gaidaichuk_Yuri_task1_Arrays_Matching 10000
- 
+  - mpirun -np 4 ./modules/task_1/Druzhinin_Alexei_task1_MinElVect/Druzhinin_Alexei_task1_MinElVect 100000  

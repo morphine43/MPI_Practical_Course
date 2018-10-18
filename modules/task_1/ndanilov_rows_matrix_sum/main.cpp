@@ -31,9 +31,9 @@ int main(int argc, char* argv[])
 	     i, j;
 
 	double *matrix = NULL,
-	       *part_of_matrix,
-	       *result_vector,
-	       *part_of_vector;
+	       *part_of_matrix = NULL,
+	       *result_vector = NULL,
+	       *part_of_vector = NULL;
 
 	/* Reading a number of rows and cols from argv */
 	if (argc > 2) {
@@ -75,7 +75,6 @@ int main(int argc, char* argv[])
 		matrix = new double[mtrx_size];
 		result_vector = new double[rows];
 		part_of_vector = new double[rows_num * cols];
-		part_of_matrix = new double[rows_num * cols];
 
 		std::srand((unsigned)time(NULL));
 
@@ -199,7 +198,6 @@ int main(int argc, char* argv[])
 	if (rank == MASTER_PROCESS_ID) {
 		delete[] matrix;
 		delete[] result_vector;
-		delete[] part_of_matrix;
 		delete[] part_of_vector;
 	}
 	else {

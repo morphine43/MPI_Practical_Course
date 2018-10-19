@@ -116,17 +116,22 @@ int main(int argc, char* argv[])
 		begin_time = MPI_Wtime();
 		for (i = 1; i < proc_num; i++) {
 			if ((i == proc_num - 1) && (rows % proc_num != 0)) {
+				for (int k = 0; k < REST_ELEMENTS; k++) {
+					std::cout << "mpi send to proc " << i << " matrix[" << BUSY_ELEMENTS + k << "] = " << matrix[BUSY_ELEMENTS + k] << std::endl;
+				}
 				MPI_Send(&matrix[BUSY_ELEMENTS],
 					 REST_ELEMENTS,
 					 MPI_DOUBLE, i,
 					 i, MPI_COMM_WORLD);
-				std::cout << "mpi send to proc " << i << ": start = " << BUSY_ELEMENTS << " end = " << BUSY_ELEMENTS + REST_ELEMENTS << std::endl;
 			}
 			else {
+				for (int k = 0; k < rows_num * cols; k++) {
+					std::cout << "mpi send to proc " << i << " matrix[" << i * rows_num * cols + k << "] = " << matrix[i * rows_num * cols + k] << std::endl;
+				}
 				MPI_Send(&(matrix[i * rows_num * cols]),
 					 rows_num * cols, MPI_DOUBLE, i, i,
 					 MPI_COMM_WORLD);
-				std::cout << "mpi send to proc " << i << ": start = " << i * rows_num * cols << " end = " << i * rows_num * cols + rows_num * cols << std::endl;
+			//	std::cout << "mpi send to proc " << i << ": start = " << i * rows_num * cols << " end = " << i * rows_num * cols + rows_num * cols << std::endl;
 			}
 		}
 	} else {
@@ -143,6 +148,9 @@ int main(int argc, char* argv[])
 			MPI_Recv(part_of_matrix, rows_num * cols, MPI_DOUBLE,
 				 MASTER_PROCESS_ID, rank, MPI_COMM_WORLD,
 				 MPI_STATUSES_IGNORE);
+		}
+		for (int k = 0; k < rows_num; k++) {
+			std::cout << "mpi proc " << rank << " received part_of_vector[" << k << "] = " << part_of_vector[k] << std::endl;
 		}
 	}
 

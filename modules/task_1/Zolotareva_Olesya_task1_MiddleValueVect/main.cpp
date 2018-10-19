@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 	
 	srand((int)time(0));
 	
-	double *x;
+	double* x;
 	int N;
 	
 	if (argc>1) {

@@ -201,9 +201,11 @@ int main(int argc, char* argv[])
 
 		std::cout << std::endl;
 	} else if (rank < proc_num) {
+		for (int k = 0; k < rows_num; k++) {
+			std::cout << "mpi proc " << rank << " send part_of_vector[" << k << "] = " << part_of_vector[k] << std::endl;
+		}
 		MPI_Send(part_of_vector, rows_num, MPI_DOUBLE,
 			 MASTER_PROCESS_ID, 0, MPI_COMM_WORLD);
-		std::cout << "mpi send from proc " << rank << ": count = " << rows_num << std::endl;
 	}
 
 	/* Memory free */

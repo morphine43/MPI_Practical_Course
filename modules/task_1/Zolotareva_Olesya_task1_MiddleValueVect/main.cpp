@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 
 	x = new int[N]; 
 	
-	for(int i=0;i<N;i++) x[i] = (int(1+rand()%20) ; 
+	for(int i=0;i<N;i++) x[i] = rand()%20 + 1; 
 	
 	
 	int ProcRank, ProcNum; 	

@@ -6,7 +6,7 @@
 
 void Initialization(int *x,int N) 
 { 
-	srand(0); 
+	srand(0);
 	//printf("\nMassiv:"); 
 	for(int i=0;i<N;i++) 
 	{ 
@@ -17,7 +17,16 @@ void Initialization(int *x,int N)
 
 int main(int argc, char* argv[]){ 
 	int ProcRank, ProcNum, N=10000; 
-	int *x = new int[N]; 
+	
+	if (argc>1) {
+		string sizeArg;
+		sizeArg = argv[1];
+		N= atoi(sizeArg.c_str());
+	}
+	else 
+		N = 50;
+
+	int *x = new int[size]; 
 	MPI_Status Status; 
 
 	MPI_Init(&argc,&argv); 

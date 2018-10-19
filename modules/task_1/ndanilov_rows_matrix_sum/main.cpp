@@ -116,18 +116,18 @@ int main(int argc, char* argv[])
 		begin_time = MPI_Wtime();
 		for (i = 1; i < proc_num; i++) {
 			if ((i == proc_num - 1) && (rows % proc_num != 0)) {
-				for (int k = 0; k < REST_ELEMENTS; k++) {
-					std::cout << "mpi send to proc " << i << " matrix[" << BUSY_ELEMENTS + k << "] = " << matrix[BUSY_ELEMENTS + k] << std::endl;
-				}
+				//for (int k = 0; k < REST_ELEMENTS; k++) {
+				//	std::cout << "mpi send to proc " << i << " matrix[" << BUSY_ELEMENTS + k << "] = " << matrix[BUSY_ELEMENTS + k] << std::endl;
+				//}
 				MPI_Send(&matrix[BUSY_ELEMENTS],
 					 REST_ELEMENTS,
 					 MPI_DOUBLE, i,
 					 i, MPI_COMM_WORLD);
 			}
 			else {
-				for (int k = 0; k < rows_num * cols; k++) {
-					std::cout << "mpi send to proc " << i << " matrix[" << i * rows_num * cols + k << "] = " << matrix[i * rows_num * cols + k] << std::endl;
-				}
+				//for (int k = 0; k < rows_num * cols; k++) {
+				//	std::cout << "mpi send to proc " << i << " matrix[" << i * rows_num * cols + k << "] = " << matrix[i * rows_num * cols + k] << std::endl;
+				//}
 				MPI_Send(&(matrix[i * rows_num * cols]),
 					 rows_num * cols, MPI_DOUBLE, i, i,
 					 MPI_COMM_WORLD);
@@ -149,15 +149,18 @@ int main(int argc, char* argv[])
 				 MASTER_PROCESS_ID, rank, MPI_COMM_WORLD,
 				 MPI_STATUSES_IGNORE);
 		}
-		for (int k = 0; k < rows_num; k++) {
-			std::cout << "mpi proc " << rank << " received part_of_vector[" << k << "] = " << part_of_vector[k] << std::endl;
-		}
+		//for (int k = 0; k < rows_num * cols; k++) {
+		//	std::cout << "mpi proc " << rank << " received part_of_matrix[" << k << "] = " << part_of_matrix[k] << std::endl;
+		//}
 	}
 
 	/* Common calculating */
 	if (rank < proc_num) {
 		for (i = 0; i < rows_num * cols; i++) {
 			part_of_vector[i / cols] += part_of_matrix[i];
+		}
+		for (i = 0; i < rows_num; i++) {
+			std::cout << "mpi proc " << rank << " calculated part_of_vector[" << i << "] = " << part_of_vector[i] << std::endl;
 		}
 	}
 
@@ -189,11 +192,11 @@ int main(int argc, char* argv[])
 					 i , 0, MPI_COMM_WORLD,
 					 MPI_STATUSES_IGNORE);
 			}
-			std::cout << "master fill in rows_num = " << rows_num << std::endl;
+			//std::cout << "master fill in rows_num = " << rows_num << std::endl;
 
 			for (j = 0; j < rows_num; j++) {
 				result_vector[(ROWS_NUM) * i + j] += part_of_vector[j];
-				std::cout << "master fill in result_vector[" << (ROWS_NUM) * i + j << "] += " << part_of_vector[j] << " from proc " << i << std::endl;
+				std::cout << "master received result_vector[" << (ROWS_NUM) * i + j << "] += " << part_of_vector[j] << " from proc " << i << std::endl;
 			}
 
 			delete[] part_of_vector;

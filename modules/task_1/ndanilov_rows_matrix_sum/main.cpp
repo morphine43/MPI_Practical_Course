@@ -11,6 +11,7 @@
 #define REST_ELEMENTS (mtrx_size - BUSY_ELEMENTS)
 #define DEFINITELY_MAGIC_NUMBER 42
 #define MAX_OUTPUT_SIZE 25
+#define TIME (end_time - begin_time)
 
 int main(int argc, char* argv[])
 {
@@ -73,7 +74,7 @@ int main(int argc, char* argv[])
 	if (rank == MASTER_PROCESS_ID) {
 		matrix = new double[mtrx_size];
 		result_vector = new double[rows];
-		part_of_vector = new double[rows_num * cols];
+		part_of_vector = new double[rows_num];
 
 		std::srand((unsigned)time(NULL));
 
@@ -100,8 +101,8 @@ int main(int argc, char* argv[])
 
 		end_time = MPI_Wtime();
 
-		std::cout << "Sequential Time: " << end_time - begin_time << std::endl;
-		std::cout << "Sequential Sum = " << std::endl;
+		std::cout << "Sequential Time = " << TIME << std::endl;
+		std::cout << "Sequential Sum Vector: " << std::endl;
 
 		for (i = 0; i < rows; i++)
 			std::cout << result_vector[i] << " ";
@@ -110,13 +111,12 @@ int main(int argc, char* argv[])
 
 		/* Let's start MPI magic */
 		begin_time = MPI_Wtime();
-
 		for (i = 1; i < proc_num; i++)
 			if ((i == proc_num - 1) && (rows % proc_num != 0))
 				MPI_Send(&matrix[BUSY_ELEMENTS],
 					 REST_ELEMENTS,
-					 MPI_DOUBLE, proc_num - 1,
-					 proc_num - 1, MPI_COMM_WORLD);
+					 MPI_DOUBLE, i,
+					 i, MPI_COMM_WORLD);
 			else
 				MPI_Send(&(matrix[i * rows_num * cols]),
 					 rows_num * cols, MPI_DOUBLE, i, i,
@@ -156,32 +156,34 @@ int main(int argc, char* argv[])
 		for (i = 0; i < rows_num; i++)
 			result_vector[i] += part_of_vector[i];
 
+		delete[] part_of_vector;
+
 		/* Fill in other parts */
 		for (i = 1; i < proc_num; i++) {
 			if (i == proc_num - 1) {
 				rows_num = REST_ELEMENTS / cols;
-				part_of_matrix = new double[rows_num * cols];
-				MPI_Recv(part_of_matrix, rows_num, MPI_DOUBLE,
+				part_of_vector = new double[rows_num];
+				MPI_Recv(part_of_vector, rows_num, MPI_DOUBLE,
 					 i , 0, MPI_COMM_WORLD,
 					 MPI_STATUSES_IGNORE);
 			} else {
 				rows_num = ROWS_NUM;
-				part_of_matrix = new double[rows_num * cols];
-				MPI_Recv(part_of_matrix, rows_num, MPI_DOUBLE,
+				part_of_vector = new double[rows_num];
+				MPI_Recv(part_of_vector, rows_num, MPI_DOUBLE,
 					 i , 0, MPI_COMM_WORLD,
 					 MPI_STATUSES_IGNORE);
 			}
 
 			for (j = 0; j < rows_num; j++)
-				result_vector[(ROWS_NUM) * i + j] += part_of_matrix[j];
+				result_vector[(ROWS_NUM) * i + j] += part_of_vector[j];
 
-			delete[] part_of_matrix;
+			delete[] part_of_vector;
 		}
 
 		end_time = MPI_Wtime();
 		std::cout << std::endl;
-		std::cout << "Parallel Time: " << end_time - begin_time << std::endl;
-		std::cout << "Parallel Sum = " << std::endl;
+		std::cout << "Parallel Time = " << TIME << std::endl;
+		std::cout << "Parallel Sum Vector: " << std::endl;
 
 		for (i = 0; i < rows; i++)
 			std::cout << result_vector[i] << " ";
@@ -196,12 +198,11 @@ int main(int argc, char* argv[])
 	if (rank == MASTER_PROCESS_ID) {
 		delete[] matrix;
 		delete[] result_vector;
-		delete[] part_of_vector;
-	}
-	else if (rank < proc_num) {
+	} else if (rank < proc_num) {
 		delete[] part_of_matrix;
 		delete[] part_of_vector;
 	}
+
 	status = MPI_Finalize();
 	if (status)
 		goto err_exit;

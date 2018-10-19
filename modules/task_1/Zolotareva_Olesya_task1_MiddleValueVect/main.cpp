@@ -6,12 +6,13 @@
 #include <cstdlib>
 #include <assert.h>
 
-int main(int argc, char* argv[]){ 
+int main(int argc, char *argv[])
+{ 
 	
-	int* x;
+	srand((int)time(0));
+	
+	double* x;
 	int n;
-	
-	int ProcRank, ProcNum; 
 	
 	if (argc>1) {
 		string sizeArg;
@@ -21,10 +22,12 @@ int main(int argc, char* argv[]){
 	else 
 		N = 50;
 
-	int x = new int[N]; 
+	double x = new double[N]; 
 	
-	for(int i=0;i<N;i++) x[i] = rand()%20 + 1; 
-		
+	for(int i=0;i<N;i++) x[i] = (double)(1+rand()%7) / ((double)(rand()%10) + 1); 
+	
+	
+	int ProcRank, ProcNum; 	
 		
 	MPI_Status Status; 
 

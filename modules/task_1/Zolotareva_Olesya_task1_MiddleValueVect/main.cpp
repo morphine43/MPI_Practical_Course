@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 	
 	srand((int)time(0));
 	
-	double x;
+	double *x;
 	int N;
 	
 	if (argc>1) {
@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 	else 
 		N = 50;
 
-	double *x = new double[N]; 
+	x = new double[N]; 
 	
 	for(int i=0;i<N;i++) x[i] = (double)(1+rand()%7) / ((double)(rand()%10) + 1); 
 	

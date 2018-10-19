@@ -111,16 +111,21 @@ int main(int argc, char* argv[])
 
 		/* Let's start MPI magic */
 		begin_time = MPI_Wtime();
-		for (i = 1; i < proc_num; i++)
-			if ((i == proc_num - 1) && (rows % proc_num != 0))
+		for (i = 1; i < proc_num; i++) {
+			if ((i == proc_num - 1) && (rows % proc_num != 0)) {
 				MPI_Send(&matrix[BUSY_ELEMENTS],
 					 REST_ELEMENTS,
 					 MPI_DOUBLE, i,
 					 i, MPI_COMM_WORLD);
-			else
+				std::cout << "mpi send to proc " << i << ": start = " << BUSY_ELEMENTS << " end = " << BUSY_ELEMENTS + REST_ELEMENTS << std::endl;
+			}
+			else {
 				MPI_Send(&(matrix[i * rows_num * cols]),
 					 rows_num * cols, MPI_DOUBLE, i, i,
 					 MPI_COMM_WORLD);
+				std::cout << "mpi send to proc " << i << ": start = " << i * rows_num * cols << " end = " << i * rows_num * cols + rows_num * cols << std::endl;
+			}
+		}
 	} else {
 		if (rank == proc_num - 1) {
 			rows_num = REST_ELEMENTS / cols;
@@ -173,9 +178,12 @@ int main(int argc, char* argv[])
 					 i , 0, MPI_COMM_WORLD,
 					 MPI_STATUSES_IGNORE);
 			}
+			std::cout << "master fill in rows_num = " << rows_num << std::endl;
 
-			for (j = 0; j < rows_num; j++)
+			for (j = 0; j < rows_num; j++) {
 				result_vector[(ROWS_NUM) * i + j] += part_of_vector[j];
+				//std::cout << "master fill in result_vector[" << (ROWS_NUM) * i + j << "] += " << part_of_vector[j] << " from proc " << i << std::endl;
+			}
 
 			delete[] part_of_vector;
 		}
@@ -192,16 +200,17 @@ int main(int argc, char* argv[])
 	} else if (rank < proc_num) {
 		MPI_Send(part_of_vector, rows_num, MPI_DOUBLE,
 			 MASTER_PROCESS_ID, 0, MPI_COMM_WORLD);
+		std::cout << "mpi send from proc " << rank << ": count = " << rows_num << std::endl;
 	}
 
 	/* Memory free */
-	/*if (rank == MASTER_PROCESS_ID) {
+	if (rank == MASTER_PROCESS_ID) {
 		delete[] matrix;
 		delete[] result_vector;
 	} else if (rank < proc_num) {
 		delete[] part_of_matrix;
 		delete[] part_of_vector;
-	}*/
+	}
 
 	status = MPI_Finalize();
 	if (status)

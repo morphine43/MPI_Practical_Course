@@ -1,15 +1,17 @@
 #include <math.h> 
-#include <stdio.h> 
+#include <iostream>
+#include <mpi.h>
 #include <string>
 #include <ctime>
 #include <cstdlib>
 #include <assert.h>
-#include <stdlib.h> 
-#include <ctime> 
-#include "mpi.h" 
 
 int main(int argc, char* argv[]){ 
-	int ProcRank, ProcNum, N; 
+	
+	int* x;
+	int n;
+	
+	int ProcRank, ProcNum; 
 	
 	if (argc>1) {
 		string sizeArg;

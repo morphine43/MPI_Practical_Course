@@ -149,6 +149,8 @@ int main(int argc, char* argv[])
 				 MASTER_PROCESS_ID, rank, MPI_COMM_WORLD,
 				 MPI_STATUSES_IGNORE);
 		}
+		for (int k = 0; k < rows_num; k++)
+			part_of_vector[k] = 0;
 		//for (int k = 0; k < rows_num * cols; k++) {
 		//	std::cout << "mpi proc " << rank << " received part_of_matrix[" << k << "] = " << part_of_matrix[k] << std::endl;
 		//}

@@ -93,8 +93,8 @@ int main(int argc, char* argv[])
 		std::cout << std::endl;
 		part_of_matrix = matrix;
 
-		for (i = 0; i < mtrx_size; i++)
-			result_vector[rows] = 0;
+		for (i = 0; i < rows; i++)
+			result_vector[i] = 0;
 
 		/* One process calculations */
 		begin_time = MPI_Wtime();

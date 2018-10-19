@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 	srand((int)time(0));
 	
 	double* x;
-	int n;
+	int N;
 	
 	if (argc>1) {
 		N= atoi(argv[1]);

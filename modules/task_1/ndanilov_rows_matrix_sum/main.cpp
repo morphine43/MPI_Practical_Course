@@ -93,6 +93,9 @@ int main(int argc, char* argv[])
 		std::cout << std::endl;
 		part_of_matrix = matrix;
 
+		for (i = 0; i < mtrx_size; i++)
+			result_vector[rows] = 0;
+
 		/* One process calculations */
 		begin_time = MPI_Wtime();
 
@@ -182,7 +185,7 @@ int main(int argc, char* argv[])
 
 			for (j = 0; j < rows_num; j++) {
 				result_vector[(ROWS_NUM) * i + j] += part_of_vector[j];
-				//std::cout << "master fill in result_vector[" << (ROWS_NUM) * i + j << "] += " << part_of_vector[j] << " from proc " << i << std::endl;
+				std::cout << "master fill in result_vector[" << (ROWS_NUM) * i + j << "] += " << part_of_vector[j] << " from proc " << i << std::endl;
 			}
 
 			delete[] part_of_vector;

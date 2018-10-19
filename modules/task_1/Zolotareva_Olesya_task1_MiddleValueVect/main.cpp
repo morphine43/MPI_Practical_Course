@@ -1,22 +1,15 @@
 #include <math.h> 
 #include <stdio.h> 
+#include <string>
+#include <ctime>
+#include <cstdlib>
+#include <assert.h>
 #include <stdlib.h> 
 #include <ctime> 
 #include "mpi.h" 
 
-void Initialization(int *x,int N) 
-{ 
-	srand(0);
-	//printf("\nMassiv:"); 
-	for(int i=0;i<N;i++) 
-	{ 
-		x[i] = rand()%20 + 1; 
-		//printf(" %d",x[i]); 
-	} 
-} 
-
 int main(int argc, char* argv[]){ 
-	int ProcRank, ProcNum, N=10000; 
+	int ProcRank, ProcNum, N; 
 	
 	if (argc>1) {
 		string sizeArg;
@@ -26,7 +19,11 @@ int main(int argc, char* argv[]){
 	else 
 		N = 50;
 
-	int *x = new int[size]; 
+	int x = new int[N]; 
+	
+	for(int i=0;i<N;i++) x[i] = rand()%20 + 1; 
+		
+		
 	MPI_Status Status; 
 
 	MPI_Init(&argc,&argv); 
@@ -37,8 +34,6 @@ int main(int argc, char* argv[]){
 	int tempSum = 0; 
 	if ( ProcRank == 0 ) 
 	{ 
-		Initialization(x,N); 
-
 		//serial v 
 
 		int SerialSum = 0; 

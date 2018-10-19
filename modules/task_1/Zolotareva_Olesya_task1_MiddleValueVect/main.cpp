@@ -15,9 +15,7 @@ int main(int argc, char *argv[])
 	int n;
 	
 	if (argc>1) {
-		string sizeArg;
-		sizeArg = argv[1];
-		N= atoi(sizeArg.c_str());
+		N= atoi(argv[1]);
 	}
 	else 
 		N = 50;

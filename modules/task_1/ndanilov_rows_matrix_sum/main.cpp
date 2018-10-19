@@ -195,13 +195,13 @@ int main(int argc, char* argv[])
 	}
 
 	/* Memory free */
-	if (rank == MASTER_PROCESS_ID) {
+	/*if (rank == MASTER_PROCESS_ID) {
 		delete[] matrix;
 		delete[] result_vector;
 	} else if (rank < proc_num) {
 		delete[] part_of_matrix;
 		delete[] part_of_vector;
-	}
+	}*/
 
 	status = MPI_Finalize();
 	if (status)

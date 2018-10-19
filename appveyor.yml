@@ -53,4 +53,4 @@ build_script:
   - cmd: mpiexec.exe -np 4 modules\task_1\Repin_Vladimir_Wrong_Order_Count\%configuration%\Repin_Vladimir_Wrong_Order_Count.exe 100000
   - cmd: mpiexec.exe -np 4 modules\task_1\Gaidaichuk_Yuri_task1_Arrays_Matching\%configuration%\Gaidaichuk_Yuri_task1_Arrays_Matching.exe 10000
   - cmd: mpiexec.exe -np 4 modules\task_1\Druzhinin_Alexei_task1_MinElVect\%configuration%\Druzhinin_Alexei_task1_MinElVect.exe 100000
-  - cmd: mpiexec.exe -np 4 modules\task_1\Zolotareva_Olesya_task1_MiddleValueVect\%configuration%\Zolotareva_Olesya_task1_MiddleValueVect.exe
+  - cmd: mpiexec.exe -np 4 modules\task_1\Zolotareva_Olesya_task1_MiddleValueVect\%configuration%\Zolotareva_Olesya_task1_MiddleValueVect.exe 10000

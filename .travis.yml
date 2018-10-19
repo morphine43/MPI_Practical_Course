@@ -29,5 +29,4 @@ script:
   - mpirun -np 4 ./modules/task_1/Repin_Vladimir_Wrong_Order_Count/Repin_Vladimir_Wrong_Order_Count 100000
   - mpirun -np 4 ./modules/task_1/Gaidaichuk_Yuri_task1_Arrays_Matching/Gaidaichuk_Yuri_task1_Arrays_Matching 10000
   - mpirun -np 4 ./modules/task_1/Druzhinin_Alexei_task1_MinElVect/Druzhinin_Alexei_task1_MinElVect 100000
-    - mpirun -np 4 ./modules/task_1/Zolotareva_Olesya_task1_MiddleValueVect/Zolotareva_Olesya_task1_MiddleValueVect
-
+  - mpirun -np 4 ./modules/task_1/Zolotareva_Olesya_task1_MiddleValueVect/Zolotareva_Olesya_task1_MiddleValueVect 10000

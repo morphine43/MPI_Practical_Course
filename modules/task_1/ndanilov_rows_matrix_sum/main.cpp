@@ -70,8 +70,7 @@ int main(int argc, char* argv[])
 	rows_num = ROWS_NUM;
 
 	/* Sending part */
-	if (rank == MASTER_PROCESS_ID)
-	{
+	if (rank == MASTER_PROCESS_ID) {
 		matrix = new double[mtrx_size];
 		result_vector = new double[rows];
 		part_of_vector = new double[rows_num * cols];
@@ -112,20 +111,16 @@ int main(int argc, char* argv[])
 		/* Let's start MPI magic */
 		begin_time = MPI_Wtime();
 
-		for (i = 1; i < proc_num - 1; i++)
-			status = MPI_Send(&(matrix[i * rows_num * cols]),
-					  rows_num * cols, MPI_DOUBLE, i, i,
-					  MPI_COMM_WORLD);
-
-		/* In the case of rows % proc_num! = 0,
-		 * send the rest to the last process
-		 */
-		if (size != 1)
-			MPI_Send(&matrix[BUSY_ELEMENTS],
-				 REST_ELEMENTS,
-				 MPI_DOUBLE, proc_num - 1,
-				 proc_num - 1, MPI_COMM_WORLD);
-
+		for (i = 1; i < proc_num; i++)
+			if ((i == proc_num - 1) && (rows % proc_num != 0))
+				MPI_Send(&matrix[BUSY_ELEMENTS],
+					 REST_ELEMENTS,
+					 MPI_DOUBLE, proc_num - 1,
+					 proc_num - 1, MPI_COMM_WORLD);
+			else
+				MPI_Send(&(matrix[i * rows_num * cols]),
+					 rows_num * cols, MPI_DOUBLE, i, i,
+					 MPI_COMM_WORLD);
 	} else {
 		if (rank == proc_num - 1) {
 			rows_num = REST_ELEMENTS / cols;
@@ -134,7 +129,7 @@ int main(int argc, char* argv[])
 			MPI_Recv(part_of_matrix, rows_num * cols, MPI_DOUBLE,
 				 MASTER_PROCESS_ID, rank, MPI_COMM_WORLD,
 				 MPI_STATUSES_IGNORE);
-		} else {
+		} else if (rank < proc_num - 1) {
 			part_of_matrix = new double[rows_num * cols];
 			part_of_vector = new double[rows_num];
 			MPI_Recv(part_of_matrix, rows_num * cols, MPI_DOUBLE,
@@ -144,12 +139,15 @@ int main(int argc, char* argv[])
 	}
 
 	/* Common calculating */
-	for (i = 0; i < rows_num * cols; i++) {
-		part_of_vector[i / cols] += part_of_matrix[i];
+	if (rank < proc_num) {
+		for (i = 0; i < rows_num * cols; i++) {
+			part_of_vector[i / cols] += part_of_matrix[i];
+		}
 	}
 
 	/* resulting vector collecting */
 	if (rank == MASTER_PROCESS_ID) {
+
 		/* Flush result vector */
 		for (i = 0; i < rows; i++)
 			result_vector[i] = 0;
@@ -189,7 +187,7 @@ int main(int argc, char* argv[])
 			std::cout << result_vector[i] << " ";
 
 		std::cout << std::endl;
-	} else {
+	} else if (rank < proc_num) {
 		MPI_Send(part_of_vector, rows_num, MPI_DOUBLE,
 			 MASTER_PROCESS_ID, 0, MPI_COMM_WORLD);
 	}
@@ -200,15 +198,13 @@ int main(int argc, char* argv[])
 		delete[] result_vector;
 		delete[] part_of_vector;
 	}
-	else {
+	else if (rank < proc_num) {
 		delete[] part_of_matrix;
 		delete[] part_of_vector;
 	}
-
 	status = MPI_Finalize();
 	if (status)
 		goto err_exit;
-
 	return 0;
 
 err_exit:

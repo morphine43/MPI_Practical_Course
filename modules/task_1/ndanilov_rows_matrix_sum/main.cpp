@@ -49,22 +49,22 @@ int main(int argc, char* argv[])
 	/* Mpi init block */
 	status = MPI_Init(&argc, &argv);
 	if (status)
-		goto err_exit;
+		return -1;
 
 	status = MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	if (status)
-		goto err_exit;
+		return -1;
 
 	status = MPI_Comm_size(MPI_COMM_WORLD, &size);
 	if (status)
-		goto err_exit;
+		return -1;
 
 	/* Maximum number of processes is 42 because
 	 * The Ultimate Question of Life, the Universe, and Everything
 	 */
 	if (size > DEFINITELY_MAGIC_NUMBER) {
 		status = -1;
-		goto err_exit;
+		return -1;
 	}
 
 	proc_num = (rows >= size) ? size : rows;
@@ -205,9 +205,7 @@ int main(int argc, char* argv[])
 
 	status = MPI_Finalize();
 	if (status)
-		goto err_exit;
-	return 0;
+		return -1;
 
-err_exit:
-	return status;
+	return 0;
 }

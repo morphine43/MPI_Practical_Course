@@ -31,4 +31,4 @@ script:
   - mpirun -np 4 ./modules/task_1/Druzhinin_Alexei_task1_MinElVect/Druzhinin_Alexei_task1_MinElVect 100000
   - mpirun -np 4 ./modules/task_1/Zolotareva_Olesya_task1_MiddleValueVect/Zolotareva_Olesya_task1_MiddleValueVect 10000
   - mpirun -np 4 ./modules/task_1/ndanilov_rows_matrix_sum/ndanilov_rows_matrix_sum 10 10
-  - mpirun -np 4 modules/task_1/Yunin_Ivan_maximum_elem_vector/%configuration%/Yunin_Ivan_maximum_elem_vector 100
+  - mpirun -np 4 ./modules/task_1/Yunin_Ivan_maximum_elem_vector/%configuration%/Yunin_Ivan_maximum_elem_vector 100

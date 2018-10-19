@@ -22,7 +22,7 @@ int main (int argc, char* argv[]){
 	double serial_time, parallel_time;
 	double serial_max, parallel_max, temp_max;
 	MPI_Status status;
-	srand(time(0));
+	srand((int)time(0));
 	
 	if (argc>1){
 		size = atoi(argv[1]);

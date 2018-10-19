@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 	
 	srand((int)time(0));
 	
-	double* x;
+	int* x;
 	int N;
 	
 	if (argc>1) {
@@ -20,9 +20,9 @@ int main(int argc, char *argv[])
 	else 
 		N = 50;
 
-	x = new double[N]; 
+	x = new int[N]; 
 	
-	for(int i=0;i<N;i++) x[i] = (double)(1+rand()%7) / ((double)(rand()%10) + 1); 
+	for(int i=0;i<N;i++) x[i] = (int(1+rand()%20) ; 
 	
 	
 	int ProcRank, ProcNum; 	

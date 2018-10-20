@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
 	srand((int)time(0));
 	
 	double* Vector;
+	double* myVector;
 	int size;
 	
 	if (argc>1) {
@@ -25,8 +26,10 @@ int main(int argc, char *argv[])
 	Vector = new double[size];
 	
 	// fill the vector
-	for (int i = 0; i < size; i++)
-			Vector[i] = (double)(1+rand()%7) / ((double)(rand()%10) + 1);
+	for (int i = 0; i < size; i++) {
+			Vector[i] = (double)(1+rand()%750) / ((double)(rand()%100) + 1);
+ 			//cout << "Vector[" << i << "]=" << Vector[i] << endl;
+	}
 	
 	// variables for parallel block
 	double Min = 0;  
@@ -74,12 +77,17 @@ int main(int argc, char *argv[])
 	//PARALLEL BLOCK
 	startTime = MPI_Wtime(); // started counting time in 0 proccess
 	}
-
-	MPI_Bcast(Vector, size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-	myMin = Vector[0];
-	for (int i = size / numProcs * Id; i < size / numProcs * Id + size / numProcs; i++) {
-		if (myMin > Vector[i])
-			myMin = Vector[i];
+	
+	
+	myVector = new double[size/numProcs];
+	for (int i = size / numProcs * Id, j = 0; i < size / numProcs * Id + size / numProcs; i++, j++)
+		myVector[j] = Vector[i];
+	
+	MPI_Bcast(myVector, size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+	myMin = myVector[0];
+	for (int i = 0; i < size / numProcs; i++) {
+		if (myMin > myVector[i])
+			myMin = myVector[i];
 	}
 
 	MPI_Reduce(&myMin, &Min, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);

@@ -10,16 +10,26 @@ compiler:
   - clang
 
 before_install:
-  - test -n $CC && unset CC
+  - test -n $CC  && unset CC
+  - test -n $CXX && unset CXX
 
 install:
   - sudo apt-get install libcr-dev mpich2 mpich2-doc
+  - wget "https://github.com/danmar/cppcheck/archive/1.85.tar.gz"
+  - tar -xzf 1.85.tar.gz
+  - cd cppcheck-1.85
+  - make -j4 SRCDIR=build CFGDIR=/usr/share/cppcheck/ &> log_make
+  - sudo make install CFGDIR=/usr/share/cppcheck/ &> log_make_install
+  - cd ..
+  - rm -rf cppcheck-1.85
 
 script:
-  - python lint.py
+  - python scripts/lint.py
   - mkdir build
   - cd build
-  - cmake -D CMAKE_BUILD_TYPE=Release ..
+  - cmake -D CMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+  - cppcheck -j4 --project=compile_commands.json &> log_cppcheck
+  - python ../scripts/static_analysis.py log_cppcheck
   - make -j4
 
   - mpirun -np 4 ./modules/test_task/test_task

@@ -21,11 +21,11 @@ home_directory = os.getcwd();
 cpplint_path = project_directory + '/3rdparty/cpplint.py'
 cpplint_path = os.path.abspath(cpplint_path)
 project_directory = os.path.abspath(project_directory)
-
+exit_flag = True
 for dirs, node, files in os.walk(project_directory):
     for file in files:
         if re.search(pattern_filename, file) != None:
-            if re.search(r'task_1', dirs) == None:
+            if re.search(r'(task_2)|(task_3)|(test_task)', dirs) != None:
                 os.chdir(dirs)
                 print(dirs + " -> " + file)
                 command = sys.executable + ' ' + cpplint_path + ' ' + file
@@ -34,8 +34,9 @@ for dirs, node, files in os.walk(project_directory):
                     print("\033[0;32mSuccess: " + file + "\033[0;0m");
                 else:
                     print("\033[0;31mFailed: "  + file + "\033[0;0m");
-                    sys.exit(1)
+                    exit_flag = False
 os.chdir(home_directory)
 print("################ END FOUND LINT ERROR   ################")
-exit(0)
+if exit_flag: exit(0)
+else: exit(1)
 ######################################################################

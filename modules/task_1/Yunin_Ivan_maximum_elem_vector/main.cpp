@@ -38,6 +38,7 @@ int main (int argc, char* argv[]){
     if (!flag)
     {
         cout << "Error";
+        delete[]vector;
         return 0;
     }
     MPI_Comm_size(MPI_COMM_WORLD,&proc_num);
@@ -71,6 +72,7 @@ int main (int argc, char* argv[]){
             parallel_time = MPI_Wtime() - parallel_time;
             cout<<"Parralel max: "<<parallel_max<<endl;
             cout<<"Parralel time: "<<parallel_time<<endl;
+            delete[]max_vector;
         }
         else{
             if( proc_id != proc_num-1){
@@ -95,6 +97,7 @@ int main (int argc, char* argv[]){
     else{
         MPI_Finalize();
         cout<<"Vector size < number of processes.";
+        delete[]vector;
         return 0;
     }
     MPI_Finalize();

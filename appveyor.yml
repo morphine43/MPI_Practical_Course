@@ -33,7 +33,7 @@ install:
   - msmpisdk.msi /passive
 
 build_script:
-  - cmd: python lint.py
+  - cmd: python scripts/lint.py
   - cmd: mkdir build
   - cmd: cd build
   - cmd: cmake -Hsrc -Bbuild -G "%CMAKE_GENERATOR%" ^

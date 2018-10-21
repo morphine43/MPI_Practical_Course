@@ -16,6 +16,7 @@ install:
   - sudo apt-get install libcr-dev mpich2 mpich2-doc
 
 script:
+  - python lint.py
   - mkdir build
   - cd build
   - cmake -D CMAKE_BUILD_TYPE=Release ..

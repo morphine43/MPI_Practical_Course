@@ -12,7 +12,7 @@ int main (int argc, char* argv[])
     srand((int)time(NULL));
 
     int rank, CountP, flag;
-    if (argc < 2) 
+    if (argc < 2)
     {
         cout << "Error";
         return -1;
@@ -26,8 +26,8 @@ int main (int argc, char* argv[])
     }
 
     double *v1,*v2;
-    MPI_Status status; 
-    double Line_MultVec = 0;  
+    MPI_Status status;
+    double Line_MultVec = 0;
     double MultVec = 0;
     double tempSum = 0;
     double Time_begin = 0;
@@ -35,17 +35,17 @@ int main (int argc, char* argv[])
 
     MPI_Init (&argc, &argv);
     MPI_Initialized(&flag);
-	if (!flag) 
+    if (!flag)
     {
-		cout << "Error";
+        cout << "Error";
         return -1;
-	}
+    }
     MPI_Comm_size(MPI_COMM_WORLD, &CountP);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    
+
     if (rank == 0)
     {
-        
+
         v1 = new double[sizev];
         v2 = new double[sizev];
         for (int i = 0;i<sizev;i++)
@@ -76,7 +76,7 @@ int main (int argc, char* argv[])
         Time_end = MPI_Wtime();
         cout << "Line_Result = " << Line_MultVec << endl;
         cout << "Line_Time = " << Time_end - Time_begin << endl;
-        
+
         // --------------  Parrallel  -------------
         if (CountP > 1){
             Time_begin = MPI_Wtime();
@@ -91,7 +91,7 @@ int main (int argc, char* argv[])
             for (int i = 0; i < CountP-1; i++)
             {
                 MPI_Recv(&tempSum,1,MPI_DOUBLE,i+1,0,MPI_COMM_WORLD,&status);
-                MultVec += tempSum;  
+                MultVec += tempSum;
             }
             Time_end = MPI_Wtime();
 
@@ -104,26 +104,26 @@ int main (int argc, char* argv[])
         {
             v1 = new double[sizev/(CountP-1)];
             v2 = new double[sizev/(CountP-1)];
-            MPI_Recv(v1,sizev/(CountP-1),MPI_DOUBLE,0,0,MPI_COMM_WORLD,&status);  
+            MPI_Recv(v1,sizev/(CountP-1),MPI_DOUBLE,0,0,MPI_COMM_WORLD,&status);
             MPI_Recv(v2,sizev/(CountP-1),MPI_DOUBLE,0,0,MPI_COMM_WORLD,&status);
             for (int i = 0; i < sizev/(CountP-1); i++)
-                tempSum += v1[i]*v2[i]; 
+                tempSum += v1[i]*v2[i];
             MPI_Send(&tempSum, 1, MPI_DOUBLE,0,0,MPI_COMM_WORLD);
-        } 
+        }
         else
         {
             v1 = new double[sizev - (CountP-2)*(sizev/(CountP-1))];
             v2 = new double[sizev - (CountP-2)*(sizev/(CountP-1))];
-            MPI_Recv(v1,sizev - (CountP-2)*(sizev/(CountP-1)),MPI_DOUBLE,0,0,MPI_COMM_WORLD,&status);  
+            MPI_Recv(v1,sizev - (CountP-2)*(sizev/(CountP-1)),MPI_DOUBLE,0,0,MPI_COMM_WORLD,&status);
             MPI_Recv(v2,sizev - (CountP-2)*(sizev/(CountP-1)),MPI_DOUBLE,0,0,MPI_COMM_WORLD,&status);
             for (int i = 0; i < sizev - (CountP-2)*(sizev/(CountP-1)); i++)
-                tempSum += v1[i]*v2[i]; 
+                tempSum += v1[i]*v2[i];
             MPI_Send(&tempSum, 1, MPI_DOUBLE,0,0,MPI_COMM_WORLD);
         }
     MPI_Finalize();
 
     delete[]v1;
     delete[]v2;
-    
+
     return 0;
 }

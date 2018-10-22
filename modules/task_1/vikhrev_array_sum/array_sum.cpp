@@ -33,14 +33,15 @@ int main(int argc, char* argv[])
 	arrSize = rows * cols;
 
 	//mpi part
-	status = MPI_Init(&argc, &argv);
-	assert(status == MPI_SUCCESS);
+	 status = MPI_Init(&argc, &argv);
+        if (status != MPI_SUCCESS) { return -1; }
 
-	status = MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	assert(status == MPI_SUCCESS);
+        status = MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+        if (status != MPI_SUCCESS) { return -1; }
 
-	status = MPI_Comm_size(MPI_COMM_WORLD, &size);
-	assert(status == MPI_SUCCESS);
+        status = MPI_Comm_size(MPI_COMM_WORLD, &size);
+        if (status != MPI_SUCCESS) { return -1; }
+
 
 	if (size > 64) return -1; // limit 
 	

@@ -10,15 +10,15 @@
 int main(int argc, char* argv[])
 {   
 	// mpi variables
-	int status, rank, size, nProc = 0;
-	double t1, t2;
+	int status = 0, rank = 0, size = 0, nProc = 0;
+	double t1 = 0, t2 = 0;
 	//usual variables
-	int  cols,
-		 rows,
-		 arrSize,
-		 N; // number of elems that will be given to one process
-	double *arr, //matrix
-		   *buff, // buffer for messages
+	int  cols = 0,
+		 rows = 0,
+		 arrSize = 0,
+		 N = 0; // number of elems that will be given to one process
+	double *arr = NULL, //matrix
+		   *buff = NULL, // buffer for messages
 		    partialSum = 0,
 		    arrSum = 0;
 	
@@ -104,17 +104,10 @@ int main(int argc, char* argv[])
 	for (int i = 0; i < N; i++)
 		partialSum += buff[i];
 	
+	MPI_Reduce(&partialSum, &arrSum, 1, MPI_DOUBLE, MPI_SUM, MainProc, MPI_COMM_WORLD);
 	//sum
 	if (rank == MainProc)
 	{	
-		arrSum = 0;
-		arrSum += partialSum;
-		
-		for (int i = 1; i < size; i++)
-		{
-			MPI_Recv(&partialSum, 1, MPI_DOUBLE, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
-			arrSum += partialSum;
-		}
 		t2 = MPI_Wtime();
 		std::cout << std::endl;
 		std::cout << "Parallel Time: " << t2 - t1 << std::endl;

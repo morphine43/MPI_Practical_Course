@@ -35,6 +35,8 @@ int computeForOneRrocessor(int x){
             matchCount++;
         }
     }
+    delete[]arr1;
+    delete[]arr2;
     return matchCount;
 }
 
@@ -148,8 +150,8 @@ int main (int argc, char* argv[])
             else{
                 std::cout << "Smth has gone wrong"<< '\n';
             }
-
-
+            delete[]arr1;
+            delete[]arr2;
     }
     if(rank != 0)
     {

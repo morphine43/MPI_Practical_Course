@@ -124,7 +124,7 @@ int main(int argc, char * argv[]) {
     // Sequence version
     // create
     int * arrS = new int[x * size];
-    int seed = (int)(MPI_Wtime());
+    int seed = static_cast<int>(MPI_Wtime());
     std::srand(seed);
     for (int i = 0; i < x * size; i++) {
       arrS[i] = std::rand();
@@ -137,7 +137,7 @@ int main(int argc, char * argv[]) {
     // Parallel version
     // create
     int * arr1 = new int[x * size];
-    seed = (int)(MPI_Wtime());
+    seed = static_cast<int>(MPI_Wtime());
     std::srand(seed);
     for (int i = 0; i < x * size; i++) {
       arr1[i] = std::rand();

@@ -138,7 +138,7 @@ int main(int argc, char * argv[]) {
     }
     ////////////////////////////////////
     starttime3 = MPI_Wtime();
-    simpleBubbleSort(arrS, x * size);
+    simpleBubbleSort(arrSimpleBubble, x * size);
     endtime3 = MPI_Wtime();
     ////////////////////////////////////
     // Sequence version

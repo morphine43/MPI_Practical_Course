@@ -6,6 +6,13 @@
 #include <cstdlib>
 #include <utility>
 
+void simpleBubbleSort(int arr[], int n) {
+  int i, j;
+  for (i = 0; i < n - 1; i++)
+    for (j = 0; j < n - i - 1; j++)
+      if (arr[j] > arr[j + 1])
+        std::swap( & arr[j], & arr[j + 1]);
+}
 void simpleOddEvenSort(int arr[], int n) {
     bool isSorted = false;
     while (!isSorted) {
@@ -94,7 +101,7 @@ void parallelMerging(
 int main(int argc, char * argv[]) {
   int status = 0, rank = 0, size = 0;
   int x = atoi(argv[1]);
-  double starttime2, endtime2, starttime1, endtime1;
+  double starttime2, endtime2, starttime1, endtime1, starttime3, endtime3;
 
   status = MPI_Init(& argc, & argv);
   // assert(status == MPI_SUCCESS);
@@ -121,10 +128,23 @@ int main(int argc, char * argv[]) {
   int * bufArr = new int[x];
 
   if (rank == 0) {
+    // Simple bubble
+     // create
+    int * arrSimpleBubble = new int[x * size];
+    int seed = static_cast<int>(MPI_Wtime());
+    std::srand(seed);
+    for (int i = 0; i < x * size; i++) {
+      arrSimpleBubble[i] = std::rand();
+    }
+    ////////////////////////////////////
+    starttime3 = MPI_Wtime();
+    simpleBubbleSort(arrS, x * size);
+    endtime3 = MPI_Wtime();
+    ////////////////////////////////////
     // Sequence version
     // create
     int * arrS = new int[x * size];
-    int seed = static_cast<int>(MPI_Wtime());
+    seed = static_cast<int>(MPI_Wtime());
     std::srand(seed);
     for (int i = 0; i < x * size; i++) {
       arrS[i] = std::rand();
@@ -188,8 +208,11 @@ int main(int argc, char * argv[]) {
       endtime2 - starttime2 << "\n";
     std::cout << "Sequence time = " <<
       endtime1 - starttime1 << "\n";
+    std::cout << "Simple bubble time = " <<
+      endtime3 - starttime3 << "\n";  
       delete[] arr1;
       delete[] arrS;
+      delete[] arrSimpleBubble;
   }
   if (rank != 0) {
     // receiving data

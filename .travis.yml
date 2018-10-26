@@ -33,13 +33,13 @@ script:
   - make -j4
 
   - mpirun -np 4 ./modules/test_task/test_task
-  - mpirun -np 4 ./modules/task_1/Yakovlev_Pavel_mul_vect/Yakovlev_Pavel_mul_vect 100000
-  - mpirun -np 4 ./modules/task_1/Perov_Dima_task1_SumElVect/Perov_Dima_task1_SumElVect 10000
-  - mpirun -np 4 ./modules/task_1/vikhrev_array_sum/vikhrev_array_sum 1000 1000
-  - mpirun -np 4 ./modules/task_1/Vdovin_Eugene_task1_NumWords/Vdovin_Eugene_task1_NumWords 3000000
-  - mpirun -np 4 ./modules/task_1/Repin_Vladimir_Wrong_Order_Count/Repin_Vladimir_Wrong_Order_Count 100000
-  - mpirun -np 4 ./modules/task_1/Gaidaichuk_Yuri_task1_Arrays_Matching/Gaidaichuk_Yuri_task1_Arrays_Matching 10000
-  - mpirun -np 4 ./modules/task_1/Druzhinin_Alexei_task1_MinElVect/Druzhinin_Alexei_task1_MinElVect 100000
-  - mpirun -np 4 ./modules/task_1/Zolotareva_Olesya_task1_MiddleValueVect/Zolotareva_Olesya_task1_MiddleValueVect 10000
-  - mpirun -np 4 ./modules/task_1/ndanilov_rows_matrix_sum/ndanilov_rows_matrix_sum 10 10
-  - mpirun -np 4 ./modules/task_1/Yunin_Ivan_maximum_elem_vector/Yunin_Ivan_maximum_elem_vector 100
+  # - mpirun -np 4 ./modules/task_1/Yakovlev_Pavel_mul_vect/Yakovlev_Pavel_mul_vect 100000
+  # - mpirun -np 4 ./modules/task_1/Perov_Dima_task1_SumElVect/Perov_Dima_task1_SumElVect 10000
+  # - mpirun -np 4 ./modules/task_1/vikhrev_array_sum/vikhrev_array_sum 1000 1000
+  # - mpirun -np 4 ./modules/task_1/Vdovin_Eugene_task1_NumWords/Vdovin_Eugene_task1_NumWords 3000000
+  # - mpirun -np 4 ./modules/task_1/Repin_Vladimir_Wrong_Order_Count/Repin_Vladimir_Wrong_Order_Count 100000
+  # - mpirun -np 4 ./modules/task_1/Gaidaichuk_Yuri_task1_Arrays_Matching/Gaidaichuk_Yuri_task1_Arrays_Matching 10000
+  # - mpirun -np 4 ./modules/task_1/Druzhinin_Alexei_task1_MinElVect/Druzhinin_Alexei_task1_MinElVect 100000
+  # - mpirun -np 4 ./modules/task_1/Zolotareva_Olesya_task1_MiddleValueVect/Zolotareva_Olesya_task1_MiddleValueVect 10000
+  # - mpirun -np 4 ./modules/task_1/ndanilov_rows_matrix_sum/ndanilov_rows_matrix_sum 10 10
+  # - mpirun -np 4 ./modules/task_1/Yunin_Ivan_maximum_elem_vector/Yunin_Ivan_maximum_elem_vector 100

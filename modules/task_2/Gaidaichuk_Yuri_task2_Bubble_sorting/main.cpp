@@ -129,47 +129,60 @@ int main(int argc, char * argv[]) {
 
   if (rank == 0) {
     // Simple bubble
-     // create
+    // creation
     int * arrSimpleBubble = new int[x * size];
     int seed = static_cast<int>(MPI_Wtime());
     std::srand(seed);
     for (int i = 0; i < x * size; i++) {
       arrSimpleBubble[i] = std::rand();
     }
+    // copy for sequence even-odd version
+    int * arrS = new int[x * size];
+    for (int i = 0; i < x * size; i++) {
+      arrS[i] = arrSimpleBubble[i];
+    }
+    // copy for parallel odd-even version
+    int * arr1 = new int[x * size];
+    for (int i = 0; i < x * size; i++) {
+      arr1[i] = arrSimpleBubble[i];
+    }
+    // print
+    if (x < 100) {
+      std::cout << "Unsorted arr = \n";
+      for (int i = 0; i < x * size; i++) {
+      std::cout << arrSimpleBubble[i] << "\t";
+      }
+      std::cout << "\n";
+    }
     ////////////////////////////////////
     starttime3 = MPI_Wtime();
     simpleBubbleSort(arrSimpleBubble, x * size);
     endtime3 = MPI_Wtime();
     ////////////////////////////////////
-    // Sequence version
-    // create
-    int * arrS = new int[x * size];
-    seed = static_cast<int>(MPI_Wtime());
-    std::srand(seed);
-    for (int i = 0; i < x * size; i++) {
-      arrS[i] = std::rand();
+    // print
+    if (x < 100) {
+      std::cout << "Simple bubble sorted arr = \n";
+      for (int i = 0; i < x * size; i++) {
+      std::cout << arrSimpleBubble[i] << "\t";
+      }
+      std::cout << "\n";
     }
+    // Sequence version
     ////////////////////////////////////
     starttime1 = MPI_Wtime();
     simpleOddEvenSort(arrS, x * size);
     endtime1 = MPI_Wtime();
     ////////////////////////////////////
-    // Parallel version
-    // create
-    int * arr1 = new int[x * size];
-    seed = static_cast<int>(MPI_Wtime());
-    std::srand(seed);
-    for (int i = 0; i < x * size; i++) {
-      arr1[i] = std::rand();
-    }
     // print
-    if (size * x < 100) {
+    if (x < 100) {
+      std::cout << "Sequence odd-even sorted arr = \n";
       for (int i = 0; i < x * size; i++) {
-      std::cout << "arr[" << i << "] = \t" << arr1[i] << "\n";
+      std::cout << arrSimpleBubble[i] << "\t";
       }
+      std::cout << "\n";
     }
-
-    /////////////////////////////////////// count1
+    // Parallel version
+    //////////////////////////////////// count1
     starttime2 = MPI_Wtime();
     // send data
     for (int i = 1; i <= size - 1; i++) {
@@ -197,19 +210,21 @@ int main(int argc, char * argv[]) {
       }
     }
     // print
-    if (size * x < 100) {
+    if (x < 100) {
+      std::cout << "Even-odd sorted arr = \n";
       for (int i = 0; i < x * size; i++) {
-      std::cout << "Sorted arr[" << i << "] = \t" << arr1[i] << "\n";
+      std::cout << arr1[i] << "\t";
       }
+      std::cout << "\n";
     }
     std::cout << "Array sorted" <<
       (sorted ? " rightly" : " unrightly") << "\n";
+    std::cout << "Simple bubble time = " <<
+      endtime3 - starttime3 << "\n";
     std::cout << "Parallel time = " <<
       endtime2 - starttime2 << "\n";
     std::cout << "Sequence time = " <<
       endtime1 - starttime1 << "\n";
-    std::cout << "Simple bubble time = " <<
-      endtime3 - starttime3 << "\n";
       delete[] arr1;
       delete[] arrS;
       delete[] arrSimpleBubble;

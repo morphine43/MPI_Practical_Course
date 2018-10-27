@@ -58,3 +58,4 @@ build_script:
   - cmd: mpiexec.exe -np 4 modules\task_1\ndanilov_rows_matrix_sum\%configuration%\ndanilov_rows_matrix_sum.exe 10 10
   - cmd: mpiexec.exe -np 4 modules\task_1\Yunin_Ivan_maximum_elem_vector\%configuration%\Yunin_Ivan_maximum_elem_vector.exe 100
   - cmd: mpiexec.exe -np 4 modules\task_2\Gaidaichuk_Yuri_task2_Bubble_sorting\%configuration%\Gaidaichuk_Yuri_task2_Bubble_sorting.exe 1000
+

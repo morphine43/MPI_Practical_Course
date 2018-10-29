@@ -100,7 +100,7 @@ void parallelMerging(
 
 int main(int argc, char * argv[]) {
   int status = 0, rank = 0, size = 0;
-  int x = atoi(argv[1]);
+  int fullArraySize = atoi(argv[1]);
   double starttime2, endtime2, starttime1, endtime1, starttime3, endtime3;
 
   status = MPI_Init(& argc, & argv);
@@ -125,44 +125,44 @@ int main(int argc, char * argv[]) {
   }
   // buf array for receiving data
   // from major process
+  int x = fullArraySize / size;
   int * bufArr = new int[x];
-
   if (rank == 0) {
     // Simple bubble
     // creation
-    int * arrSimpleBubble = new int[x * size];
+    int * arrSimpleBubble = new int[fullArraySize];
     int seed = static_cast<int>(MPI_Wtime());
     std::srand(seed);
-    for (int i = 0; i < x * size; i++) {
-      arrSimpleBubble[i] = std::rand();
+    for (int i = 0; i < fullArraySize; i++) {
+      arrSimpleBubble[i] = std::rand() % 2000 - 1000;
     }
     // copy for sequence even-odd version
-    int * arrS = new int[x * size];
-    for (int i = 0; i < x * size; i++) {
+    int * arrS = new int[fullArraySize];
+    for (int i = 0; i < fullArraySize; i++) {
       arrS[i] = arrSimpleBubble[i];
     }
     // copy for parallel odd-even version
-    int * arr1 = new int[x * size];
-    for (int i = 0; i < x * size; i++) {
+    int * arr1 = new int[fullArraySize];
+    for (int i = 0; i < fullArraySize; i++) {
       arr1[i] = arrSimpleBubble[i];
     }
     // print
-    if (x < 100) {
+    if (fullArraySize < 100) {
       std::cout << "Unsorted arr = \n";
-      for (int i = 0; i < x * size; i++) {
+      for (int i = 0; i < fullArraySize; i++) {
       std::cout << arrSimpleBubble[i] << "\t";
       }
       std::cout << "\n";
     }
     ////////////////////////////////////
     starttime3 = MPI_Wtime();
-    simpleBubbleSort(arrSimpleBubble, x * size);
+    simpleBubbleSort(arrSimpleBubble, fullArraySize);
     endtime3 = MPI_Wtime();
     ////////////////////////////////////
     // print
-    if (x < 100) {
+    if (fullArraySize < 100) {
       std::cout << "Simple bubble sorted arr = \n";
-      for (int i = 0; i < x * size; i++) {
+      for (int i = 0; i < fullArraySize; i++) {
       std::cout << arrSimpleBubble[i] << "\t";
       }
       std::cout << "\n";
@@ -170,13 +170,13 @@ int main(int argc, char * argv[]) {
     // Sequence version
     ////////////////////////////////////
     starttime1 = MPI_Wtime();
-    simpleOddEvenSort(arrS, x * size);
+    simpleOddEvenSort(arrS, fullArraySize);
     endtime1 = MPI_Wtime();
     ////////////////////////////////////
     // print
-    if (x < 100) {
+    if (fullArraySize < 100) {
       std::cout << "Sequence odd-even sorted arr = \n";
-      for (int i = 0; i < x * size; i++) {
+      for (int i = 0; i < fullArraySize; i++) {
       std::cout << arrSimpleBubble[i] << "\t";
       }
       std::cout << "\n";
@@ -199,20 +199,26 @@ int main(int argc, char * argv[]) {
       MPI_Recv(arr1 + x * i, x, MPI_INT, i, 0,
         MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
     }
+    // sorting last elements
+    if(fullArraySize % size != 0) {
+      simpleOddEvenSort(arr1 + x * size, fullArraySize % size);
+    }
+    // last merging
+    mergeAndSplit(arr1, x * size, arr1 + x * size, fullArraySize % size);
     endtime2 = MPI_Wtime();
     ///////////////////////////////////////
     // checking
     bool sorted = true;
-    for (int i = 0; i < x * size - 1; i++) {
+    for (int i = 0; i < fullArraySize - 1; i++) {
       if (arr1[i] > arr1[i + 1]) {
         sorted = false;
         break;
       }
     }
     // print
-    if (x < 100) {
+    if (fullArraySize < 100) {
       std::cout << "Even-odd sorted arr = \n";
-      for (int i = 0; i < x * size; i++) {
+      for (int i = 0; i < fullArraySize; i++) {
       std::cout << arr1[i] << "\t";
       }
       std::cout << "\n";

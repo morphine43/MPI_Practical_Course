@@ -200,7 +200,7 @@ int main(int argc, char * argv[]) {
         MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
     }
     // sorting last elements
-    if(fullArraySize % size != 0) {
+    if (fullArraySize % size != 0) {
       simpleOddEvenSort(arr1 + x * size, fullArraySize % size);
     }
     // last merging

@@ -87,8 +87,8 @@ int main(int argc, char *argv[])
     	min_vector = new double[numProcs];
     	for (int i = 1; i < numProcs; i++)
     		MPI_Send(Vector+size/numProcs*i, size/numProcs, MPI_DOUBLE, i, 0, MPI_COMM_WORLD);
-   		min_vector[0] = minimum(Vector,size/numProcs);
-   		for (int i = 1; i < numProcs; i++)
+   	min_vector[0] = minimum(Vector,size/numProcs);
+   	for (int i = 1; i < numProcs; i++)
             MPI_Recv(&min_vector[i], 1, MPI_DOUBLE, i, 0, MPI_COMM_WORLD, &status);
         // check the remainder of vector
         remainder = size % numProcs;

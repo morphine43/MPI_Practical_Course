@@ -1,0 +1,60 @@
+environment:
+  matrix:
+    - CMAKE_GENERATOR: "Visual Studio 11 2012"
+      BUILD_SHARED_LIBS: ON
+      ENABLE_MPI: ON
+      MPI_HOME: "C:/Program Files (x86)/Microsoft SDKs/MPI"
+
+    - CMAKE_GENERATOR: "Visual Studio 12 2013"
+      BUILD_SHARED_LIBS: ON
+      ENABLE_MPI: ON
+      MPI_HOME: "C:/Program Files (x86)/Microsoft SDKs/MPI"
+
+    - CMAKE_GENERATOR: "Visual Studio 14 2015"
+      BUILD_SHARED_LIBS: ON
+      ENABLE_MPI: ON
+      MPI_HOME: "C:/Program Files (x86)/Microsoft SDKs/MPI"
+
+    # - CMAKE_GENERATOR: "Visual Studio 15 2017"
+    #   BUILD_SHARED_LIBS: OFF
+    #   ENABLE_MPI: ON
+    #   MPI_HOME: "C:/Program Files (x86)/Microsoft SDKs/MPI"
+
+configuration:
+  - Debug
+  - Release
+
+install:
+  - ps: Start-FileDownload 'https://download.microsoft.com/download/B/2/E/B2EB83FE-98C2-4156-834A-E1711E6884FB/MSMpiSetup.exe'
+  - MSMpiSetup.exe -unattend
+  - set PATH=C:\Program Files\Microsoft MPI\Bin;%PATH%
+
+  - ps: Start-FileDownload 'https://download.microsoft.com/download/B/2/E/B2EB83FE-98C2-4156-834A-E1711E6884FB/msmpisdk.msi'
+  - msmpisdk.msi /passive
+
+build_script:
+  - cmd: python scripts/lint.py
+  - cmd: mkdir build
+  - cmd: cd build
+  - cmd: cmake -Hsrc -Bbuild -G "%CMAKE_GENERATOR%" ^
+               -DBUILD_SHARED_LIBS=%BUILD_SHARED_LIBS% ^
+               -DENABLE_PYTHON=%ENABLE_PYTHON% ^
+               -DENABLE_MPI=%ENABLE_MPI% ^
+               -DMPI_C_INCLUDE_PATH:PATH="%MPI_HOME%/Include" ^
+               -DMPI_C_LIBRARIES:PATH="%MPI_HOME%/Lib/x86/msmpi.lib" ^
+               -DMPI_CXX_INCLUDE_PATH:PATH="%MPI_HOME%/Include" ^
+               -DMPI_CXX_LIBRARIES:PATH="%MPI_HOME%/Lib/x86/msmpi.lib" ..
+  - cmd: msbuild ALL_BUILD.vcxproj
+
+  - cmd: mpiexec.exe -np 4 modules\test_task\%configuration%\test_task.exe
+  # - cmd: mpiexec.exe -np 4 modules\task_1\Perov_Dima_task1_SumElVect\%configuration%\Perov_Dima_task1_SumElVect.exe 10000
+  # - cmd: mpiexec.exe -np 4 modules\task_1\vikhrev_array_sum\%configuration%\vikhrev_array_sum.exe 1000 1000
+  # - cmd: mpiexec.exe -np 4 modules\task_1\Yakovlev_Pavel_mul_vect\%configuration%\Yakovlev_Pavel_mul_vect.exe 100000
+  # - cmd: mpiexec.exe -np 4 modules\task_1\Vdovin_Eugene_task1_NumWords\%configuration%\Vdovin_Eugene_task1_NumWords.exe 3000000
+  # - cmd: mpiexec.exe -np 4 modules\task_1\Repin_Vladimir_Wrong_Order_Count\%configuration%\Repin_Vladimir_Wrong_Order_Count.exe 100000
+  # - cmd: mpiexec.exe -np 4 modules\task_1\Gaidaichuk_Yuri_task1_Arrays_Matching\%configuration%\Gaidaichuk_Yuri_task1_Arrays_Matching.exe 10000
+  - cmd: mpiexec.exe -np 4 modules\task_1\Druzhinin_Alexei_task1_MinElVect\%configuration%\Druzhinin_Alexei_task1_MinElVect.exe 1000000
+  # - cmd: mpiexec.exe -np 4 modules\task_1\Zolotareva_Olesya_task1_MiddleValueVect\%configuration%\Zolotareva_Olesya_task1_MiddleValueVect.exe 10000
+  # - cmd: mpiexec.exe -np 4 modules\task_1\ndanilov_rows_matrix_sum\%configuration%\ndanilov_rows_matrix_sum.exe 10 10
+  # - cmd: mpiexec.exe -np 4 modules\task_1\Yunin_Ivan_maximum_elem_vector\%configuration%\Yunin_Ivan_maximum_elem_vector.exe 100
+  - cmd: mpiexec.exe -np 4 modules\task_2\Gaidaichuk_Yuri_task2_Bubble_sorting\%configuration%\Gaidaichuk_Yuri_task2_Bubble_sorting.exe 9

@@ -1,9 +1,10 @@
-#include <iostream>
 #include <mpi.h>
+#include <assert.h>
+#include <iostream>
 #include <string>
 #include <ctime>
 #include <cstdlib>
-#include <assert.h>
+
 
 using namespace std;
 
@@ -80,17 +81,20 @@ int main (int argc, char* argv[])
         // --------------  Parrallel  -------------
         if (CountP > 1){
             Time_begin = MPI_Wtime();
-            for (int i = 0; i < CountP-2; i++)
+            for (int i = 1; i < CountP-1; i++)
             {
-                MPI_Send(v1+i*(sizev/(CountP-1)), sizev/(CountP-1), MPI_DOUBLE,i+1,0,MPI_COMM_WORLD);
-                MPI_Send(v2+i*(sizev/(CountP-1)), sizev/(CountP-1), MPI_DOUBLE,i+1,0,MPI_COMM_WORLD);
+                MPI_Send(v1+i*(sizev/(CountP)), sizev/(CountP), MPI_DOUBLE,i,0,MPI_COMM_WORLD);
+                MPI_Send(v2+i*(sizev/(CountP)), sizev/(CountP), MPI_DOUBLE,i,0,MPI_COMM_WORLD);
             }
-            MPI_Send((v1+(CountP-2)*(sizev/(CountP-1))), (sizev - (CountP-2)*(sizev/(CountP-1))), MPI_DOUBLE, (CountP-1), 0, MPI_COMM_WORLD);
-            MPI_Send((v2+(CountP-2)*(sizev/(CountP-1))), (sizev - (CountP-2)*(sizev/(CountP-1))), MPI_DOUBLE, (CountP-1), 0, MPI_COMM_WORLD);
+            MPI_Send((v1+(CountP-1)*(sizev/(CountP))), (sizev - (CountP-1)*(sizev/(CountP))), MPI_DOUBLE, (CountP-1), 0, MPI_COMM_WORLD);
+            MPI_Send((v2+(CountP-1)*(sizev/(CountP))), (sizev - (CountP-1)*(sizev/(CountP))), MPI_DOUBLE, (CountP-1), 0, MPI_COMM_WORLD);
 
-            for (int i = 0; i < CountP-1; i++)
+            for (int i = 0; i < (sizev/CountP); i++)
+                MultVec += v1[i]*v2[i];
+
+            for (int i = 1; i < CountP; i++)
             {
-                MPI_Recv(&tempSum,1,MPI_DOUBLE,i+1,0,MPI_COMM_WORLD,&status);
+                MPI_Recv(&tempSum,1,MPI_DOUBLE,i,0,MPI_COMM_WORLD,&status);
                 MultVec += tempSum;  
             }
             Time_end = MPI_Wtime();
@@ -102,21 +106,21 @@ int main (int argc, char* argv[])
     else
         if (rank != CountP-1)
         {
-            v1 = new double[sizev/(CountP-1)];
-            v2 = new double[sizev/(CountP-1)];
-            MPI_Recv(v1,sizev/(CountP-1),MPI_DOUBLE,0,0,MPI_COMM_WORLD,&status);  
-            MPI_Recv(v2,sizev/(CountP-1),MPI_DOUBLE,0,0,MPI_COMM_WORLD,&status);
-            for (int i = 0; i < sizev/(CountP-1); i++)
+            v1 = new double[sizev/(CountP)];
+            v2 = new double[sizev/(CountP)];
+            MPI_Recv(v1,sizev/(CountP),MPI_DOUBLE,0,0,MPI_COMM_WORLD,&status);  
+            MPI_Recv(v2,sizev/(CountP),MPI_DOUBLE,0,0,MPI_COMM_WORLD,&status);
+            for (int i = 0; i < sizev/(CountP); i++)
                 tempSum += v1[i]*v2[i]; 
             MPI_Send(&tempSum, 1, MPI_DOUBLE,0,0,MPI_COMM_WORLD);
         } 
         else
         {
-            v1 = new double[sizev - (CountP-2)*(sizev/(CountP-1))];
-            v2 = new double[sizev - (CountP-2)*(sizev/(CountP-1))];
-            MPI_Recv(v1,sizev - (CountP-2)*(sizev/(CountP-1)),MPI_DOUBLE,0,0,MPI_COMM_WORLD,&status);  
-            MPI_Recv(v2,sizev - (CountP-2)*(sizev/(CountP-1)),MPI_DOUBLE,0,0,MPI_COMM_WORLD,&status);
-            for (int i = 0; i < sizev - (CountP-2)*(sizev/(CountP-1)); i++)
+            v1 = new double[(sizev - (CountP-1)*(sizev/(CountP)))];
+            v2 = new double[(sizev - (CountP-1)*(sizev/(CountP)))];
+            MPI_Recv(v1,(sizev - (CountP-1)*(sizev/(CountP))),MPI_DOUBLE,0,0,MPI_COMM_WORLD,&status);  
+            MPI_Recv(v2,(sizev - (CountP-1)*(sizev/(CountP))),MPI_DOUBLE,0,0,MPI_COMM_WORLD,&status);
+            for (int i = 0; i < (sizev - (CountP-1)*(sizev/(CountP))); i++)
                 tempSum += v1[i]*v2[i]; 
             MPI_Send(&tempSum, 1, MPI_DOUBLE,0,0,MPI_COMM_WORLD);
         }

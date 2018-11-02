@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 				ParallelSum += tempSum;
 			}
 
-			double ParallelTimeEnd = MPI_Wtime();
+			ParallelTimeEnd = MPI_Wtime();
 			cout << "\nMidScore(parallel)=" << (double)ParallelSum / N<<endl;
 			cout << "\n Time(parallel)=" << (ParallelTimeEnd - ParallelTimeStart)<<endl;
 		}

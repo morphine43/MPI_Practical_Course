@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 	MPI_Scatter(myVector, size / numProcs, MPI_DOUBLE, myBlock, size / numProcs, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
 	for (int i = 0; i < size / numProcs; i++) {
-		mySum += myVector[i];
+		mySum += myBlock[i];
 	}
 
 	/*

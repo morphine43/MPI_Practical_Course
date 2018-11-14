@@ -1,3 +1,4 @@
+// copyright : (C) by Pahandrovich
 #include <mpi.h>
 #include <assert.h>
 #include <iostream>
@@ -155,8 +156,7 @@ int main(int argc, char* argv[]) {
       }
       std::cout << std::endl;
     }
-  }
-  else {
+  } else {
     if (rank != CountP-1) {
       vect = new double[submit_num];
       matrix = new double[submit_num*rows];
@@ -183,8 +183,7 @@ int main(int argc, char* argv[]) {
           tempRes[j] += vect[k] * matrix[j + rows * k];
 
       MPI_Send(tempRes, Result_size, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
-    }
-    else {
+    } else {
       vect = new double[submit_num_last];
       matrix = new double[submit_num_last*rows];
       tempRes = new double[Result_size];

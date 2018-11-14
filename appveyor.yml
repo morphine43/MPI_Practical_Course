@@ -24,24 +24,10 @@ configuration:
   - Debug
   - Release
 
-# cache:
-#   - C:\ProgramData\opencv_build
-#   - C:\ProgramData\source_ocv
 install:
-  # - cmd: if not exist "C:\ProgramData\opencv_build" mkdir C:\ProgramData\opencv_build
-  # - cmd: if not exist "C:\ProgramData\source_ocv" mkdir C:\ProgramData\source_ocv
-  # - ps: $directoryInfo = Get-ChildItem C:\ProgramData\source_ocv | Measure-Object
-  # - ps: if ($directoryInfo.count -eq 0) { Start-FileDownload 'https://github.com/opencv/opencv/archive/3.4.3.zip' }
-  # - ps: if ($directoryInfo.count -eq 0) { Expand-Archive 3.4.3.zip -DestinationPath C:\ProgramData\source_ocv }
-  # - cmd: SET CURRENTDIR="%cd%"
-  # - cmd: cd C:\ProgramData\opencv_build
-  # - cmd: cmake -D CMAKE_BUILD_TYPE=release C:\ProgramData\source_ocv\opencv-3.4.3
-  # - cmd: msbuild ALL_BUILD.vcxproj
-  # - cmd: cd %CURRENTDIR%
   - ps: Start-FileDownload 'https://download.microsoft.com/download/B/2/E/B2EB83FE-98C2-4156-834A-E1711E6884FB/MSMpiSetup.exe'
   - MSMpiSetup.exe -unattend
   - set PATH=C:\Program Files\Microsoft MPI\Bin;%PATH%
-
   - ps: Start-FileDownload 'https://download.microsoft.com/download/B/2/E/B2EB83FE-98C2-4156-834A-E1711E6884FB/msmpisdk.msi'
   - msmpisdk.msi /passive
 

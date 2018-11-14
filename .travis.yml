@@ -7,7 +7,7 @@ os:
 cache:
   directories:
     - /home/travis/opencv_build/
-    - /home/travis/cppcheck_build/
+    - /home/travis/opencv_cppcheck/
 
 compiler:
   - gcc
@@ -31,8 +31,8 @@ install:
   - wget "https://github.com/danmar/cppcheck/archive/1.85.tar.gz"
   - tar -xzf 1.85.tar.gz
   - export CURRENT_DIR_CPPCHECK=${PWD}
-  - mkdir -p /home/travis/cppcheck_build/
-  - cd /home/travis/cppcheck_build/
+  - mkdir -p /home/travis/opencv_cppcheck/
+  - cd /home/travis/opencv_cppcheck/
   - cmake $CURRENT_DIR_CPPCHECK/cppcheck-1.85
   - make -j4 SRCDIR=build CFGDIR=/usr/share/cppcheck/
   - sudo make install CFGDIR=/usr/share/cppcheck/

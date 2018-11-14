@@ -37,6 +37,7 @@ install:
   - make -j4 SRCDIR=build CFGDIR=/usr/share/cppcheck/
   - sudo make install CFGDIR=/usr/share/cppcheck/
   - cd $CURRENT_DIR_CPPCHECK
+  - rm -rf cppcheck-1.85
 
 script:
   - python scripts/lint.py

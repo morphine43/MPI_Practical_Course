@@ -42,7 +42,8 @@ int main(int argc, char* argv[]) {
   MPI_Comm_size(MPI_COMM_WORLD, &CountP);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  int submit_num = static_cast<int>(ceil(static_cast<double>(cols) / static_cast<double>(CountP)));
+  int submit_num = static_cast<int>(
+                ceil(static_cast<double>(cols) / static_cast<double>(CountP)));
   int submit_num_last = cols - (CountP-1) * submit_num;
 
   if (rank == 0) {
@@ -116,24 +117,30 @@ int main(int argc, char* argv[]) {
                   MPI_COMM_WORLD);
       }
       MPI_Send(vect + (CountP-1) * submit_num,
-	       submit_num_last,
-	       MPI_DOUBLE,
-	       CountP-1,
-	       0,
-	       MPI_COMM_WORLD);
+                  submit_num_last,
+                  MPI_DOUBLE,
+                  CountP-1,
+                  0,
+                  MPI_COMM_WORLD);
       MPI_Send(matrix + (CountP-1) * submit_num * rows,
-	       submit_num_last * rows,
-	       MPI_DOUBLE,
-	       CountP-1,
-	       0,
-	       MPI_COMM_WORLD);
+                  submit_num_last * rows,
+                  MPI_DOUBLE,
+                  CountP-1,
+                  0,
+                  MPI_COMM_WORLD);
 
       for (int k = 0; k < submit_num; k++)
         for (int j = 0; j < rows; j++)
           Result[j] += vect[k] * matrix[j+rows*k];
 
       for (int i = 1; i < CountP; i++) {
-        MPI_Recv(tempRes, Result_size, MPI_DOUBLE, i, 0, MPI_COMM_WORLD, &status);
+        MPI_Recv(tempRes,
+                  Result_size,
+                  MPI_DOUBLE,
+                  i,
+                  0,
+                  MPI_COMM_WORLD,
+                  &status);
         for (int j = 0; j < Result_size; j++)
           Result[j] += tempRes[j];
       }
@@ -156,8 +163,20 @@ int main(int argc, char* argv[]) {
       tempRes = new double[Result_size];
       for (int i = 0; i < Result_size; i++)
         tempRes[i] = 0.0;
-      MPI_Recv(vect, submit_num, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, &status);
-      MPI_Recv(matrix, submit_num*rows, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, &status);
+      MPI_Recv(vect,
+                submit_num,
+                MPI_DOUBLE,
+                0,
+                0,
+                MPI_COMM_WORLD,
+                &status);
+      MPI_Recv(matrix,
+                submit_num*rows,
+                MPI_DOUBLE,
+                0,
+                0,
+                MPI_COMM_WORLD,
+                &status);
 
       for (int k = 0; k < submit_num; k++)
         for (int j = 0; j < Result_size; j++)

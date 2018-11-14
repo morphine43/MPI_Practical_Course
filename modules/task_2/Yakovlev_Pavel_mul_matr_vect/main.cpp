@@ -5,83 +5,71 @@
 #include <cstdlib>
 #include <cmath>
 
-
 using namespace std;
 
-int main (int argc, char* argv[])
-{
-    srand((int)time(NULL));
+int main (int argc, char* argv[]) {
+  srand((int)time(NULL));
 
-    int rank, CountP, flag;
-    if (argc < 3) 
-    {
-        cout << "Error";
-        return -1;
-    }
+  int rank, CountP, flag;
+  if (argc < 3) {
+    cout << "Error";
+    return -1;
+  }
 
-    int rows = atoi(argv[1]);
-	int cols = atoi(argv[2]);
-    if (rows <= 0 || cols <= 0)
-    {
-        cout << "Error";
-        return -1;
-    }
-
-    double *vect = NULL,
-			*matrix = NULL;
-    MPI_Status status; 
-    double Line_Mult = 0;  
-    double Time_begin = 0;
-    double Time_end = 0;
-	int Matrix_size = rows*cols;
-	int Vect_size = cols;
-	int Result_size = rows;
-	double *Result = NULL;
-	double *tempRes = NULL;
+  int rows = atoi(argv[1]);
+  int cols = atoi(argv[2]);
+  if (rows <= 0 || cols <= 0) {
+    cout << "Error";
+    return -1;
+  }
+  double *vect = NULL,
+    *matrix = NULL;
+  MPI_Status status; 
+  double Line_Mult = 0;  
+  double Time_begin = 0;
+  double Time_end = 0;
+  int Matrix_size = rows*cols;
+  int Vect_size = cols;
+  int Result_size = rows;
+  double *Result = NULL;
+  double *tempRes = NULL;
 	
 
-    MPI_Init (&argc, &argv);
-    MPI_Initialized(&flag);
-	if (!flag) 
-    {
-		cout << "Error";
-        return -1;
-	}
+  MPI_Init (&argc, &argv);
+  MPI_Initialized(&flag);
+  if (!flag) 
+  {
+    cout << "Error";
+    return -1;
+  }
 
+  MPI_Comm_size(MPI_COMM_WORLD, &CountP);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    MPI_Comm_size(MPI_COMM_WORLD, &CountP);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
-	int submit_num = (int)ceil((double)cols / (double)CountP); // êîë-âî îòïðàâëÿåìûõ ñòîëáöîâ
-	int submit_num_last = cols - (CountP-1) * submit_num; // êîë-âî îòïðàâëÿåìûõ ñòîëáöîâ äëÿ ïîñëåäíåãî ïðîöåññà
+  int submit_num = (int)ceil((double)cols / (double)CountP); // ÃªÃ®Ã«-Ã¢Ã® Ã®Ã²Ã¯Ã°Ã Ã¢Ã«Ã¿Ã¥Ã¬Ã»Ãµ Ã±Ã²Ã®Ã«Ã¡Ã¶Ã®Ã¢
+  int submit_num_last = cols - (CountP-1) * submit_num; // ÃªÃ®Ã«-Ã¢Ã® Ã®Ã²Ã¯Ã°Ã Ã¢Ã«Ã¿Ã¥Ã¬Ã»Ãµ Ã±Ã²Ã®Ã«Ã¡Ã¶Ã®Ã¢ Ã¤Ã«Ã¿ Ã¯Ã®Ã±Ã«Ã¥Ã¤Ã­Ã¥Ã£Ã® Ã¯Ã°Ã®Ã¶Ã¥Ã±Ã±Ã 
 	
-	if (rank == 0)
-	{
-		vect = new double[Vect_size];
-		matrix = new double[Matrix_size];
-		Result = new double[Result_size];
-		tempRes = new double[Result_size];
+  if (rank == 0) {
+    vect = new double[Vect_size];
+    matrix = new double[Matrix_size];
+    Result = new double[Result_size];
+    tempRes = new double[Result_size];
 
-		// -----------------Initialization-----------------
-		for (int i = 0; i < Matrix_size; i++)
-		{
-			if (i < Vect_size) vect[i] = rand() % 10 - 5;
-			if (i < Result_size) Result[i] = 0;
-			matrix[i] = rand() % 10 - 5;
-		}
-		// -----------Print-----------------
-		if (rows < 11 && cols < 11)
-		{
-			cout << "Vector:" << endl;
-			for (int i = 0; i < Vect_size; i++)
-			{
-				cout << " " << vect[i];
-			}
-			cout << "\nMatrix:" << endl;
-			for (int i = 0; i < rows; i++)
-			{
-				for (int j = 0; j < cols; j++)
-					cout << " " << matrix[i + rows * j];
+//  -----------------Initialization-----------------
+    for (int i = 0; i < Matrix_size; i++) {
+      if (i < Vect_size) vect[i] = rand() % 10 - 5;
+      if (i < Result_size) Result[i] = 0;
+      matrix[i] = rand() % 10 - 5;
+    }
+//  -----------Print-----------------
+  if (rows < 11 && cols < 11) {
+    cout << "Vector:" << endl;
+    for (int i = 0; i < Vect_size; i++)
+      cout << " " << vect[i];
+    cout << "\nMatrix:" << endl;
+    for (int i = 0; i < rows; i++) {
+      for (int j = 0; j < cols; j++)
+        cout << " " << matrix[i + rows * j];
 				cout << endl;
 			}
 			cout << endl;

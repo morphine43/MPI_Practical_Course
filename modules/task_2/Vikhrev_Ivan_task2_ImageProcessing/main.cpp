@@ -269,11 +269,11 @@ int main(int argc, char** argv)
       procImgP.show((String)"Parallel processed");
       waitKey(0);
     }
-    if (!origImg.saveImg("..\\..\\Res\\Original.png"))
+    if (!origImg.saveImg("Original.png"))
       std::cout << " Can`t save image 0 " << std::endl;
-    if (!procImgS.saveImg("..\\..\\Res\\smooth_image_seq.png")) 
+    if (!procImgS.saveImg("smooth_image_seq.png")) 
        std::cout << " Can`t save image 1" << std::endl;
-    if(!procImgP.saveImg("..\\..\\Res\\smooth_image_par.png"))
+    if(!procImgP.saveImg("smooth_image_par.png"))
       std::cout << " Can`t save image 2" << std::endl;
   }
   delete[] dataIN;

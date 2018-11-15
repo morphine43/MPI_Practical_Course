@@ -9,21 +9,21 @@
 
 class img {
  public:
-   cv::String imageName;
-   cv::Mat pic;
-   unsigned int cols;
-   unsigned int rows;
-   unsigned int  type;
-   unsigned int  imgSize;
-   img();
-   explicit img(cv::Mat m);
-   img(const img &m);
-   ~img() {
-   }
-   bool loadImg(cv::String name);
-   bool saveImg(cv::String name);
-   void createImg(unsigned int height, unsigned int width);
-   void show(cv::String wName);
+  cv::String imageName;
+  cv::Mat pic;
+  unsigned int cols;
+  unsigned int rows;
+  unsigned int  type;
+  unsigned int  imgSize;
+  img();
+  explicit img(cv::Mat m);
+  img(const img &m);
+  ~img() {
+  }
+  bool loadImg(cv::String name);
+  bool saveImg(cv::String name);
+  void createImg(unsigned int height, unsigned int width);
+  void show(cv::String wName);
 };
 
 img::img() {
@@ -192,7 +192,7 @@ int main(int argc, char** argv) {
           applyFilter2(&procImgS.pic, ksize);
         } else {
             applyFilter3(&procImgS.pic, ksize);
-		}
+        }
       }
     t2 = MPI_Wtime();
     std::cout << "Sequential Time: " << t2 - t1 << std::endl;

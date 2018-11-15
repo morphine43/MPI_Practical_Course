@@ -221,8 +221,8 @@ int main(int argc, char** argv) {
       scount[i] = portion + cols * ksize;
     }
   }
-  MPI_Scatterv(origImg.pic.data, scount, dis, MPI_UNSIGNED_CHAR, dataIN, scount[rank],
-    MPI_UNSIGNED_CHAR, MainProc, MPI_COMM_WORLD);
+  MPI_Scatterv(origImg.pic.data, scount, dis, MPI_UNSIGNED_CHAR, dataIN, 
+    scount[rank], MPI_UNSIGNED_CHAR, MainProc, MPI_COMM_WORLD);
 
   cv::Mat tmp(scount[rank] / cols, cols, CV_8U, dataIN);
   

@@ -5,8 +5,8 @@
 #include <ctime>
 #include <cstdlib>
 #include <assert.h>
-
 using namespace std;
+
 int main(int argc, char *argv[])
 {
 
@@ -21,7 +21,6 @@ int main(int argc, char *argv[])
     else
         N = 50;
 
-     
 
     int ProcRank, ProcNum,flag;
 
@@ -100,7 +99,7 @@ int main(int argc, char *argv[])
 				ParallelSum += tempSum;
 			}
 
-			double ParallelTimeEnd = MPI_Wtime();
+			ParallelTimeEnd = MPI_Wtime();
 			cout << "\nMidScore(parallel)=" << (double)ParallelSum / N<<endl;
 			cout << "\n Time(parallel)=" << (ParallelTimeEnd - ParallelTimeStart)<<endl;
 		}
@@ -134,5 +133,4 @@ int main(int argc, char *argv[])
     MPI_Finalize();
 
     delete []x;
-	
 }

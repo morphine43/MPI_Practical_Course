@@ -4,6 +4,11 @@ language:
 os:
   - linux
 
+cache:
+  directories:
+    - /home/travis/opencv_build/
+    # - /home/travis/cppcheck_build/
+
 compiler:
   - gcc
   - g++
@@ -12,36 +17,54 @@ compiler:
 before_install:
   - test -n $CC  && unset CC
   - test -n $CXX && unset CXX
+  - wget https://github.com/opencv/opencv/archive/3.4.3.tar.gz
+  - tar -xvzf 3.4.3.tar.gz
+  - export CURRENT_DIR_OCV=${PWD}
+  - mkdir -p /home/travis/opencv_build/
+  - cd /home/travis/opencv_build/
+  - cmake $CURRENT_DIR_OCV/opencv-3.4.3
+  - make -j4
+  - cd $CURRENT_DIR_OCV
 
 install:
   - sudo apt-get install libcr-dev mpich2 mpich2-doc
-  - wget "https://github.com/danmar/cppcheck/archive/1.85.tar.gz"
-  - tar -xzf 1.85.tar.gz
-  - cd cppcheck-1.85
-  - make -j4 SRCDIR=build CFGDIR=/usr/share/cppcheck/ &> log_make
-  - sudo make install CFGDIR=/usr/share/cppcheck/ &> log_make_install
-  - cd ..
-  - rm -rf cppcheck-1.85
+  # - wget "https://github.com/danmar/cppcheck/archive/1.85.tar.gz"
+  # - tar -xzf 1.85.tar.gz
+  # - export CURRENT_DIR_CPPCHECK=${PWD}
+  # - mkdir -p /home/travis/cppcheck_build/
+  # - cd /home/travis/cppcheck_build/
+  # - cmake $CURRENT_DIR_CPPCHECK/cppcheck-1.85
+  # - make -j4 SRCDIR=build CFGDIR=/usr/share/cppcheck/
+  # - sudo make install CFGDIR=/usr/share/cppcheck/
+  # - cd $CURRENT_DIR_CPPCHECK
+  # - rm -rf cppcheck-1.85
 
 script:
   - python scripts/lint.py
   - mkdir build
   - cd build
-  - cmake -D CMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
-  - cppcheck -j4 --project=compile_commands.json &> log_cppcheck
-  - python ../scripts/static_analysis.py log_cppcheck
+  - cmake -D CMAKE_BUILD_TYPE=Release \
+          -D OpenCV_DIR=/home/travis/opencv_build/ \
+          -D CMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+  # - cppcheck -j4 --project=compile_commands.json &> log_cppcheck
+  # - python ../scripts/static_analysis.py log_cppcheck
   - make -j4
 
   - mpirun -np 4 ./modules/test_task/test_task
+  - mpirun -np 4 ./modules/experimental/scalar_multiplication/scalar_multiplication 100000
   # - mpirun -np 4 ./modules/task_1/Yakovlev_Pavel_mul_vect/Yakovlev_Pavel_mul_vect 100000
   # - mpirun -np 4 ./modules/task_1/Perov_Dima_task1_SumElVect/Perov_Dima_task1_SumElVect 10000
   # - mpirun -np 4 ./modules/task_1/vikhrev_array_sum/vikhrev_array_sum 1000 1000
   # - mpirun -np 4 ./modules/task_1/Vdovin_Eugene_task1_NumWords/Vdovin_Eugene_task1_NumWords 3000000
   # - mpirun -np 4 ./modules/task_1/Repin_Vladimir_Wrong_Order_Count/Repin_Vladimir_Wrong_Order_Count 100000
   # - mpirun -np 4 ./modules/task_1/Gaidaichuk_Yuri_task1_Arrays_Matching/Gaidaichuk_Yuri_task1_Arrays_Matching 10000
-  - mpirun -np 4 ./modules/task_1/Druzhinin_Alexei_task1_MinElVect/Druzhinin_Alexei_task1_MinElVect 1000000
+  # - mpirun -np 4 ./modules/task_1/Druzhinin_Alexei_task1_MinElVect/Druzhinin_Alexei_task1_MinElVect 1000000
   # - mpirun -np 4 ./modules/task_1/Zolotareva_Olesya_task1_MiddleValueVect/Zolotareva_Olesya_task1_MiddleValueVect 10000
   # - mpirun -np 4 ./modules/task_1/ndanilov_rows_matrix_sum/ndanilov_rows_matrix_sum 10 10
   # - mpirun -np 4 ./modules/task_1/Yunin_Ivan_maximum_elem_vector/Yunin_Ivan_maximum_elem_vector 100
-  - mpirun -np 4 ./modules/task_2/Gaidaichuk_Yuri_task2_Bubble_sorting/Gaidaichuk_Yuri_task2_Bubble_sorting 9
-  
+  # - mpirun -np 4 ./modules/task_2/Gaidaichuk_Yuri_task2_Bubble_sorting/Gaidaichuk_Yuri_task2_Bubble_sorting 9
+  - mpirun -np 4 ./modules/task_2/Perov_Dima_task2_ProducerConsumer/Perov_Dima_task2_ProducerConsumer 10 5 5 1 2
+  - mpirun -np 4 ./modules/task_2/Yakovlev_Pavel_mul_matr_vect/Yakovlev_Pavel_mul_matr_vect 50 50
+  - mpirun -np 5 ./modules/task_2/Vdovin_Eugene_task2_Readers_and_Writers/Vdovin_Eugene_task2_Readers_and_Writers 2 60
+  - mpirun -np 4 ./modules/task_2/Repin_Vladimir_Gaussian_Elimination/Repin_Vladimir_Gaussian_Elimination 500
+  - mpirun -np 4 ./modules/task_2/Vikhrev_Ivan_task2_ImageProcessing/Vikhrev_Ivan_task2_ImageProcessing -x=1000 -y=1000

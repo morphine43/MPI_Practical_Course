@@ -1,4 +1,3 @@
-#pragma warning(disable : 4146)
 #include <iostream>
 #include <mpi.h>
 #include <string.h>

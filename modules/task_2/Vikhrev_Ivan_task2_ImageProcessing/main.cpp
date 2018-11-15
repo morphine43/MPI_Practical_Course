@@ -9,21 +9,21 @@
 
 class img {
   public:
-  cv::String imageName;
-  cv::Mat pic;
-  unsigned int cols;
-  unsigned int rows;
-  unsigned int  type;
-  unsigned int  imgSize;
-  img();
-  explicit img(cv::Mat m);
-  img(const img &m);
-  ~img() {
+   cv::String imageName;
+   cv::Mat pic;
+   unsigned int cols;
+   unsigned int rows;
+   unsigned int  type;
+   unsigned int  imgSize;
+   img();
+   explicit img(cv::Mat m);
+   img(const img &m);
+   ~img() {
    }
-  bool loadImg(cv::String name);
-  bool saveImg(cv::String name);
-  void createImg(unsigned int height, unsigned int width);
-  void show(cv::String wName);
+   bool loadImg(cv::String name);
+   bool saveImg(cv::String name);
+   void createImg(unsigned int height, unsigned int width);
+   void show(cv::String wName);
 };
 
 img::img() {
@@ -167,7 +167,7 @@ int main(int argc, char** argv) {
         cols = parser.get<unsigned int>("x");
         std::cout << "Cols: " << cols << std::endl;
         origImg.createImg(rows, cols);
-      } 
+      }
     }
       if (parser.has("f")) {
       filter = parser.get<unsigned int>("f");
@@ -185,30 +185,30 @@ int main(int argc, char** argv) {
     procImgS = img(origImg);
     t1 = MPI_Wtime();
 
-	if (filter == 1) {
-		applyFilter1(&procImgS.pic, ksize);
-	} else {
-        if (filter == 2)
+    if (filter == 1) {
+      applyFilter1(&procImgS.pic, ksize);
+    } else {
+	    if (filter == 2)
           applyFilter2(&procImgS.pic, ksize);
-	    else
+        else
           applyFilter3(&procImgS.pic, ksize);
       }
     t2 = MPI_Wtime();
     std::cout << "Sequential Time: " << t2 - t1 << std::endl;
     t1 = MPI_Wtime();
   }
-  
+
   MPI_Bcast(&cols, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
   MPI_Bcast(&rows, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
   MPI_Bcast(&image_size, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
   MPI_Bcast(&portion, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
   MPI_Bcast(&filter, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
-  
+
   dataIN = new uchar[portion + 2*cols*ksize];
   dataOUT = new uchar[image_size];
   dis = new int[size];
   scount = new int[size];
-  
+
   for (int i = 0; i < size; ++i) {
     dis[i] = i*portion -cols * ksize;
     scount[i] = portion + 2*cols * ksize;
@@ -222,19 +222,21 @@ int main(int argc, char** argv) {
     scount[rank], MPI_UNSIGNED_CHAR, MainProc, MPI_COMM_WORLD);
 
   cv::Mat tmp(scount[rank] / cols, cols, CV_8U, dataIN);
-  
-  if (filter == 1) {
-    applyFilter1(&tmp, ksize);
-  } else {
-      if (filter == 2)
-        applyFilter2(&tmp, ksize);
-      else
-        applyFilter3(&tmp, ksize);
-    }
 
-  p = tmp.data + cols * ksize;//pointer do data
+  if (filter == 1) {
+    applyFilter1(&procImgS.pic, ksize);
+  }
+  else {
+      if (filter == 2) {
+        applyFilter2(&procImgS.pic, ksize);
+      }
+      else {
+        applyFilter3(&procImgS.pic, ksize);
+	  }
+  }
+  p = tmp.data + cols * ksize;  // pointer do data
   if (rank == MainProc) {
-	  p = tmp.data;
+    p = tmp.data;
   }
   MPI_Gather(p, portion, MPI_UNSIGNED_CHAR, dataOUT, portion,
     MPI_UNSIGNED_CHAR, MainProc, MPI_COMM_WORLD);
@@ -243,22 +245,22 @@ int main(int argc, char** argv) {
       t2 = MPI_Wtime();
       procImgP = img(cv::Mat(origImg.rows, origImg.cols, CV_8U, dataOUT));
       std::cout << "Parallel Time:   " << t2 - t1 << std::endl;
-    
+
       if (parser.get<bool>("s")) {
         origImg.show(static_cast<cv::String>("Original"));
         procImgS.show(static_cast<cv::String>("Sequnce processed"));
         procImgP.show(static_cast<cv::String>("Parallel processed"));
         cv::waitKey(0);
       }
-	  if (!origImg.saveImg("Original.png")) {
-	    std::cout << " Can`t save image 0 " << std::endl;
-	  }
-	  if (!procImgS.saveImg("smooth_image_seq.png")) {
-	    std::cout << " Can`t save image 1" << std::endl;
-	  }
-	  if (!procImgP.saveImg("smooth_image_par.png")) {
-		  std::cout << " Can`t save image 2" << std::endl;
-	  }
+      if (!origImg.saveImg("Original.png")) {
+        std::cout << " Can`t save image 0 " << std::endl;
+      }
+      if (!procImgS.saveImg("smooth_image_seq.png")) {
+        std::cout << " Can`t save image 1" << std::endl;
+      }
+      if (!procImgP.saveImg("smooth_image_par.png")) {
+        std::cout << " Can`t save image 2" << std::endl;
+      }
     }
   delete[] dataIN;
   delete[] dataOUT;

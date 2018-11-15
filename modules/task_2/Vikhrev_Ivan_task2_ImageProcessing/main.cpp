@@ -218,19 +218,20 @@ int main(int argc, char** argv) {
       scount[i] = portion + cols * ksize;
     }
   }
-
+  if (size == 1)
+    scount[0] = portion;
   MPI_Scatterv(origImg.pic.data, scount, dis, MPI_UNSIGNED_CHAR, dataIN,
     scount[rank], MPI_UNSIGNED_CHAR, MainProc, MPI_COMM_WORLD);
 
   cv::Mat tmp(scount[rank] / cols, cols, CV_8U, dataIN);
 
   if (filter == 1) {
-    applyFilter1(&procImgS.pic, ksize);
+    applyFilter1(&tmp, ksize);
   } else {
       if (filter == 2) {
-        applyFilter2(&procImgS.pic, ksize);
+        applyFilter2(&tmp, ksize);
       } else {
-        applyFilter3(&procImgS.pic, ksize);
+        applyFilter3(&tmp, ksize);
       }
   }
   p = tmp.data + cols * ksize;  // pointer do data

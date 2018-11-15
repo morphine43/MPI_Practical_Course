@@ -7,7 +7,7 @@
 #include <cmath>
 
 int main(int argc, char* argv[]) {
-  std::srand(static_cast<int>(time(NULL));
+  std::srand(static_cast<int>(time(NULL)));
 
   int rank, CountP, flag;
   if (argc < 3) {

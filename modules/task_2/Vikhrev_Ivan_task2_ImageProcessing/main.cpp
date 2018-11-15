@@ -8,7 +8,7 @@
 #define ksize 21
 
 class img {
-  public:
+ public:
    cv::String imageName;
    cv::Mat pic;
    unsigned int cols;
@@ -188,10 +188,11 @@ int main(int argc, char** argv) {
     if (filter == 1) {
       applyFilter1(&procImgS.pic, ksize);
     } else {
-	    if (filter == 2)
+        if (filter == 2) {
           applyFilter2(&procImgS.pic, ksize);
-        else
-          applyFilter3(&procImgS.pic, ksize);
+        } else {
+            applyFilter3(&procImgS.pic, ksize);
+		}
       }
     t2 = MPI_Wtime();
     std::cout << "Sequential Time: " << t2 - t1 << std::endl;
@@ -225,14 +226,12 @@ int main(int argc, char** argv) {
 
   if (filter == 1) {
     applyFilter1(&procImgS.pic, ksize);
-  }
-  else {
+  } else {
       if (filter == 2) {
         applyFilter2(&procImgS.pic, ksize);
-      }
-      else {
+      } else {
         applyFilter3(&procImgS.pic, ksize);
-	  }
+      }
   }
   p = tmp.data + cols * ksize;  // pointer do data
   if (rank == MainProc) {

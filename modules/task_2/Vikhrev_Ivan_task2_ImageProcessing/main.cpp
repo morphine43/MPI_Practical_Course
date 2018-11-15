@@ -2,7 +2,6 @@
 #include <assert.h>
 #include <mpi.h>
 #include <iostream>
-#include <cstddef>
 #include "opencv2/opencv.hpp"
 
 #define MainProc 0
@@ -118,12 +117,12 @@ int main(int argc, char** argv) {
                image_size = 0,
                portion = 0,
                filter = 1;
-  int *scount = nullptr,
-      *dis =    nullptr;
+  int *scount = NULL,
+      *dis = NULL;
   cv::String imageName = "";
-  uchar  *dataIN =  nullptr,
-          *dataOUT = nullptr,
-       *p = nullptr;
+  uchar  *dataIN =  NULL,
+          *dataOUT = NULL,
+       *p = NULL;
   double t1 = 0, t2 = 0;
   bool checkImg = true;
 

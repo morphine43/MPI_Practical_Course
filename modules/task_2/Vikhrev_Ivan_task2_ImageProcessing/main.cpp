@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <mpi.h>
 #include <iostream>
+#include <cstddef>
 #include "opencv2/opencv.hpp"
 
 #define MainProc 0
@@ -115,7 +116,6 @@ int main(int argc, char** argv) {
   unsigned int cols = 0,
                rows = 0,
                image_size = 0,
-               type = 0,
                portion = 0,
                filter = 1;
   int *scount = nullptr,

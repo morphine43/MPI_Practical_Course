@@ -138,130 +138,136 @@ cout << "result " << j << " " << ((int *)rf)[i] << "  last " << ((int *)sf)[i] <
 }
 }
 }
-void BAND(void *sendbuf, void *recvbuf, int count, MPI_Datatype type, MPI_Op op, int root, MPI_Comm comm) {
+void BAND(void *sf, void *rf, int n, MPI_Datatype t, MPI_Op op, int rt, MPI_Comm comm)
+ {
 MPI_Status st;
 int ProcNum;
 MPI_Comm_size(comm, &ProcNum);
 for (int j = 0; j < ProcNum; j++) {
-if (j != root)
-MPI_Recv(sendbuf, count, type, j, 0, comm, &st);
-for (int i = 0; i < count; i++)
+if (j != rt)
+MPI_Recv(sf,n, t, j, 0, comm, &st);
+for (int i = 0; i < n; i++)
 {
-if (j == root) {
-((int *)recvbuf)[i] = ((int *)sendbuf)[i];
-cout << "result in root " << ((int *)recvbuf)[i] << std::endl;
+if (j == rt) {
+((int *)rf)[i] = ((int *)sf)[i];
+cout << "result in root " << ((int *)rf)[i] << endl;
 }
 else {
-((int *)recvbuf)[i] = ((int *)recvbuf)[i] & ((int *)sendbuf)[i];
-//int tmp = ((int *)recvbuf)[i];
-cout << "result " << j << " " << ((int *)recvbuf)[i] << "  last " << ((int *)sendbuf)[i] << endl;
+((int *)rf)[i] = ((int *)rf)[i] & ((int *)sf)[i];
+
+cout << "result " << j << " " << ((int *)rf)[i] << "  last " << ((int *)sf)[i] << endl;
 }
 }
 }
 }
-void LAND(void *sendbuf, void *recvbuf, int count, MPI_Datatype type, MPI_Op op, int root, MPI_Comm comm) {
+void LAND(void *sf, void *rf, int n, MPI_Datatype t, MPI_Op op, int rt, MPI_Comm comm)
+ {
 MPI_Status st;
 int ProcNum;
 MPI_Comm_size(comm, &ProcNum);
 for (int j = 0; j < ProcNum; j++) {
-if (j != root)
-MPI_Recv(sendbuf, count, type, j, 0, comm, &st);
-for (int i = 0; i < count; i++)
+if (j != rt)
+MPI_Recv(sf, n, t, j, 0, comm, &st);
+for (int i = 0; i < n; i++)
 {
-if (j == root) {
-((int *)recvbuf)[i] = ((int *)sendbuf)[i];
-cout << "result in root " << ((int *)recvbuf)[i] << endl;
+if (j == rt) {
+((int *)rf)[i] = ((int *)sf)[i];
+cout << "result in root " << ((int *)rf)[i] << endl;
 }
 else {
-((int *)recvbuf)[i] = ((int *)recvbuf)[i] && ((int *)sendbuf)[i];
-//int tmp = ((int *)recvbuf)[i];
-cout << "result " << j << " " << ((int *)recvbuf)[i] << "  last " << ((int *)sendbuf)[i] << endl;
+((int *)rf)[i] = ((int *)rf)[i] && ((int *)sf)[i];
+
+cout << "result " << j << " " << ((int *)rf)[i] << "  last " << ((int *)sf)[i] << endl;
 }
 }
 }
 }
-void PROD(void *sendbuf, void *recvbuf, int count, MPI_Datatype type, MPI_Op op, int root, MPI_Comm comm) {
+void PROD(void *sf, void *rf, int n, MPI_Datatype t,MPI_Op op,int rt,MPI_Comm comm)
+ {
 MPI_Status st;
 int ProcNum;
 MPI_Comm_size(comm, &ProcNum);
 for (int j = 0; j < ProcNum; j++) {
-if (j != root)
-MPI_Recv(sendbuf, count, type, j, 0, comm, &st);
-for (int i = 0; i < count; i++)
+if (j != rt)
+MPI_Recv(sf, n, t, j, 0, comm, &st);
+for (int i = 0; i < n; i++)
 {
-if (j == root) {
-((int *)recvbuf)[i] = ((int *)sendbuf)[i];
-cout << "result in root " << ((int *)recvbuf)[i] << endl;
+if (j == rt) {
+((int *)rf)[i] = ((int *)sf)[i];
+cout << "result in root " << ((int *)rf)[i] << endl;
 }
 else {
-((int *)recvbuf)[i] = ((int *)recvbuf)[i] * ((int *)sendbuf)[i];
+((int *)rf)[i] = ((int *)rf)[i] * ((int *)sf)[i];
 //int tmp = ((int *)recvbuf)[i];
-cout << "result " << j << " " << ((int *)recvbuf)[i] << "  last " << ((int *)sendbuf)[i] << endl;
+cout << "result " << j << " " << ((int *)rf)[i] << "  last " << ((int *)sf)[i] << endl;
 }
 }
 }
 }
-void MIN(void *sendbuf, void *recvbuf, int count, MPI_Datatype type, MPI_Op op, int root, MPI_Comm comm) {
+void MIN(void *sf, void *rf, int n, MPI_Datatype t,MPI_Op op,int rt,MPI_Comm comm)
+ {
 MPI_Status st;
 int ProcNum;
 MPI_Comm_size(comm, &ProcNum);
 for (int j = 0; j < ProcNum; j++) {
-if (j != root)
-MPI_Recv(sendbuf, count, type, j, 0, comm, &st);
-for (int i = 0; i < count; i++)
+if (j != rt)
+MPI_Recv(sf, n, t, j, 0, comm, &st);
+for (int i = 0; i < n; i++)
 {
-if (j == root) {
-((int *)recvbuf)[i] = ((int *)sendbuf)[i];
-cout << "result in root " << ((int *)recvbuf)[i] << endl;
+if (j == rt) {
+((int *)rf)[i] = ((int *)sf)[i];
+cout << "result in root " << ((int *)rf)[i] << endl;
 }
 else {
-if (((int *)recvbuf)[i] > ((int *)sendbuf)[i])
-((int *)recvbuf)[i] = ((int *)sendbuf)[i];
-//int tmp = ((int *)recvbuf)[i];
-cout << "result " << j << " " << ((int *)recvbuf)[i] << "  last " << ((int *)sendbuf)[i] << endl;
+if (((int *)rf)[i] > ((int *)sf)[i])
+((int *)rf)[i] = ((int *)sf)[i];
+//int tmp = ((int *)rf)[i];
+cout << "result " << j << " " << ((int *)rf)[i] << "  last " << ((int *)sf)[i] << endl;
 }
 }
 }
 }
-void MAX(void *sendbuf, void *recvbuf, int count, MPI_Datatype type, MPI_Op op, int root, MPI_Comm comm) {
+void MAX(void *sf, void *rf, int n, MPI_Datatype t, MPI_Op op, int rt, MPI_Comm comm)
+ {
 MPI_Status st;
 int ProcNum;
 MPI_Comm_size(comm, &ProcNum);
 for (int j = 0; j < ProcNum; j++) {
-if (j != root)
-MPI_Recv(sendbuf, count, type, j, 0, comm, &st);
-for (int i = 0; i < count; i++)
+if (j != rt)
+MPI_Recv(sf, n, t, j, 0, comm, &st);
+for (int i = 0; i < n; i++)
 {
-if (j == root) {
-((int *)recvbuf)[i] = ((int *)sendbuf)[i];
-cout << "result in root " << ((int *)recvbuf)[i] << endl;
+if (j == rt) {
+((int *)rf)[i] = ((int *)sf)[i];
+cout << "result in root " << ((int *)rf)[i] << endl;
 }
 else {
-if (((int *)recvbuf)[i] < ((int *)sendbuf)[i])
-((int *)recvbuf)[i] = ((int *)sendbuf)[i];
-//int tmp = ((int *)recvbuf)[i];
-cout << "result " << j << " " << ((int *)recvbuf)[i] << "  last " << ((int *)sendbuf)[i] << endl;
+if (((int *)rf)[i] < ((int *)sf)[i])
+((int *)rf)[i] = ((int *)sf)[i];
+
+cout << "result " << j << " " << ((int *)rf)[i] << "  last " << ((int *)sf)[i] << endl;
 }
 }
 	}
 }
-void SUMM(void *sendbuf, void *recvbuf, int count, MPI_Datatype type, MPI_Op op, int root, MPI_Comm comm) {
+void SUMM(void *sf, void *rf, int n, MPI_Datatype t, MPI_Op op,int rt,MPI_Comm comm)
+ {
 //std::cout<<"I am in 2 if" << std::endl;
 MPI_Status st;
 int ProcNum;
 MPI_Comm_size(comm, &ProcNum);
 for (int j = 0; j < ProcNum; j++) {
-if (j != root)
-MPI_Recv(sendbuf, count, type, j, 0, comm, &st);
-for (int i = 0; i < count; i++)
+if (j != rt)
+MPI_Recv(sf, n, t, j, 0, comm, &st);
+for (int i = 0; i < n; i++)
 {
-if (j == root) {
-((int *)recvbuf)[i] = ((int *)sendbuf)[i];
-//std::cout << "result in root " << ((int *)recvbuf)[i] << std::endl;
+if (j == rt) {
+((int *)rf)[i] = ((int *)sf)[i];
+//std::cout << "result in root " << ((int *)rf)[i] << endl;
 }
 else {
-((int *)recvbuf)[i] = ((int *)recvbuf)[i] + ((int *)sendbuf)[i];
-//int tmp = ((int *)recvbuf)[i];
+((int *)rf)[i] = ((int *)rf)[i] + ((int *)sf)[i];
+//int tmp = ((int *)rf)[i];
 }
 }
 }
@@ -283,60 +289,60 @@ for (int i = 0; i < count; i++)
 //}
 }
 }
-int MY_MPI_Reduce(void *sendbuf, void *recvbuf, int count, MPI_Datatype type, MPI_Op op, int root, MPI_Comm comm)
+int MY_MPI_Reduce(void *sf,void *rf,int n,MPI_Datatype t,MPI_Op op,int rt,MPI_Comm comm)
 {
 int ProcNum, ProcRank;
 MPI_Comm_size(comm, &ProcNum);
 MPI_Comm_rank(comm, &ProcRank);
-if (ProcRank != root) {
+if (ProcRank != rt) {
 //std::cout << "I am in not root" << std::endl;
-MPI_Send(sendbuf, count, type, root, 0, comm);
+MPI_Send(sf,n, t, rt, 0, comm);
 }
 else {
-if (ProcRank == root)
+if (ProcRank == rt)
 {
 //std::cout << "I am in root " << ProcNum << std::endl;
 //	MPI_Status st;
 //int j = 0;
-if (type == MPI_INT) {
+if (t == MPI_INT) {
 if (op == MPI_SUM) {
-SUMM(sendbuf, recvbuf, count, type, op, root, comm);
+SUMM(sf, rf, n, t, op, rt, comm);
 return 0;
 }
 if (op == MPI_MAX) {
-M_MAX(sendbuf, recvbuf, count, type, op, root, comm);
+M_MAX(sf, rf, n, t, op, rt, comm);
 return 0;
 }
 if (op == MPI_MIN) {
-M_MIN(sendbuf, recvbuf, count, type, op, root, comm);
+M_MIN(sf, rf, n, t, op, rt, comm);
 return 0;
 }
 if (op == MPI_PROD) {
-PROD(sendbuf, recvbuf, count, type, op, root, comm);
+PROD(sf, rf, n, t, op, rt, comm);
 return 0;
 }
 if (op == MPI_LAND) {
-LAND(sendbuf, recvbuf, count, type, op, root, comm);
+LAND(sf, rf, n, t, op, rt, comm);
 return 0;
 }
 if (op == MPI_LOR) {
-LOR(sendbuf, recvbuf, count, type, op, root, comm);
+LOR(sf, rf, n, t, op, rt, comm);
 return 0;
 }
 if (op == MPI_BAND) {
-BAND(sendbuf, recvbuf, count, type, op, root, comm);
+BAND(sf, rf, n, t, op, rt, comm);
 return 0;
 }
 if (op == MPI_BOR) {
-BOR(sendbuf, recvbuf, count, type, op, root, comm);
+BOR(sf, rf, n, t, op, rt, comm);
 return 0;
 }
 if (op == MPI_BXOR) {
-BXOR(sendbuf, recvbuf, count, type, op, root, comm);
+BXOR(sf, rf, n, t, op, rt, comm);
 return 0;
 }
 if (op == MPI_LXOR) {
-LXOR(sendbuf, recvbuf, count, type, op, root, comm);
+LXOR(sf, rf, n, t, op, rt, comm);
 }
 if (op == MPI_MAXLOC)
 return -1;
@@ -348,10 +354,12 @@ return -1;
 }
  return -10;
 }
-void recursion(void *sendbuf, void *recvbuf, int count, MPI_Datatype type, MPI_Op op, int root, MPI_Comm comm, int* massProcRankSend, int size, int h) {
+
+void rec(void *sf,void *rf,int n,MPI_Datatype t,MPI_Op op,int rt,MPI_Comm comm,int* mas,int size,int h)
+ {
 int curentSize, procNum, rank;
 int* curentMass;
-int* countMassElement = new int[count];
+int* countMassElement = new int[n];
 MPI_Comm_size(comm, &procNum);
 MPI_Comm_rank(comm, &rank);
 MPI_Status st;
@@ -369,38 +377,38 @@ curentMass[i] = -1;
 h++;
 //int t = 0;
 for (int i = 0, t = 0; i < size; i++) {
-if (massProcRankSend[i] == rank) {
+if (mas[i] == rank) {
 if (!(size % 2)) {
 if (!(i % 2)) {
-MPI_Send(sendbuf, count, type, massProcRankSend[i + 1], 0, comm);
-for (int q = 0; q < count; q++)
+MPI_Send(sf, n, t, mas[i + 1], 0, comm);
+for (int q = 0; q < n; q++)
 {
-countMassElement[q] = ((int *)(recvbuf))[q];
+countMassElement[q] = ((int *)(rf))[q];
 }
 }
 else {
-MPI_Recv(recvbuf, count, type, massProcRankSend[i - 1], 0, comm, &st);
-MY_MPI_SUMM_Tree(sendbuf, recvbuf, count);
-sendbuf = recvbuf;
+MPI_Recv(rf, n, t, mas[i - 1], 0, comm, &st);
+MY_MPI_SUMM_Tree(sf, rf, n);
+sf = rf;
 }
 }
 else {
 if ((rank != procNum - 1)) {
 if (!(i % 2)) {
-MPI_Send(sendbuf, count, type, massProcRankSend[i + 1], 0, comm);
-for (int q = 0; q < count; q++)
+MPI_Send(sf, n, t, mas[i + 1], 0, comm);
+for (int q = 0; q < n; q++)
 {
-countMassElement[q] = ((int *)(recvbuf))[q];
+countMassElement[q] = ((int *)(rf))[q];
 }
 }
 else {
-for (int r = 0; r < count; r++) {
-((int *)recvbuf)[i] = ((int *)sendbuf)[i];
+for (int r = 0; r < n; r++) {
+((int *)rf)[i] = ((int *)sf)[i];
 }
-MPI_Recv(sendbuf, count, type, massProcRankSend[i - 1], 0, comm, &st);
-MY_MPI_SUMM_Tree(sendbuf, recvbuf, count);
-for (int r = 0; r < count; r++) {
-((int *)sendbuf)[i] = ((int *)recvbuf)[i];
+MPI_Recv(sf, n, t, mas[i - 1], 0, comm, &st);
+MY_MPI_SUMM_Tree(sf, rf, n);
+for (int r = 0; r < n; r++) {
+((int *)sf)[i] = ((int *)rf)[i];
 }
 }
 }
@@ -418,20 +426,20 @@ t++;
 }
 }
 if (curentSize != 1) {
-recursion(sendbuf, countMassElement, count, type, op, root, comm, curentMass, curentSize, h);
+rec(sf, countMassElement, n, t, op, rt, comm, curentMass, curentSize, h);
 }
 else {
-if (curentMass[0] != root) {
+if (curentMass[0] != rt) {
 if (rank == curentMass[0])
 {
-MPI_Send(sendbuf, count, type, root, 0, comm);
+MPI_Send(sf, n, t, rt, 0, comm);
 }
-if (rank == root) {
-MPI_Recv(recvbuf, count, type, curentMass[0], 0, comm, &st);
+if (rank == rt) {
+MPI_Recv(rf, n, t, curentMass[0], 0, comm, &st);
 }
 }
 else {
-recvbuf = sendbuf;
+rf = sf;
 }
 }
 }

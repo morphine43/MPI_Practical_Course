@@ -1,3 +1,4 @@
+// Copyright ivanvikhrev
 #include "opencv2/opencv.hpp"
 #include <assert.h>
 #include <mpi.h>

@@ -61,4 +61,3 @@ build_script:
   - cmd: mpiexec.exe -np 4 modules\task_2\Perov_Dima_task2_ProducerConsumer\%configuration%\Perov_Dima_task2_ProducerConsumer.exe 10 5 5 1 2
   - cmd: mpiexec.exe -np 5 modules\task_2\Vdovin_Eugene_task2_Readers_and_Writers\%configuration%\Vdovin_Eugene_task2_Readers_and_Writers.exe 2 60
   - cmd: mpiexec.exe -np 4 modules\task_2\Repin_Vladimir_Gaussian_Elimination\%configuration%\Repin_Vladimir_Gaussian_Elimination.exe 500
-  - cmd: mpiexec.exe -np 4 modules\task_2\Vikhrev_Ivan_task2_ImageProcessing\%configuration%\Vikhrev_Ivan_task2_ImageProcessing.exe -x=1000 -y=1000

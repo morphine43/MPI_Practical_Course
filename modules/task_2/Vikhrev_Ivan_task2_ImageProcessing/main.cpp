@@ -260,6 +260,13 @@ int main(int argc, char** argv) {
       if (!procImgP.saveImg("smooth_image_par.png")) {
         std::cout << " Can`t save image 2" << std::endl;
       }
+      unsigned int count = 0;
+      for (unsigned int i = 0; i < image_size; i++) {
+        if (procImgS.pic.data[i] != procImgP.pic.data[i]) {
+          count++;
+         }
+      }
+      std::cout <<"Different values "<< count << std::endl;
     }
   delete[] dataIN;
   delete[] dataOUT;

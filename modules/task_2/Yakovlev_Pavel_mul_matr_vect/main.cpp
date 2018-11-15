@@ -24,7 +24,6 @@ int main(int argc, char* argv[]) {
   double *vect = NULL,
     *matrix = NULL;
   MPI_Status status;
-  double Line_Mult = 0;
   double Time_begin = 0;
   double Time_end = 0;
   int Matrix_size = rows*cols;

@@ -58,7 +58,7 @@ double scal_mult(double* a, double* b, int size) {
 }
 
 
-int main (int argc, char* argv[]) {
+int main (int argc, char*argv[]) {
     int col_num = 100, row_num = 100, sub_row_num;
     int proc_num, proc_id, flag;
     int flag_out = 0;
@@ -85,7 +85,8 @@ int main (int argc, char* argv[]) {
     MPI_Comm_size(MPI_COMM_WORLD, &proc_num);
     MPI_Comm_rank(MPI_COMM_WORLD, &proc_id);
     sub_row_num = static_cast<int>(ceil(static_cast<double>(row_num)/
-                                        (static_cast<double>(proc_num)))); // quantity rows for one process
+                                        (static_cast<double>(proc_num))));
+    // quantity rows for one process
 
 // memory alloc for all processes
     vector = new double[col_num];
@@ -94,7 +95,9 @@ int main (int argc, char* argv[]) {
 //  end memory alloc for all processes
 
     if (proc_id == 0) {
-        int tail = proc_num*sub_row_num-row_num;// if the quantity rows is divided between the processes is not entirely (for correct work Gather() )
+        int tail = proc_num*sub_row_num-row_num;
+        /* tail-> if the quantity rows is divided between the processes 
+        is not entirely (for correct work Gather() )*/
         // init vector and matrix (memory and values)
         matrix = new double[row_num*col_num];
         serial_res = new double[row_num];
@@ -109,43 +112,50 @@ int main (int argc, char* argv[]) {
         // serial multiplication
         serial_time = MPI_Wtime();
         for (int i = 0; i < row_num;i++) {
-            serial_res[i]=scal_mult(vector, matrix+col_num*i, col_num); // (*) look description
+            serial_res[i] = scal_mult(vector, matrix+col_num*i, col_num); // (*) look description
         }
         serial_time = MPI_Wtime() - serial_time;
-        std::cout<<"serial time: "<<serial_time<<'\n';
+        std::cout << "serial time: " << serial_time << '\n';
         // serial multiplication end
         parallel_time = MPI_Wtime();
     }
 
     // (#)(start) code executed by all processes
-    MPI_Bcast(vector, col_num, MPI_DOUBLE, 0, MPI_COMM_WORLD); // send vector to all procceses
+    MPI_Bcast(vector, col_num, MPI_DOUBLE, 0, MPI_COMM_WORLD); /* send vector
+    to all procceses*/
     MPI_Scatter(matrix, sub_row_num*col_num, MPI_DOUBLE,
-       sub_matrix, sub_row_num*col_num, MPI_DOUBLE, 0, MPI_COMM_WORLD); // send parts of matrix to all processes (each procces gets matrix with dim [sub_row_num x col_num])
+       sub_matrix, sub_row_num*col_num, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    /* send parts of matrix to all processes (each procces gets matrix
+    with dim [sub_row_num x col_num])*/
     // begin calculate sub result
-    for (int i = 0; i<sub_row_num; i++){
-            sub_parallel_res[i] = scal_mult(vector, (sub_matrix+col_num*i), col_num); // (*) look description
+    for (int i = 0; i < sub_row_num; i++) {
+            sub_parallel_res[i] = scal_mult(vector, (sub_matrix+col_num*i),
+                                            col_num); // (*) look description
         }
     // end calculate sub result
-    MPI_Gather(sub_parallel_res, sub_row_num, MPI_DOUBLE, parallel_res, sub_row_num, 
-               MPI_DOUBLE, 0, MPI_COMM_WORLD); // collection result data in proc#0 (each procces send part of result_vector, part had dim [sub_row_num x 1])
+    MPI_Gather(sub_parallel_res, sub_row_num, MPI_DOUBLE, parallel_res,
+               sub_row_num,MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    /* collection result data in proc#0 (each procces send 
+    part of result_vector, part had dim [sub_row_num x 1])*/
+
     // (#)(finish) code executed by all processes
 
-    if (proc_id == 0){
+    if (proc_id == 0) {
         parallel_time = MPI_Wtime() - parallel_time;
         if (flag_out) {
-            std::cout<<"Serial result vector"<<'\n';
-            for (int i = 0; i<row_num;i++) {
-                std::cout<<serial_res[i]<<" ";
+            std::cout << "Serial result vector" << '\n';
+            for (int i = 0; i < row_num;i++) {
+                std::cout << serial_res[i] << " ";
             }
-            std::cout<<'\n'<<"Parallel result vector"<<'\n';
-            for (int i = 0; i<row_num;i++) {
-                std::cout<<parallel_res[i]<<" ";
+            std::cout << '\n' << "Parallel result vector" << '\n';
+            for (int i = 0; i < row_num;i++) {
+                std::cout << parallel_res[i] << " ";
             }
         }
 
-        std::cout<<'\n'<<"Parralel time: "<<parallel_time<<'\n';
-        if(check(serial_res, parallel_res, row_num))
-            std::cout<<"Error: vectors are not equal"<<'\n';
+        std::cout << '\n' << "Parralel time: " << parallel_time << '\n';
+        if (check(serial_res, parallel_res, row_num))
+            std::cout << "Error: vectors are not equal" << '\n';
         delete[]matrix;
         delete[]serial_res;
         delete[]parallel_res;

@@ -1,14 +1,13 @@
+#include <assert.h>
+#include <time.h>
 #include <mpi.h>
 #include <iostream>
-#include <assert.h>
 #include <cstdlib>
-#include <time.h>
 #include <string>
 
 #include "host.h"
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
   /* Mpi variables */
   int status,
       rank,

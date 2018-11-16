@@ -12,7 +12,6 @@ host::host(int rank, int size) {
 }
 
 host::~host() {
-
 }
 
 void host::generate_packet(int src, int dst, std::string msg) {
@@ -49,7 +48,6 @@ ring_host::ring_host(int rank, int size) : host(rank, size) {
 }
 
 ring_host::~ring_host() {
-
 }
 
 int ring_host::who_next() const {

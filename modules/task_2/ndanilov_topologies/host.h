@@ -1,12 +1,12 @@
-#ifndef HOST_H
-#define HOST_H
+#ifndef MODULES_TASK_2_NDANILOV_TOPOLOGIES_HOST_H_
+#define MODULES_TASK_2_NDANILOV_TOPOLOGIES_HOST_H_
 
 #include <string>
 
 #include "packet.h"
 
 class host {
-  public:
+ public:
     int id = 0;
     packet pkt;
     MPI_Datatype type;
@@ -20,7 +20,7 @@ class host {
 };
 
 class ring_host : public host {
-  public:
+ public:
     int checked = 0;
     ring_host(int rank, int size);
     ~ring_host();

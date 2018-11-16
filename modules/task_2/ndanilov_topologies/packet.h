@@ -4,9 +4,9 @@
 #define MAX_DATA_SIZE 255
 
 struct packet {
-	int src = -1;
-	int dst = -1;
-	char data[MAX_DATA_SIZE];
+  int src = -1;
+  int dst = -1;
+  char data[MAX_DATA_SIZE];
 };
 
-#endif
+#endif  // MODULES_TASK_2_NDANILOV_TOPOLOGIES_PACKET_H_

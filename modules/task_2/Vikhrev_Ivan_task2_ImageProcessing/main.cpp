@@ -5,7 +5,7 @@
 #include "opencv2/opencv.hpp"
 
 #define MainProc 0
-#define ksize 11 // kernel for filter(and locality rows at the same time)
+#define ksize 11  // kernel for filter(and locality rows at the same time)
 
 class img {
  public:
@@ -110,23 +110,23 @@ int main(int argc, char** argv) {
   cv::CommandLineParser parser(argc, argv, kOptions);
   parser.about(kAbout);
 
-  int status, rank, size; // MPI vars
-  img origImg, procImgS, procImgP; // Original, sequence and parallel images
-  unsigned int cols = 0, 
+  int status, rank, size;  // MPI vars
+  img origImg, procImgS, procImgP;  // Original, sequence and parallel images
+  unsigned int cols = 0,
                rows = 0,
                image_size = 0,
                rows_to_one_proc = 0,
-               remain_rows = 0, // in case of eneven division
-               remain_size = 0, // in pixels
-               portion = 0, // pix to each process
-               locality = 0, // locality of filter
-               filter = 1; 
-  int *scounts = NULL, // use in scatterv and gatherv
-      *displs = NULL;  // use in scatterv and gatherv
+               remain_rows = 0,  // in case of eneven division
+               remain_size = 0,  // in pixels
+               portion = 0,  // pix to each process
+               locality = 0,  // locality of filter
+               filter = 1;
+  int *scounts = NULL,  // use in scatterv and gatherv
+      *displs = NULL;   // use in scatterv and gatherv
   cv::String imageName = "";
-  uchar  *dataIN =  NULL, // buffer
-         *dataOUT = NULL, // arr for result
-         *p = NULL; // pointer to data in gatherv
+  uchar  *dataIN =  NULL,  // buffer
+         *dataOUT = NULL,  // arr for result
+         *p = NULL;  // pointer to data in gatherv
   double t1 = 0, t2 = 0;
   bool checkImg = true;
 
@@ -184,9 +184,9 @@ int main(int argc, char** argv) {
     cols = origImg.cols;
     rows = origImg.rows;
     image_size = origImg.imgSize;
-	rows_to_one_proc = rows / size;
+    rows_to_one_proc = rows / size;
     remain_rows = rows - size * rows_to_one_proc;
-	portion = rows_to_one_proc * cols;
+    portion = rows_to_one_proc * cols;
     procImgS = img(origImg);
     t1 = MPI_Wtime();
 
@@ -249,12 +249,12 @@ int main(int argc, char** argv) {
   }
   for (int i = 1; i < size; i++) {
     displs[i] = i*portion + remain_size;;
-	scounts[i] = portion;
+    scounts[i] = portion;
   }
   displs[0] = 0;
   scounts[0] = portion + remain_size;
   MPI_Gatherv(p, scounts[rank], MPI_UNSIGNED_CHAR, dataOUT, scounts,
-	  displs, MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
+    displs, MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
 
     if (rank == MainProc) {
       t2 = MPI_Wtime();

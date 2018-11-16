@@ -63,8 +63,7 @@ reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
   std::cout << "result in root " <<
   reinterpret_cast<int*>(&rf)[i] << std::endl;
 } else {
-reinterpret_cast<int*>(&rf)[i] =
-reinterpret_cast<int*>(&rf)[i] != reinterpret_cast<int*>(&sf)[i];
+reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&rf)[i] != reinterpret_cast<int*>(&sf)[i];
   std::cout << "result " << j << " " << reinterpret_cast<int*>(&rf)[i]
 << "  last " << reinterpret_cast<int*>(&sf)[i] << std::endl;
 }
@@ -255,7 +254,8 @@ MPI_Comm_size(comm, &ProcNum);
        if (j == root) {
           dynamic_cast(&rrecvbuf)[i] = dynamic_cast(&sendbuf)[i]);
 } else {
-dynamic_cast(&recvbuf)[i]) = dynamic_cast(&recvbuf)[i]) + dynamic_cast(&sendbuf)[i];
+dynamic_cast(&recvbuf)[i] =
+dynamic_cast(&recvbuf)[i] + dynamic_cast(&sendbuf)[i];
 }
 }
 }
@@ -264,7 +264,8 @@ void MY_MPI_SUMM_Tree(void *sendbuf, void *recvbuf, int count) {
   int ProcNum;
   MPI_Comm_rank(MPI_COMM_WORLD, &ProcNum);
      for (int i = 0; i < count; i++) {
-dynamic_cast(&recvbuf)[i] = dynamic_cast(&recvbuf)[i] + dynamic_cast(&sendbuf)[i];
+dynamic_cast(&recvbuf)[i] =
+dynamic_cast(&recvbuf)[i] + dynamic_cast(&sendbuf)[i];
 }
 }
 
@@ -413,7 +414,7 @@ int * massProcRankSend = new int[ProcNum];
      for (int i = 0; i < ProcNum; i++) {
      massProcRankSend[i] = i;
 }
-rec(sf, rf, n, t, op, rt, com, massProcRankSend, ProcNum,0);
+rec(sf, rf, n, t, op, rt, com, massProcRankSend, ProcNum, 0);
 return 0;
 }
 

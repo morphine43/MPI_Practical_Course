@@ -251,7 +251,7 @@ MPI_Comm_size(comm, &ProcNum);
     for (int j = 0; j < ProcNum; j++) {
        if (j != root)
           MPI_Recv(sendbuf, count, type, j, 0, comm, &st);
-		for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++) {
        if (j == root) {
           dynamic_cast(&rrecvbuf)[i] = dynamic_cast(&sendbuf)[i]);
 } else {
@@ -263,7 +263,7 @@ dynamic_cast(&recvbuf)[i]) = dynamic_cast(&recvbuf)[i]) + dynamic_cast(&sendbuf)
 void MY_MPI_SUMM_Tree(void *sendbuf, void *recvbuf, int count) {
   int ProcNum;
   MPI_Comm_rank(MPI_COMM_WORLD, &ProcNum);
-   for (int i = 0; i < count; i++) {
+     for (int i = 0; i < count; i++) {
 dynamic_cast(&recvbuf)[i] = dynamic_cast(&recvbuf)[i] + dynamic_cast(&sendbuf)[i];
 }
 }

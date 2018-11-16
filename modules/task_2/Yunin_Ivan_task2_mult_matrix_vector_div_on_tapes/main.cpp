@@ -62,9 +62,14 @@ int main(int argc, char*argv[]) {
     int col_num = 100, row_num = 100, sub_row_num;
     int proc_num, proc_id, flag;
     int flag_out = 0;
-    double *vector = nullptr, *matrix = nullptr, *sub_matrix = nullptr;
-    double *serial_res = nullptr, *parallel_res nullptr, *sub_parallel_res = nullptr;
-    double serial_time = 0.0, parallel_time = 0.0;
+    double *vector = nullptr; 
+    double *matrix = nullptr; 
+    double *sub_matrix = nullptr;
+    double *serial_res = nullptr; 
+    double *parallel_res nullptr; 
+    double *sub_parallel_res = nullptr;
+    double serial_time = 0.0;
+    double parallel_time = 0.0;
     std::srand(static_cast<int>(time(0)));
 
     if (argc > 2) {

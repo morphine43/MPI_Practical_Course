@@ -107,21 +107,21 @@ int main(int argc, char*argv[]) {
     if (proc_id == 0) {
         int tail = proc_num*sub_row_num-row_num;
         /* tail-> if the quantity rows is divided between the processes 
-        is not entirely (for correct work Gather() )*/
+is not entirely (for correct work Gather() )*/
 
         // init vector and matrix (memory and values)
         matrix = new double[row_num*col_num];
         for (int i = 0; i < row_num*col_num; i++)
             matrix[i] = 0.0;
-        
+
         serial_res = new double[row_num];
         for (int i = 0; i < row_num; i++)
             serial_res[i] = 0.0;
-        
+
         parallel_res = new double[row_num+tail];
         for (int i = 0; i < row_num+tail; i++)
             parallel_res[i] = 0.0;
-        
+
         for (int i = 0; i < col_num; i++) {
             vector[i] = -(std::rand()%100) + (std::rand()%200)/13.0;
             for (int j = 0; j < row_num; j++) {

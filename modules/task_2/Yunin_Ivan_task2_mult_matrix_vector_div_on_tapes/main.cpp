@@ -98,7 +98,7 @@ int main(int argc, char*argv[]) {
     sub_matrix = new double[sub_row_num*col_num];
     for (int i = 0; i < sub_row_num*col_num; i++)
         sub_matrix[i] = 0.0;
-    
+
     sub_parallel_res = new double[sub_row_num];
     for (int i = 0; i < sub_row_num; i++)
         sub_parallel_res[i] = 0.0;

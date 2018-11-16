@@ -5,7 +5,7 @@
 #include "opencv2/opencv.hpp"
 
 #define MainProc 0
-#define ksize 21
+#define ksize 11 // kernel for filter(and locality rows at the same time)
 
 class img {
  public:
@@ -110,19 +110,23 @@ int main(int argc, char** argv) {
   cv::CommandLineParser parser(argc, argv, kOptions);
   parser.about(kAbout);
 
-  int status, rank, size;
-  img origImg, procImgS, procImgP;
-  unsigned int cols = 0,
+  int status, rank, size; // MPI vars
+  img origImg, procImgS, procImgP; // Original, sequence and parallel images
+  unsigned int cols = 0, 
                rows = 0,
                image_size = 0,
-               portion = 0,
-               filter = 1;
-  int *scount = NULL,
-      *dis = NULL;
+               rows_to_one_proc = 0,
+               remain_rows = 0, // in case of eneven division
+               remain_size = 0, // in pixels
+               portion = 0, // pix to each process
+               locality = 0, // locality of filter
+               filter = 1; 
+  int *scounts = NULL, // use in scatterv and gatherv
+      *displs = NULL;  // use in scatterv and gatherv
   cv::String imageName = "";
-  uchar  *dataIN =  NULL,
-          *dataOUT = NULL,
-       *p = NULL;
+  uchar  *dataIN =  NULL, // buffer
+         *dataOUT = NULL, // arr for result
+         *p = NULL; // pointer to data in gatherv
   double t1 = 0, t2 = 0;
   bool checkImg = true;
 
@@ -180,7 +184,9 @@ int main(int argc, char** argv) {
     cols = origImg.cols;
     rows = origImg.rows;
     image_size = origImg.imgSize;
-    portion = image_size / size;
+	rows_to_one_proc = rows / size;
+    remain_rows = rows - size * rows_to_one_proc;
+	portion = rows_to_one_proc * cols;
     procImgS = img(origImg);
     t1 = MPI_Wtime();
 
@@ -196,33 +202,36 @@ int main(int argc, char** argv) {
     t2 = MPI_Wtime();
     std::cout << "Sequential Time: " << t2 - t1 << std::endl;
     t1 = MPI_Wtime();
+    dataIN = new uchar[portion + 2*cols*ksize + remain_size];
+    dataOUT = new uchar[image_size];
   }
 
-  MPI_Bcast(&cols, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
-  MPI_Bcast(&rows, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
-  MPI_Bcast(&image_size, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
+  MPI_Bcast(&remain_rows, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
+  MPI_Bcast(&rows_to_one_proc, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
   MPI_Bcast(&portion, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
+  MPI_Bcast(&cols, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
   MPI_Bcast(&filter, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
 
-  dataIN = new uchar[portion + 2*cols*ksize];
-  dataOUT = new uchar[image_size];
-  dis = new int[size];
-  scount = new int[size];
+  locality = cols * ksize;
+  remain_size = cols * remain_rows;
+  if (rank != 0)
+    dataIN = new uchar[portion + 2*locality];
+  displs = new int[size];
+  scounts = new int[size];
 
-  for (int i = 0; i < size; ++i) {
-    dis[i] = i*portion -cols * ksize;
-    scount[i] = portion + 2*cols * ksize;
-    if (i == size - 1 || i == 0) {
-      dis[0] = 0;
-      scount[i] = portion + cols * ksize;
-    }
+  for (int i = 1; i < size; i++) {
+    displs[i] = remain_size+i*portion -locality;
+    scounts[i] = portion + 2*locality;
   }
+  displs[0] = 0;
+  scounts[0] = portion + remain_size + locality;
+  scounts[size - 1] = portion + locality;
   if (size == 1)
-    scount[0] = portion;
-  MPI_Scatterv(origImg.pic.data, scount, dis, MPI_UNSIGNED_CHAR, dataIN,
-    scount[rank], MPI_UNSIGNED_CHAR, MainProc, MPI_COMM_WORLD);
+    scounts[0] = portion;
+  MPI_Scatterv(origImg.pic.data, scounts, displs, MPI_UNSIGNED_CHAR, dataIN,
+    scounts[rank], MPI_UNSIGNED_CHAR, MainProc, MPI_COMM_WORLD);
 
-  cv::Mat tmp(scount[rank] / cols, cols, CV_8U, dataIN);
+  cv::Mat tmp(scounts[rank] / cols, cols, CV_8U, dataIN);
 
   if (filter == 1) {
     applyFilter1(&tmp, ksize);
@@ -233,12 +242,19 @@ int main(int argc, char** argv) {
         applyFilter3(&tmp, ksize);
       }
   }
-  p = tmp.data + cols * ksize;  // pointer do data
+
+  p = tmp.data + cols * ksize;  // pointer to data
   if (rank == MainProc) {
     p = tmp.data;
   }
-  MPI_Gather(p, portion, MPI_UNSIGNED_CHAR, dataOUT, portion,
-    MPI_UNSIGNED_CHAR, MainProc, MPI_COMM_WORLD);
+  for (int i = 1; i < size; i++) {
+    displs[i] = i*portion + remain_size;;
+	scounts[i] = portion;
+  }
+  displs[0] = 0;
+  scounts[0] = portion + remain_size;
+  MPI_Gatherv(p, scounts[rank], MPI_UNSIGNED_CHAR, dataOUT, scounts,
+	  displs, MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
 
     if (rank == MainProc) {
       t2 = MPI_Wtime();
@@ -247,7 +263,7 @@ int main(int argc, char** argv) {
 
       if (parser.get<bool>("s")) {
         origImg.show(static_cast<cv::String>("Original"));
-        procImgS.show(static_cast<cv::String>("Sequnce processed"));
+        procImgS.show(static_cast<cv::String>("Sequence processed"));
         procImgP.show(static_cast<cv::String>("Parallel processed"));
         cv::waitKey(0);
       }
@@ -270,8 +286,8 @@ int main(int argc, char** argv) {
     }
   delete[] dataIN;
   delete[] dataOUT;
-  delete[] dis;
-  delete[] scount;
+  delete[] displs;
+  delete[] scounts;
   status = MPI_Finalize();
   if (status != MPI_SUCCESS) {
     return -1;

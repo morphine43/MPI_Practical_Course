@@ -266,7 +266,7 @@ int main(int argc, char** argv) {
           count++;
          }
       }
-      std::cout <<"Different values "<< count << std::endl;
+      std::cout <<"Different values: "<< count << std::endl;
     }
   delete[] dataIN;
   delete[] dataOUT;

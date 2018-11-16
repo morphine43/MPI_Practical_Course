@@ -66,7 +66,7 @@ int main(int argc, char*argv[]) {
     double *serial_res, *parallel_res, *sub_parallel_res;
     double serial_time, parallel_time;
     MPI_Status status;
-    std::rand(static_cast<int>(time(0)));
+    std::srand(static_cast<int>(time(0)));
 
     if (argc > 2) {
         row_num = atoi(argv[1]);

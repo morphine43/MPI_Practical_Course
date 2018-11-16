@@ -6,22 +6,23 @@
 #include <cstdlib>
 #include <cmath>
 void M_MIN(void *sb, void *rb, int n,
-   MPI_Datatype t, MPI_Op op, int rt, MPI_Comm com) {
-   MPI_Status st;
-   int ProcNum;
-   MPI_Comm_size(com, &ProcNum);
+ MPI_Datatype t, MPI_Op op, int rt, MPI_Comm com) {
+ MPI_Status st;
+ int ProcNum;
+ MPI_Comm_size(com, &ProcNum);
       for (int j = 0; j < ProcNum; j++) {
-         if (j != rt)
+         if (j != rt){
             MPI_Recv(sb, n, t, j, 0, com, &st);
+          }
                for (int i = 0; i < n; i++) {
                    if (j == rt) {
 reinterpret_cast< int* > (&rb)[i] = reinterpret_cast< int* >(&sb)[i];
 std::cout << "result in root " << reinterpret_cast<int*>(&rb)[i] << std::endl;
 }
 else {
- if (reinterpret_cast<int*>(&rb)[i] < reinterpret_cast<int*>(&sb)[i])
+if (reinterpret_cast<int*>(&rb)[i] < reinterpret_cast<int*>(&sb)[i])
 reinterpret_cast<int*>(&rb)[i] = reinterpret_cast<int*>(&sb)[i];
- std::cout << "result " << j << " " << reinterpret_cast<int*>(&rb)[i]
+std::cout << "result " << j << " " << reinterpret_cast<int*>(&rb)[i]
 << "  last " << reinterpret_cast<int*>(&sb)[i] << std::endl;
 }
 }
@@ -32,13 +33,15 @@ void M_MAX(void *sf, void *rf, int n, MPI_Datatype t,
 MPI_Status st;
 int ProcNum;
 MPI_Comm_size(com, &ProcNum);
-   for (int j = 0; j < ProcNum; j++) {
-    if (j != rt)
+ for (int j = 0; j < ProcNum; j++) {
+    if (j != rt) {
       MPI_Recv(sf, n, t, j, 0, com, &st);
+    }
        for (int i = 0; i < n; i++) {
-    if (j == rt) {
+ if (j == rt) {
 reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
- std::cout << "result in root " << reinterpret_cast<int*>(&rf)[i] << std::endl; }
+std::cout << "result in root " << reinterpret_cast<int*>(&rf)[i] ;
+}
 else {
  if (reinterpret_cast<int*>(&rf)[i] < (reinterpret_cast<int*>(&sf)[i]))
 reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
@@ -50,9 +53,9 @@ reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
 }
 void LXOR(void *sf, void *rf, int n, MPI_Datatype t,
                 MPI_Op op, int rt, MPI_Comm com) {
- MPI_Status st;
- int ProcNum;
- MPI_Comm_size(com, &ProcNum);
+MPI_Status st;
+int ProcNum;
+MPI_Comm_size(com, &ProcNum);
      for (int j = 0; j < ProcNum; j++) {
       if (j != rt)
         MPI_Recv(sf, n, t, j, 0, com, &st);
@@ -366,11 +369,11 @@ else {
             MPI_Send(sf, n, t, mas[i + 1], 0, comm);
             for (int q = 0; q < n; q++) {
               countMassElement[q] = reinterpret_cast<int*>(&rf)[q];
-}
+              }
 }
 else {
             for (int r = 0; r < n; r++) {
-   reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
+reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
 }
   MPI_Recv(sf, n, t, mas[i - 1], 0, comm, &st);
   MY_MPI_SUMM_Tree(sf, rf, n);
@@ -405,16 +408,16 @@ else {
 }
 }
 else {
- rf = sf;
+rf = sf;
 }
 }
 }
 int Tree(void *sf, void *rf, int n, MPI_Datatype t, MPI_Op op,
-                                      int rt, MPI_Comm com) {
- int ProcNum, ProcRank;
- MPI_Comm_size(com, &ProcNum);
- MPI_Comm_rank(com, &ProcRank);
- int * massProcRankSend = new int[ProcNum];
+              int rt, MPI_Comm com) {
+int ProcNum, ProcRank;
+MPI_Comm_size(com, &ProcNum);
+MPI_Comm_rank(com, &ProcRank);
+int * massProcRankSend = new int[ProcNum];
      for (int i = 0; i < ProcNum; i++) {
      massProcRankSend[i] = i;
 }
@@ -444,22 +447,22 @@ if (ProcRank == 0) {
    Time_my2 = MPI_Wtime();
    Time_tree1 = MPI_Wtime();
 }
-    Tree(mas, mas_r, n, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+ Tree(mas, mas_r, n, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 if (ProcRank == 0) {
-   Time_tree2 = MPI_Wtime();
+ Time_tree2 = MPI_Wtime();
 for (int i = 0; i < n; i++) {
 }
-    Time_MPI1 = MPI_Wtime();
+ Time_MPI1 = MPI_Wtime();
 }
-    MPI_Reduce(mas, mas_r, n, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+ MPI_Reduce(mas, mas_r, n, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 if (ProcRank == 0) {
     Time_MPI2 = MPI_Wtime();
 std::cout << "reduce realisation MPI: t =  " <<
-     Time_MPI2 - Time_MPI1 << std::endl;
+ Time_MPI2 - Time_MPI1 << std::endl;
 std::cout << "reduce realisation my tree: t =  " <<
-     Time_tree2 - Time_tree1 << std::endl;
+ Time_tree2 - Time_tree1 << std::endl;
 std::cout << "reduce realisation my: t =  " << Time_my2 - Time_my1 << std::endl;
 }
  MPI_Finalize();
-   return 0;
+ return 0;
 }

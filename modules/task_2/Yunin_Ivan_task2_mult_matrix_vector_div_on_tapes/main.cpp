@@ -66,7 +66,7 @@ int main(int argc, char*argv[]) {
     double *serial_res, *parallel_res, *sub_parallel_res;
     double serial_time, parallel_time;
     MPI_Status status;
-    srand(static_cast<int>(time(0)));
+    sstd::rand(static_cast<int>(time(0)));
 
     if (argc > 2) {
         row_num = atoi(argv[1]);
@@ -104,9 +104,9 @@ int main(int argc, char*argv[]) {
         serial_res = new double[row_num];
         parallel_res = new double[row_num+tail];
         for (int i = 0; i < col_num; i++) {
-            vector[i] = -(rand_r()%100) + (rand_r()%200)/13.0;
+            vector[i] = -(std::rand()%100) + (std::rand_r()%200)/13.0;
             for (int j = 0; j < row_num; j++) {
-                matrix[j*col_num+i] = ((rand_r()%300)/17.0)-(rand_r()%100)/3.0;
+                matrix[j*col_num+i] = ((std::rand_r()%300)/17.0)-(std::rand_r()%100)/3.0;
             }
         }
         // end init vector and matrix (memory and values)

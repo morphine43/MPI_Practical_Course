@@ -28,11 +28,11 @@ int main(int argc, char* argv[]) {
   assert(destination >= 0);
 
   /* Mpi init block */
-  status = MPI_Init(&argc, &argv);
+  MPI_Init(&argc, &argv);
 
-  status = MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  status = MPI_Comm_size(MPI_COMM_WORLD, &size);
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
 
   ring_host *test_host = new ring_host(rank, size);
 

@@ -104,8 +104,8 @@ void BOR(void *sf, void *rf,
           for (int i = 0; i < n; i++) {
                if (j == rt) {
 reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
-   std::cout << "result in root " <<
-   reinterpret_cast<int*>(&rf)[i] << std::endl;
+std::cout << "result in root " <<
+reinterpret_cast<int*>(&rf)[i] << std::endl;
 } else {
 reinterpret_cast<int*>(&rf)[i] =
 reinterpret_cast<int*>(&rf)[i] | reinterpret_cast<int*>(&sf)[i];
@@ -237,7 +237,8 @@ reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
 } else {
      if (reinterpret_cast<int*>(&rf)[i] < reinterpret_cast<int*>(&sf)[i])
 reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
-  std::cout << "result " << j << reinterpret_cast<int*>(&rf)[i] << "  last " << reinterpret_cast<int*>(&sf)[i];
+  std::cout << "result " << j << reinterpret_cast<int*>(&rf)[i] <<
+   "  last " << reinterpret_cast<int*>(&sf)[i];
 }
 }
 }

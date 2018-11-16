@@ -1,9 +1,9 @@
 /* Copyright Nikita Danilov */
+#include <mpi.h>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
-#include <mpi.h>
 
 #include "include/host.h"
 

@@ -1,6 +1,6 @@
 /* Copyright Nikita Danilov */
-#ifndef MODULES_TASK_2_NDANILOV_TOPOLOGIES_HOST_H_
-#define MODULES_TASK_2_NDANILOV_TOPOLOGIES_HOST_H_
+#ifndef MODULES_TASK_2_NDANILOV_TOPOLOGIES_INCLUDE_HOST_H_
+#define MODULES_TASK_2_NDANILOV_TOPOLOGIES_INCLUDE_HOST_H_
 
 #include <string>
 
@@ -28,4 +28,4 @@ class ring_host : public host {
     int who_next() const final;
     void xmit() final;
 };
-#endif  // MODULES_TASK_2_NDANILOV_TOPOLOGIES_HOST_H_
+#endif  // MODULES_TASK_2_NDANILOV_TOPOLOGIES_INCLUDE_HOST_H_

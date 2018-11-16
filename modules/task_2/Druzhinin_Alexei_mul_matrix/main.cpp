@@ -114,9 +114,9 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &Id);
 
     // dividing the matrix A and B
-    partA = static_cast<int>(cmath::ceil(static_cast<double>(Arows) /
+    partA = static_cast<int>(std::ceil(static_cast<double>(Arows) /
     static_cast<double>(numProcs)));
-    partB = static_cast<int>(cmath::ceil(static_cast<double>(Bcols) /
+    partB = static_cast<int>(std::ceil(static_cast<double>(Bcols) /
     static_cast<double>(numProcs)));
     size_partA = partA * Acols;
     size_partB = partB * Brows;

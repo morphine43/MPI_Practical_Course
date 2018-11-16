@@ -5,8 +5,8 @@
 #define MAX_DATA_SIZE 255
 
 struct packet {
-  int src = -1;
-  int dst = -1;
+  int src;
+  int dst;
   char data[MAX_DATA_SIZE];
 };
 

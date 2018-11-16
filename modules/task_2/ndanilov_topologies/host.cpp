@@ -86,16 +86,21 @@ void ring_host::xmit() {
 
       MPI_Send(&pkt, 1, type, dest, id, MPI_COMM_WORLD);
       pkt.src = -1;
-      std::cout << "Process " << id << " send packet to " << dest << " process" << std::endl;
+      std::cout << "Process " << id << " send packet to " << dest
+                << " process" << std::endl;
     } else {
-       MPI_Recv(&dest, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+       MPI_Recv(&dest, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG,
+                MPI_COMM_WORLD, &status);
       if (dest == id) {
-        MPI_Recv(&pkt, 1, type, status.MPI_SOURCE, status.MPI_SOURCE, MPI_COMM_WORLD, &status);
-        std::cout << "Process " << id << " received packet from " << status.MPI_SOURCE << " process" << std::endl;
+        MPI_Recv(&pkt, 1, type, status.MPI_SOURCE, status.MPI_SOURCE,
+                 MPI_COMM_WORLD, &status);
+        std::cout << "Process " << id << " received packet from "
+                  << status.MPI_SOURCE << " process" << std::endl;
         done = 0;
         if (id == pkt.dst) {
           done = 1;
-          std::cout << std::endl << "Packet transfer completed successfully!" << std::endl << std::endl;
+          std::cout << std::endl << "Packet transfer completed successfully!"
+                    << std::endl << std::endl;
           std::cout << "Packet data:" << std::endl;
           std::cout << "src = " << pkt.src << std::endl;
           std::cout << "dst = " << pkt.dst << std::endl;
@@ -108,7 +113,8 @@ void ring_host::xmit() {
         if (dst_id != id)
           MPI_Send(&done, 1, MPI_INT, dst_id, id, MPI_COMM_WORLD);
     } else {
-      MPI_Recv(&done, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+      MPI_Recv(&done, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG,
+               MPI_COMM_WORLD, &status);
     }
   }
 

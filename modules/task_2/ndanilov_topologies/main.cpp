@@ -11,8 +11,7 @@ int main(int argc, char* argv[]) {
   /* Mpi variables */
   int status,
       rank,
-      size,
-      proc_num;
+      size;
   int source, destination;
   std::string msg;
 

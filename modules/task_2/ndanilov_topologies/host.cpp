@@ -69,7 +69,7 @@ int ring_host::who_next() const {
 }
 
 void ring_host::xmit() {
-  int done = 0, dest, stop_word = 0;
+  int done = 0, dest;
   MPI_Status status;
 
   type = register_mpi_type(pkt);

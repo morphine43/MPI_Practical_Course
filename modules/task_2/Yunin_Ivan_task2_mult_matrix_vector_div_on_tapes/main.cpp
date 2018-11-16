@@ -58,7 +58,7 @@ double scal_mult(double* a, double* b, int size) {
 }
 
 
-int main (int argc, char*argv[]) {
+int main(int argc, char*argv[]) {
     int col_num = 100, row_num = 100, sub_row_num;
     int proc_num, proc_id, flag;
     int flag_out = 0;
@@ -98,21 +98,23 @@ int main (int argc, char*argv[]) {
         int tail = proc_num*sub_row_num-row_num;
         /* tail-> if the quantity rows is divided between the processes 
         is not entirely (for correct work Gather() )*/
+
         // init vector and matrix (memory and values)
         matrix = new double[row_num*col_num];
         serial_res = new double[row_num];
         parallel_res = new double[row_num+tail];
         for (int i = 0; i < col_num; i++) {
-            vector[i] = -(rand()%100) + (rand()%200)/13.0;
+            vector[i] = -(rand_r()%100) + (rand_r()%200)/13.0;
             for (int j = 0; j < row_num; j++) {
-                matrix[j*col_num+i] = ((rand()%300)/17.0)-(rand()%100)/3.0;
+                matrix[j*col_num+i] = ((rand_r()%300)/17.0)-(rand_r()%100)/3.0;
             }
         }
         // end init vector and matrix (memory and values)
         // serial multiplication
         serial_time = MPI_Wtime();
-        for (int i = 0; i < row_num;i++) {
-            serial_res[i] = scal_mult(vector, matrix+col_num*i, col_num); // (*) look description
+        for (int i = 0; i < row_num; i++) {
+            serial_res[i] = scal_mult(vector, matrix+col_num*i, col_num);
+            // (*) look description
         }
         serial_time = MPI_Wtime() - serial_time;
         std::cout << "serial time: " << serial_time << '\n';
@@ -134,7 +136,7 @@ int main (int argc, char*argv[]) {
         }
     // end calculate sub result
     MPI_Gather(sub_parallel_res, sub_row_num, MPI_DOUBLE, parallel_res,
-               sub_row_num,MPI_DOUBLE, 0, MPI_COMM_WORLD);
+               sub_row_num, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     /* collection result data in proc#0 (each procces send 
     part of result_vector, part had dim [sub_row_num x 1])*/
 
@@ -144,11 +146,11 @@ int main (int argc, char*argv[]) {
         parallel_time = MPI_Wtime() - parallel_time;
         if (flag_out) {
             std::cout << "Serial result vector" << '\n';
-            for (int i = 0; i < row_num;i++) {
+            for (int i = 0; i < row_num; i++) {
                 std::cout << serial_res[i] << " ";
             }
             std::cout << '\n' << "Parallel result vector" << '\n';
-            for (int i = 0; i < row_num;i++) {
+            for (int i = 0; i < row_num; i++) {
                 std::cout << parallel_res[i] << " ";
             }
         }

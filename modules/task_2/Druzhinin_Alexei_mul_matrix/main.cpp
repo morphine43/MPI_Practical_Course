@@ -5,6 +5,7 @@
 #include <string>
 #include <ctime>
 #include <cstdlib>
+#include <cmath>
 
 // Check result of linear and parallel
 void CheckResults(int *linearResult, int *parallelResult, int size) {
@@ -48,7 +49,7 @@ void Transpose(int *matrixold, int *matrixnew, int rows, int cols) {
 void Print(int *matrix, int rows, int cols) {  // Print
     for (int i = 0; i < cols * rows; i++) {
         if (i % cols == 0)
-            cout << endl;
+            std::cout << std::endl;
         std::cout << matrix[i] << " ";
     }
     std::cout << std::endl;
@@ -113,9 +114,9 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &Id);
 
     // dividing the matrix A and B
-    partA = static_cast<int>(ceil(static_cast<double>(Arows) /
+    partA = static_cast<int>(cmath::ceil(static_cast<double>(Arows) /
     static_cast<double>(numProcs)));
-    partB = static_cast<int>(ceil(static_cast<double>(Bcols) /
+    partB = static_cast<int>(cmath::ceil(static_cast<double>(Bcols) /
     static_cast<double>(numProcs)));
     size_partA = partA * Acols;
     size_partB = partB * Brows;

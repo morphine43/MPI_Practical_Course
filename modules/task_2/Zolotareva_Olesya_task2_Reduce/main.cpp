@@ -253,9 +253,9 @@ MPI_Comm_size(comm, &ProcNum);
           MPI_Recv(sendbuf, count, type, j, 0, comm, &st);
 		for (int i = 0; i < count; i++) {
        if (j == root) {
-          ((int *)recvbuf)[i] = ((int *)sendbuf)[i];
+          dynamic_cast(&rrecvbuf)[i] = dynamic_cast(&sendbuf)[i]);
 } else {
-((int *)recvbuf)[i] = ((int *)recvbuf)[i] + ((int *)sendbuf)[i];
+dynamic_cast(&recvbuf)[i]) = dynamic_cast(&recvbuf)[i]) + dynamic_cast(&sendbuf)[i];
 }
 }
 }
@@ -264,7 +264,7 @@ void MY_MPI_SUMM_Tree(void *sendbuf, void *recvbuf, int count) {
   int ProcNum;
   MPI_Comm_rank(MPI_COMM_WORLD, &ProcNum);
    for (int i = 0; i < count; i++) {
-((int *)recvbuf)[i] = ((int *)recvbuf)[i] + ((int *)sendbuf)[i];
+dynamic_cast(&recvbuf)[i] = dynamic_cast(&recvbuf)[i] + dynamic_cast(&sendbuf)[i];
 }
 }
 
@@ -413,9 +413,7 @@ int * massProcRankSend = new int[ProcNum];
      for (int i = 0; i < ProcNum; i++) {
      massProcRankSend[i] = i;
 }
-rec(sf, rf, n, t, op, rt, com, massProcRankSend,ProcNum,0);
-if (ProcRank == rt) {
-}
+rec(sf, rf, n, t, op, rt, com, massProcRankSend, ProcNum,0);
 return 0;
 }
 
@@ -429,7 +427,7 @@ int main(int argc, char* argv[]) {
     double Time_tree1 = 0, Time_tree2 = 0;
     double Time_MPI1 = 0, Time_MPI2 = 0;
           MPI_Init(&argc, &argv);
-          MPI_Comm_size(MPI_COMM_WORLD,&ProcNum);
+          MPI_Comm_size(MPI_COMM_WORLD, &ProcNum);
           MPI_Comm_rank(MPI_COMM_WORLD, &ProcRank);
 srand(static_cast<int>(time(NULL)));
         for (int i = 0; i < n; i++) {

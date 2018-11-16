@@ -106,6 +106,7 @@ void ring_host::xmit() {
           }
       }
     }
+    MPI_Barrier(MPI_COMM_WORLD);
     if (dest == id) {
       for (int dst_id = 0; dst_id < proc_number; ++dst_id)
         if (dst_id != id)

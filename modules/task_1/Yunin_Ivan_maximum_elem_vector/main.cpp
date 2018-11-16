@@ -16,12 +16,10 @@ double max_func(double* first, int size){
 }
 
 int main (int argc, char* argv[]){
-	int tail_flag=0; //for сheck the existence  vector "tail"
 	int size=42, proc_num,proc_id, block_size,flag;
 	double *vector,*temp_vector;
 	double serial_time, parallel_time;
 	double serial_max, parallel_max, temp_max;
-	MPI_Status status;
 	srand((int)time(0));
 	
 	if (argc>1){

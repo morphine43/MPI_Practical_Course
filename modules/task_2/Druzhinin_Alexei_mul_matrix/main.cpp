@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
         Acols = atoi(argv[2]);
         Brows = atoi(argv[3]);
         Bcols = atoi(argv[4]);
-    }else {
+    } else {
         Arows = 2;
         Acols = 3;
         Brows = 3;
@@ -113,9 +113,10 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &Id);
 
     // dividing the matrix A and B
-    partA = static_cast<int>(ceil(static_cast<double>(Arows) / 
+    partA = static_cast<int>(ceil(static_cast<double>(Arows) /
     static_cast<double>(numProcs)));
-    partB = int(ceil(double(Bcols) / double(numProcs)));
+    partB = static_cast<int>(ceil(static_cast<double>(Bcols) /
+    static_cast<double>(numProcs)));
     size_partA = partA * Acols;
     size_partB = partB * Brows;
     remainderA = partA * numProcs - Arows;
@@ -186,7 +187,7 @@ int main(int argc, char *argv[]) {
                 }
             }
         }
-    }else {
+    } else {
         for (int i = 0; i < (partA - remainderA); i++) {
             for (int j = 0; j < (partB - remainderB); j++) {
                 tmpC[i * Bcols + j + (partA - remainderA) *
@@ -224,7 +225,7 @@ int main(int argc, char *argv[]) {
                                 index * remainderB] = tmp;
                     }
                 }
-            }else {
+            } else {
                 for (int i = 0; i < partA; i++) {
                     for (int j = 0; j < (partB - remainderB); j++) {
                         tmp = 0;
@@ -239,7 +240,7 @@ int main(int argc, char *argv[]) {
                     }
                 }
             }
-        }else {
+        } else {
             if (nm - Id != 1) {
                 for (int i = 0; i < (partA - remainderA); i++) {
                     for (int j = 0; j < partB; j++) {
@@ -254,7 +255,7 @@ int main(int argc, char *argv[]) {
                                         index * remainderB] = tmp;
                     }
                 }
-            }else {
+            } else {
                 for (int i = 0; i < (partA - remainderA); i++) {
                     for (int j = 0; j < (partB - remainderB); j++) {
                         tmp = 0;

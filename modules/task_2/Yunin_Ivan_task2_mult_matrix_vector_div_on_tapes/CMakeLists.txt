@@ -1,4 +1,4 @@
-project( Yunin_Ivan_task2_mult_matrix_vect_div_on_tapes )
+project( Yunin_Ivan_task2_mult_matrix_vector_div_on_tapes )
 
 message( STATUS "-- " ${PROJECT_NAME} )
 add_executable( ${PROJECT_NAME} main.cpp )

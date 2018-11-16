@@ -1,12 +1,13 @@
-#include <mpi.h> 
+//copyright (c) by lesya89
+#include <mpi.h>
+#include <assert.h>
 #include <iostream>
 #include <ctime>
-#include <assert.h>
 #include <cstdlib>
 #include <cmath>
 using namespace std;
-void M_MIN(void *sb, void *rb,int n, MPI_Datatype t, 
-	MPI_Op op, int rt, MPI_Comm com) 
+void M_MIN(void *sb, void *rb, int n, MPI_Datatype t,
+MPI_Op op, int rt, MPI_Comm com)
 { MPI_Status st;
 int ProcNum;
 MPI_Comm_size(com, &ProcNum);
@@ -15,12 +16,12 @@ if (j != rt)
 MPI_Recv(sb, n, t, j, 0, com, &st);
 for (int i = 0; i < n; i++)
 { if (j == rt) {
-((int *)rb)[i] = ((int *)sb)[i];
+	reinterpret_cast< int* > (&rb)[i] = reinterpret_cast< int* >(&sb)[i];
 cout << "result in root " << ((int *)rb)[i] << endl;
 }
 else { if (((int *)rb)[i] < ((int *)sb)[i])
 ((int *)rb)[i] = ((int *)sb)[i];
-cout << "result " << j << " " << ((int *)rb)[i] 
+cout << "result " << j << " " << ((int *)rb)[i]
 << "  last " << ((int *)sb)[i] << endl;
 }
 }
@@ -187,16 +188,15 @@ cout << "result " << j << ((int *)rf)[i] << "  last " << ((int *)sf)[i] ;
 }
 }
 void MIN(void *sf, void *rf, int n, MPI_Datatype t, 
-	MPI_Op op, int rt, MPI_Comm comm)
- { MPI_Status st;
+MPI_Op op, int rt, MPI_Comm comm)
+{ MPI_Status st;
 int ProcNum;
 MPI_Comm_size(comm, &ProcNum);
 for (int j = 0; j < ProcNum; j++) {
 if (j != rt)
 MPI_Recv(sf, n, t, j, 0, comm, &st);
 for (int i = 0; i < n; i++)
-{
-if (j == rt) {
+{ if (j == rt) {
 ((int *)rf)[i] = ((int *)sf)[i];
 cout << "result in root " << ((int *)rf)[i] << endl;
 }
@@ -208,8 +208,8 @@ cout << "result " << j << ((int *)rf)[i] << "  last " << ((int *)sf)[i];
 }
 }
 void MAX(void *sf, void *rf, int n, MPI_Datatype t,
-	MPI_Op op, int rt, MPI_Comm comm)
- { MPI_Status st;
+MPI_Op op, int rt, MPI_Comm comm)
+{ MPI_Status st;
 int ProcNum;
 MPI_Comm_size(comm, &ProcNum);
 for (int j = 0; j < ProcNum; j++) {
@@ -229,7 +229,7 @@ cout << "result " << j << ((int *)rf)[i] << "  last " << ((int *)sf)[i];
 }
 }
 void SUMM(void *sf, void *rf, int n, MPI_Datatype t,
-	MPI_Op op, int rt, MPI_Comm comm)
+MPI_Op op, int rt, MPI_Comm comm)
 { MPI_Status st;
 int ProcNum;
 MPI_Comm_size(comm, &ProcNum);
@@ -254,7 +254,7 @@ for (int i = 0; i < count; i++)
 }
 }
 int MY_MPI_Reduce(void *sf, void *rf, int n, MPI_Datatype t, 
-	MPI_Op op, int rt, MPI_Comm comm)
+MPI_Op op, int rt, MPI_Comm comm)
 {
 int ProcNum, ProcRank;
 MPI_Comm_size(comm, &ProcNum);
@@ -310,12 +310,11 @@ return -1;
 }
 }
 }
- return -10;
+return -10;
 }
-
 void rec(void *sf, void *rf, int n, 
-	MPI_Datatype t, MPI_Op op, int rt, 
-	MPI_Comm comm, int* mas, int size,int h)
+MPI_Datatype t, MPI_Op op, int rt, 
+MPI_Comm comm, int* mas, int size, int h)
  { int curentSize, procNum, rank;
 int* curentMass;
 int* countMassElement = new int[n];
@@ -391,7 +390,7 @@ else { rf = sf; }
 }
 }
 int Tree(void *sf, void *rf, int n, MPI_Datatype t, MPI_Op op,
-	int rt, MPI_Comm com) {
+int rt, MPI_Comm com) {
 int ProcNum, ProcRank;
 MPI_Comm_size(com, &ProcNum);
 MPI_Comm_rank(com, &ProcRank);
@@ -403,6 +402,8 @@ if (ProcRank == rt) {
 }
 return 0;
 }
+
+
 int main(int argc, char* argv[]) {
 int n = atoi(argv[1]);
 int *mas = new int[n];

@@ -63,12 +63,12 @@ int main(int argc, char*argv[]) {
     int proc_num, proc_id, flag;
     int flag_out = 0;
     double *vector = NULL;
-    double *matrix = NULL; 
+    double *matrix = NULL;
     double *sub_matrix = NULL;
     double *serial_res = NULL;
     double *parallel_res = NULL;
     double *sub_parallel_res = NULL;
-    double serial_time =0.0, parallel_time = 0.0;
+    double serial_time = 0.0, parallel_time = 0.0;
     std::srand(static_cast<int>(time(0)));
 
     if (argc > 2) {

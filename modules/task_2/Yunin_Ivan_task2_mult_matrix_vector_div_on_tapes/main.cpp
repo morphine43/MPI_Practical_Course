@@ -65,7 +65,6 @@ int main(int argc, char*argv[]) {
     double *vector, *matrix, *sub_matrix;
     double *serial_res, *parallel_res, *sub_parallel_res;
     double serial_time, parallel_time;
-    MPI_Status status;
     std::srand(static_cast<int>(time(0)));
 
     if (argc > 2) {

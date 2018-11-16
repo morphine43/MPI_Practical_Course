@@ -123,8 +123,8 @@ int main(int argc, char*argv[]) {
     }
 
     // (#)(start) code executed by all processes
-    MPI_Bcast(vector, col_num, MPI_DOUBLE, 0, MPI_COMM_WORLD); /* send vector
-    to all procceses*/
+    MPI_Bcast(vector, col_num, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    //MPI_Bcast send vector to all procceses
     MPI_Scatter(matrix, sub_row_num*col_num, MPI_DOUBLE,
        sub_matrix, sub_row_num*col_num, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     /* send parts of matrix to all processes (each procces gets matrix
@@ -132,7 +132,7 @@ int main(int argc, char*argv[]) {
     // begin calculate sub result
     for (int i = 0; i < sub_row_num; i++) {
             sub_parallel_res[i] = scal_mult(vector, (sub_matrix+col_num*i),
-                                            col_num); // (*) look description
+                                            col_num);// (*) look description
         }
     // end calculate sub result
     MPI_Gather(sub_parallel_res, sub_row_num, MPI_DOUBLE, parallel_res,

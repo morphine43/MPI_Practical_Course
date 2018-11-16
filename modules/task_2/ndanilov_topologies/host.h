@@ -1,3 +1,4 @@
+/* Copyright Nikita Danilov */
 #ifndef MODULES_TASK_2_NDANILOV_TOPOLOGIES_HOST_H_
 #define MODULES_TASK_2_NDANILOV_TOPOLOGIES_HOST_H_
 

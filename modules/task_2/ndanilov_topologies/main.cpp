@@ -1,3 +1,4 @@
+/* Copyright Nikita Danilov */
 #include <assert.h>
 #include <time.h>
 #include <mpi.h>

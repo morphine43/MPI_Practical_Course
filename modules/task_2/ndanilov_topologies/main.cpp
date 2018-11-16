@@ -9,8 +9,7 @@
 
 int main(int argc, char* argv[]) {
   /* Mpi variables */
-  int status,
-      rank,
+  int rank,
       size;
   int source, destination;
   std::string msg;

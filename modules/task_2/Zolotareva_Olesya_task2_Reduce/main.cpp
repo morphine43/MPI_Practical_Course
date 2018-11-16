@@ -1,4 +1,4 @@
-//copyright (c) by lesya89
+// copyright (c) by lesya89
 #include <mpi.h>
 #include <assert.h>
 #include <iostream>
@@ -16,19 +16,19 @@ if (j != rt)
 MPI_Recv(sb, n, t, j, 0, com, &st);
 for (int i = 0; i < n; i++)
 { if (j == rt) {
-	reinterpret_cast< int* > (&rb)[i] = reinterpret_cast< int* >(&sb)[i];
-cout << "result in root " << ((int *)rb)[i] << endl;
+reinterpret_cast< int* > (&rb)[i] = reinterpret_cast< int* >(&sb)[i];
+cout << "result in root " << reinterpret_cast<int*>(&rb)[i] << endl;
 }
-else { if (((int *)rb)[i] < ((int *)sb)[i])
-((int *)rb)[i] = ((int *)sb)[i];
-cout << "result " << j << " " << ((int *)rb)[i]
-<< "  last " << ((int *)sb)[i] << endl;
+else { if (reinterpret_cast<int*>(&rb)[i] < reinterpret_cast<int*>(&sb)[i])
+reinterpret_cast<int*>(&rb)[i] = reinterpret_cast<int*>(&sb)[i];
+cout << "result " << j << " " << reinterpret_cast<int*>(&rb)[i]
+<< "  last " << reinterpret_cast<int*>(&sb)[i] << endl;
 }
 }
 }
 }
 void M_MAX(void *sf, void *rf, int n, MPI_Datatype t,
-	MPI_Op op, int rt, MPI_Comm com)
+MPI_Op op, int rt, MPI_Comm com)
 { MPI_Status st;
 int ProcNum;
 MPI_Comm_size(com, &ProcNum);
@@ -37,19 +37,19 @@ if (j != rt)
 MPI_Recv(sf, n, t, j, 0, com, &st);
 for (int i = 0; i < n; i++)
 { if (j == rt) {
-((int *)rf)[i] = ((int *)sf)[i];
-cout << "result in root " << ((int *)rf)[i] << endl;
+	reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
+cout << "result in root " << reinterpret_cast<int*>(&rf)[i] << endl;
 }
-else { if (((int *)rf)[i] < ((int *)sf)[i])
-((int *)rf)[i] = ((int *)sf)[i];
-cout << "result " << j << " " << ((int *)rf)[i]
-<< "  last " << ((int *)sf)[i] << endl;
+else { if (reinterpret_cast<int*>(&rf)[i] < (reinterpret_cast<int*>(&sf)[i]))
+reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
+cout << "result " << j << " " << reinterpret_cast<int*>(&rf)[i]
+<< "  last " << reinterpret_cast<int*>(&sf)[i] << endl;
 }
 }
 }
 }
 void LXOR(void *sf, void *rf, int n, MPI_Datatype t, 
-	MPI_Op op, int rt, MPI_Comm com)
+MPI_Op op, int rt, MPI_Comm com)
 { MPI_Status st;
 int ProcNum;
 MPI_Comm_size(com, &ProcNum);
@@ -58,12 +58,13 @@ if (j != rt)
 MPI_Recv(sf, n, t, j, 0, com, &st);
 for (int i = 0; i < rt; i++)
 { if (j == rt) {
-((int *)rf)[i] = ((int *)sf)[i];
-cout << "result in root " << ((int *)rf)[i] << endl;
+	reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
+cout << "result in root " << reinterpret_cast<int*>(&rf)[i] << endl;
 }
-else { ((int *)rf)[i] = ((int *)rf)[i] != ((int *)sf)[i];
-cout << "result " << j << " " << ((int *)rf)[i] 
-<< "  last " << ((int *)sf)[i] << endl;
+else {
+reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&rf)[i] != reinterpret_cast<int*>(&sf)[i];
+cout << "result " << j << " " << reinterpret_cast<int*>(&rf)[i]
+<< "  last " << reinterpret_cast<int*>(&sf)[i] << endl;
 }
 }
 }
@@ -79,12 +80,13 @@ MPI_Recv(sf, n, t, j, 0, com, &st);
 for (int i = 0; i < n; i++)
 {
 if (j == rt) {
-((int *)rf)[i] = ((int *)sf)[i];
-cout << "result in root " << ((int *)rf)[i] << endl;
+	reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
+cout << "result in root " << reinterpret_cast<int*>(&rf)[i] << endl;
 }
-else { ((int *)rf)[i] = ((int *)rf)[i] ^ ((int *)sf)[i];
+else {
+	reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&rf)[i] ^ reinterpret_cast<int*>(&sf)[i];
 cout << "result " << j << " " << ((int *)rf)[i] 
-<< "  last " << ((int *)sf)[i] << endl;
+<< "  last " << reinterpret_cast<int*>(&sf)[i] << endl;
 }
 }
 }
@@ -98,11 +100,12 @@ if (j != rt)
 MPI_Recv(sf, n, t, j, 0, com, &st);
 for (int i = 0; i < n; i++)
 { if (j == rt) {
-((int *)rf)[i] = ((int *)sf)[i];
+	reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
 cout << "result in root " << ((int *)rf)[i] << endl;
 }
-else { ((int *)rf)[i] = ((int *)rf)[i] | ((int *)sf)[i];
-cout << "result " << j  << ((int *)rf)[i] << "  last " << ((int *)sf)[i];
+else {
+	reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&rf)[i] | reinterpret_cast<int*>(&sf)[i];
+cout << "result " << j  << reinterpret_cast<int*>(&rf)[i] << "  last " << reinterpret_cast<int*>(&sf)[i];
 }
 }
 }
@@ -117,11 +120,12 @@ if (j != rt)
 MPI_Recv(sf, n, t, j, 0, com, &st);
 for (int i = 0; i < n; i++)
 { if (j == rt) {
-((int *)rf)[i] = ((int *)sf)[i];
-cout << "result in root " << ((int *)rf)[i] << endl;
+	reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
+cout << "result in root " << reinterpret_cast<int*>(&rf)[i] << endl;
 }
-else { ((int *)rf)[i] = ((int *)rf)[i] || ((int *)sf)[i];
-cout << "result " << j  << ((int *)rf)[i] << "  last " << ((int *)sf)[i];
+else { reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&rf)[i] 
+|| reinterpret_cast<int*>(&sf)[i];
+cout << "result " << j  << reinterpret_cast<int*>(&rf)[i] << "  last " << reinterpret_cast<int*>(&sf)[i];
 }
 }
 }
@@ -136,13 +140,13 @@ if (j != rt)
 MPI_Recv(sf, n, t, j, 0, comm, &st);
 for (int i = 0; i < n; i++)
 { if (j == rt) {
-((int *)rf)[i] = ((int *)sf)[i];
-cout << "result in root " << ((int *)rf)[i] << endl;
+((int *)rf)[i] = reinterpret_cast<int*>(&sf)[i];
+cout << "result in root " << reinterpret_cast<int*>(&rf)[i] << endl;
 }
 else {
-((int *)rf)[i] = ((int *)rf)[i] & ((int *)sf)[i];
+	reinterpret_cast<int*>(&rf)[i] = ((int *)rf)[i] & reinterpret_cast<int*>(&sf)[i];
 
-cout << "result " << j << ((int *)rf)[i] << "  last " << ((int *)sf)[i];
+cout << "result " << j << reinterpret_cast<int*>(&rf)[i] << "  last " << reinterpret_cast<int*>(&sf)[i];
 }
 }
 }
@@ -157,12 +161,13 @@ if (j != rt)
 MPI_Recv(sf, n, t, j, 0, comm, &st);
 for (int i = 0; i < n; i++)
 { if (j == rt) {
-((int *)rf)[i] = ((int *)sf)[i];
-cout << "result in root " << ((int *)rf)[i] << endl;
+	reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
+cout << "result in root " << reinterpret_cast<int*>(&rf)[i] << endl;
 }
-else { ((int *)rf)[i] = ((int *)rf)[i] && ((int *)sf)[i];
+else {
+	reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&rf)[i] && reinterpret_cast<int*>(&sf)[i];
 
-cout << "result " << j  << ((int *)rf)[i] << "  last " << ((int *)sf)[i] ;
+cout << "result " << j  << reinterpret_cast<int*>(&rf)[i] << "  last " << reinterpret_cast<int*>(&sf)[i] ;
 }
 }
 }
@@ -177,12 +182,12 @@ if (j != rt)
 MPI_Recv(sf, n, t, j, 0, comm, &st);
 for (int i = 0; i < n; i++)
 { if (j == rt) {
-((int *)rf)[i] = ((int *)sf)[i];
+reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
 cout << "result in root " << ((int *)rf)[i] << endl;
 }
 else {
-((int *)rf)[i] = ((int *)rf)[i] * ((int *)sf)[i];
-cout << "result " << j << ((int *)rf)[i] << "  last " << ((int *)sf)[i] ;
+reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&rf)[i] * reinterpret_cast<int*>(&sf)[i];
+cout << "result " << j << reinterpret_cast<int*>(&rf)[i] << "  last " << reinterpret_cast<int*>(&sf)[i] ;
 }
 }
 }
@@ -197,12 +202,12 @@ if (j != rt)
 MPI_Recv(sf, n, t, j, 0, comm, &st);
 for (int i = 0; i < n; i++)
 { if (j == rt) {
-((int *)rf)[i] = ((int *)sf)[i];
+reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
 cout << "result in root " << ((int *)rf)[i] << endl;
 }
-else { if (((int *)rf)[i] > ((int *)sf)[i])
-((int *)rf)[i] = ((int *)sf)[i];
-cout << "result " << j << ((int *)rf)[i] << "  last " << ((int *)sf)[i];
+else { if (reinterpret_cast<int*>(&rf)[i] > reinterpret_cast<int*>(&sf)[i])
+reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
+cout << "result " << j << reinterpret_cast<int*>(&rf)[i] << "  last " << reinterpret_cast<int*>(&sf)[i];
 }
 }
 }
@@ -217,13 +222,12 @@ if (j != rt)
 MPI_Recv(sf, n, t, j, 0, comm, &st);
 for (int i = 0; i < n; i++)
 { if (j == rt) {
-((int *)rf)[i] = ((int *)sf)[i];
-cout << "result in root " << ((int *)rf)[i] << endl;
+reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
+cout << "result in root " << reinterpret_cast<int*>(&rf)[i] << endl;
 }
-else { if (((int *)rf)[i] < ((int *)sf)[i])
-((int *)rf)[i] = ((int *)sf)[i];
-
-cout << "result " << j << ((int *)rf)[i] << "  last " << ((int *)sf)[i];
+else { if (reinterpret_cast<int*>(&rf)[i] < reinterpret_cast<int*>(&sf)[i])
+reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
+cout << "result " << j << reinterpret_cast<int*>(&rf)[i] << "  last " << reinterpret_cast<int*>(&sf)[i];
 }
 }
 }
@@ -238,10 +242,10 @@ if (j != rt)
 MPI_Recv(sf, n, t, j, 0, comm, &st);
 for (int i = 0; i < n; i++)
 { if (j == rt) {
-((int *)rf)[i] = ((int *)sf)[i];
+reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
 }
 else {
-((int *)rf)[i] = ((int *)rf)[i] + ((int *)sf)[i];
+reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&rf)[i] + reinterpret_cast<int*>(&sf)[i];
 }
 }
 }
@@ -250,7 +254,8 @@ void MY_MPI_SUMM_Tree(void *sendbuf, void *recvbuf, int count) {
 int ProcNum;
 MPI_Comm_rank(MPI_COMM_WORLD, &ProcNum);
 for (int i = 0; i < count; i++)
-{ ((int *)recvbuf)[i] = ((int *)recvbuf)[i] + ((int *)sendbuf)[i];
+{
+reinterpret_cast<int*>(&recvbuf)[i] = reinterpret_cast<int*>(&recvbuf)[i] + reinterpret_cast<int*>(&sendbuf)[i];
 }
 }
 int MY_MPI_Reduce(void *sf, void *rf, int n, MPI_Datatype t, 
@@ -338,7 +343,7 @@ if (!(size % 2)) {
 if (!(i % 2)) {
 MPI_Send(sf, n, t, mas[i + 1], 0, comm);
 for (int q = 0; q < n; q++)
-{ countMassElement[q] = ((int *)(rf))[q];
+{ countMassElement[q] = reinterpret_cast<int*>(&(rf))[q];
 }
 }
 else { MPI_Recv(rf, n, t, mas[i - 1], 0, comm, &st);
@@ -350,16 +355,16 @@ else { if ((rank != procNum - 1)) {
 if (!(i % 2)) {
 MPI_Send(sf, n, t, mas[i + 1], 0, comm);
 for (int q = 0; q < n; q++)
-{ countMassElement[q] = ((int *)(rf))[q];
+{ countMassElement[q] = reinterpret_cast<int*>(&rf)[q];
 }
 }
 else { for (int r = 0; r < n; r++) {
-((int *)rf)[i] = ((int *)sf)[i];
+reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
 }
 MPI_Recv(sf, n, t, mas[i - 1], 0, comm, &st);
 MY_MPI_SUMM_Tree(sf, rf, n);
 for (int r = 0; r < n; r++) {
-((int *)sf)[i] = ((int *)rf)[i];
+reinterpret_cast<int*>(&sf)[i] = reinterpret_cast<int*>(&rf)[i];
 }
 }
 }

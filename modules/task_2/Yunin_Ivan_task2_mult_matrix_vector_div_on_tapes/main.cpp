@@ -62,8 +62,12 @@ int main(int argc, char*argv[]) {
     int col_num = 100, row_num = 100, sub_row_num;
     int proc_num, proc_id, flag;
     int flag_out = 0;
-    double *vector, *matrix = nullptr, *sub_matrix;
-    double *serial_res = nullptr, *parallel_res = nullptr, *sub_parallel_res;
+    double *vector = NULL;
+    double *matrix = NULL; 
+    double *sub_matrix = NULL;
+    double *serial_res = NULL;
+    double *parallel_res = NULL;
+    double *sub_parallel_res = NULL;
     double serial_time =0.0, parallel_time = 0.0;
     std::srand(static_cast<int>(time(0)));
 
@@ -159,12 +163,12 @@ int main(int argc, char*argv[]) {
         if (check(serial_res, parallel_res, row_num))
             std::cout << "Error: vectors are not equal" << '\n';
     }
-    if (matrix       != nullptr ) { delete[]matrix;       }
-    if (serial_res   != nullptr ) { delete[]serial_res;   }
-    if (parallel_res != nullptr ) { delete[]parallel_res; }
-    delete[]sub_parallel_res;
-    delete[]vector;
-    delete[]sub_matrix;
+    if (matrix       != NULL ) {      delete[]matrix;           }
+    if (serial_res   != NULL ) {      delete[]serial_res;   }
+    if (parallel_res != NULL ) {      delete[]parallel_res; }
+    if ( sub_parallel_res != NULL) { delete[]sub_parallel_res; }
+    if ( vector != NULL) {           delete[]vector; }
+    if ( sub_matrix != NULL) {       delete[]sub_matrix; }
     MPI_Finalize();
     return 0;
 }

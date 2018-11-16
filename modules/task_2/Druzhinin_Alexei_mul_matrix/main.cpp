@@ -289,15 +289,15 @@ int main(int argc, char *argv[]) {
         std::cout << "==============";
         CheckResults(MatrixC_l, MatrixC, Arows*Bcols);
     }
-    if (tmpA != nullptr ) delete []tmpA;
-    if (tmpB != nullptr ) delete []tmpB;
-    if (tmpC != nullptr ) delete []tmpC;
+    if (tmpA != NULL ) delete []tmpA;
+    if (tmpB != NULL ) delete []tmpB;
+    if (tmpC != NULL ) delete []tmpC;
     MPI_Finalize();
 // END PARALLEL BLOCK
-    if (MatrixA != nullptr ) delete []MatrixA;
-    if (MatrixB != nullptr ) delete []MatrixB;
-    if (MatrixC_l != nullptr ) delete []MatrixC_l;
-    if (MatrixC != nullptr ) delete []MatrixC;
-    if (MatrixBtr != nullptr ) delete []MatrixBtr;
+    if (MatrixA != NULL ) delete []MatrixA;
+    if (MatrixB != NULL ) delete []MatrixB;
+    if (MatrixC_l != NULL ) delete []MatrixC_l;
+    if (MatrixC != NULL ) delete []MatrixC;
+    if (MatrixBtr != NULL ) delete []MatrixBtr;
     return 0;
 }

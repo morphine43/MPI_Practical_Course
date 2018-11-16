@@ -2,10 +2,10 @@
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
-#include <mpi.h>
 #include <iostream>
+#include <mpi.h>
 
-#include "host.h"
+#include "include/host.h"
 
 host::host(int rank, int size) {
   id = rank;

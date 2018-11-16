@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <string>
 
-#include "host.h"
+#include "include/host.h"
 
 int main(int argc, char* argv[]) {
   /* Mpi variables */

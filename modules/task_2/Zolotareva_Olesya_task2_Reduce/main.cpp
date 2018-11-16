@@ -243,32 +243,31 @@ reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
 }
 }
 }
-void SUMM(void *sf, void *rf, int n, MPI_Datatype t,
-              MPI_Op op, int rt, MPI_Comm comm) {
-  MPI_Status st;
-  int ProcNum;
-  MPI_Comm_size(comm, &ProcNum);
-              for (int j = 0; j < ProcNum; j++) {
-                  if (j != rt)
-                   MPI_Recv(sf, n, t, j, 0, comm, &st);
-              for (int i = 0; i < n; i++) {
-                  if (j == rt) {
-reinterpret_cast<int*>(&rf)[i] = reinterpret_cast<int*>(&sf)[i];
+void SUMM(void *sendbuf, void *recvbuf, int count,
+       MPI_Datatype type, MPI_Op op, int root, MPI_Comm comm) {
+MPI_Status st;
+int ProcNum;
+MPI_Comm_size(comm, &ProcNum);
+    for (int j = 0; j < ProcNum; j++) {
+       if (j != root)
+          MPI_Recv(sendbuf, count, type, j, 0, comm, &st);
+		for (int i = 0; i < count; i++) {
+       if (j == root) {
+          ((int *)recvbuf)[i] = ((int *)sendbuf)[i];
 } else {
-reinterpret_cast<int*>(&rf)[i] =
-      reinterpret_cast<int*>(&rf)[i] + reinterpret_cast<int*>(&sf)[i];
+((int *)recvbuf)[i] = ((int *)recvbuf)[i] + ((int *)sendbuf)[i];
 }
 }
 }
 }
 void MY_MPI_SUMM_Tree(void *sendbuf, void *recvbuf, int count) {
   int ProcNum;
-     MPI_Comm_rank(MPI_COMM_WORLD, &ProcNum);
-              for (int i = 0; i < count; i++) {
-                  reinterpret_cast<int*>(&recvbuf)[i] =
-     reinterpret_cast<int*>(&recvbuf)[i] + reinterpret_cast<int*>(&sendbuf)[i];
+  MPI_Comm_rank(MPI_COMM_WORLD, &ProcNum);
+   for (int i = 0; i < count; i++) {
+((int *)recvbuf)[i] = ((int *)recvbuf)[i] + ((int *)sendbuf)[i];
 }
 }
+
 int MY_MPI_Reduce(void *sf, void *rf, int n, MPI_Datatype t,
                  MPI_Op op, int rt, MPI_Comm comm) {
   int ProcNum, ProcRank;
@@ -414,6 +413,9 @@ int * massProcRankSend = new int[ProcNum];
      for (int i = 0; i < ProcNum; i++) {
      massProcRankSend[i] = i;
 }
+rec(sf, rf, n, t, op, rt, com, massProcRankSend,ProcNum,0);
+if (ProcRank == rt) {
+}
 return 0;
 }
 
@@ -422,11 +424,12 @@ int main(int argc, char* argv[]) {
   int n = atoi(argv[1]);
   int *mas = new int[n];
   int *mas_r = new int[n];
-  int ProcRank;
+  int ProcRank, ProcNum;
     double Time_my1 = 0, Time_my2 = 0;
     double Time_tree1 = 0, Time_tree2 = 0;
     double Time_MPI1 = 0, Time_MPI2 = 0;
           MPI_Init(&argc, &argv);
+          MPI_Comm_size(MPI_COMM_WORLD,&ProcNum);
           MPI_Comm_rank(MPI_COMM_WORLD, &ProcRank);
 srand(static_cast<int>(time(NULL)));
         for (int i = 0; i < n; i++) {
@@ -434,26 +437,21 @@ srand(static_cast<int>(time(NULL)));
 }
 if (ProcRank == 0) {
   Time_my1 = MPI_Wtime();
-}
-    MY_MPI_Reduce(mas, mas_r, n, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-if (ProcRank == 0) {
+  MY_MPI_Reduce(mas, mas_r, n, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
   Time_my2 = MPI_Wtime();
   Time_tree1 = MPI_Wtime();
-}
   Tree(mas, mas_r, n, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-if (ProcRank == 0) {
   Time_tree2 = MPI_Wtime();
   Time_MPI1 = MPI_Wtime();
-}
   MPI_Reduce(mas, mas_r, n, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-if (ProcRank == 0) {
-    Time_MPI2 = MPI_Wtime();
+  Time_MPI2 = MPI_Wtime();
 std::cout << "reduce realisation MPI: t =  " <<
  Time_MPI2 - Time_MPI1 << std::endl;
 std::cout << "reduce realisation my tree: t =  " <<
  Time_tree2 - Time_tree1 << std::endl;
 std::cout << "reduce realisation my: t =  " << Time_my2 - Time_my1 << std::endl;
 }
+
   MPI_Finalize();
   return 0;
 }

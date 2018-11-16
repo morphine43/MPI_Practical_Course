@@ -93,8 +93,15 @@ int main(int argc, char*argv[]) {
 
 // memory alloc for all processes
     vector = new double[col_num];
+    for (int i = 0; i < col_num; i++)
+        vector[i] = 0.0;
     sub_matrix = new double[sub_row_num*col_num];
+    for (int i = 0; i < sub_row_num*col_num; i++)
+        sub_matrix[i] = 0.0;
+    
     sub_parallel_res = new double[sub_row_num];
+    for (int i = 0; i < sub_row_num; i++)
+        sub_parallel_res[i] = 0.0;
 //  end memory alloc for all processes
 
     if (proc_id == 0) {
@@ -104,8 +111,17 @@ int main(int argc, char*argv[]) {
 
         // init vector and matrix (memory and values)
         matrix = new double[row_num*col_num];
+        for (int i = 0; i < row_num*col_num; i++)
+            matrix[i] = 0.0;
+        
         serial_res = new double[row_num];
+        for (int i = 0; i < row_num; i++)
+            serial_res[i] = 0.0;
+        
         parallel_res = new double[row_num+tail];
+        for (int i = 0; i < row_num+tail; i++)
+            parallel_res[i] = 0.0;
+        
         for (int i = 0; i < col_num; i++) {
             vector[i] = -(std::rand()%100) + (std::rand()%200)/13.0;
             for (int j = 0; j < row_num; j++) {

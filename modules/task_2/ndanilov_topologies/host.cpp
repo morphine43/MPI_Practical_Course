@@ -111,7 +111,6 @@ void ring_host::xmit() {
                  MPI_COMM_WORLD, &status);
         std::cout << "Process " << id << " received packet from "
                   << status.MPI_SOURCE << " process" << std::endl;
-        //done = 0;
       }
     }
     if (pkt.dst != -1 && id == pkt.dst) {

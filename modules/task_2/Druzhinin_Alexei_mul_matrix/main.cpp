@@ -198,7 +198,7 @@ int main(int argc, char *argv[]) {
     PrevProc = Id - 1;
     if (Id == 0)
         PrevProc = numProcs - 1;
-    
+
     // cyclic exchange of columns matrix B
     for (int nm = 1; nm < numProcs; nm++) {
         MPI_Sendrecv_replace(tmpB, size_partB, MPI_INT, NextProc, 0,

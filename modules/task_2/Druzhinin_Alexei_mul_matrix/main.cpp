@@ -8,13 +8,14 @@
 #include <cmath>
 
 // Check result of linear and parallel
-void CheckResults(int *linearResult, int *parallelResult, int size) {
-    for (int i = 0; i < size; i++)
-        if (linearResult[i] != parallelResult[i]) {
-            std::cout << std::endl <<
+void CheckResults(int *linRes, int *parRes, int rows, int cols, int remB) {
+    for (int i = 0; i < rows; i++)
+        for (int j = 0; j < cols; j++)
+            if (linRes[i * cols + j] != parRes[i * cols + j + i*remB]) {
+                std::cout << std::endl <<
             "Error! Linear and parallel results are not equal" << std::endl;
-            return;
-        }
+                return;
+            }
     std::cout << std::endl << "Matrices are equal" << std::endl;
 }
 
@@ -46,13 +47,13 @@ void Transpose(int *matrixold, int *matrixnew, int rows, int cols) {
     }
 }
 
-void Print(int *matrix, int rows, int cols) {  // Print
-    for (int i = 0; i < cols * rows; i++) {
-        if (i % cols == 0)
-            std::cout << std::endl;
-        std::cout << matrix[i] << " ";
+void Print(int *matrix, int rows, int cols, int remA, int remB) {  // Print
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            std::cout << matrix[i * cols + j + i*remB] << " ";
+        }
+        std::cout << std::endl;
     }
-    std::cout << std::endl;
 }
 
 int main(int argc, char *argv[]) {
@@ -62,23 +63,21 @@ int main(int argc, char *argv[]) {
     MPI_Status status;
     double startTime = 0, endTime = 0, Time = 0;
     int Id = 0, numProcs = 0;
-    int *MatrixA = NULL, *MatrixB = NULL;
+    int *MatrixA = NULL, *MatrixB = NULL, *MatrixBtr = NULL;
     int *MatrixC_l = NULL, *MatrixC = NULL;
-    int flag;
-    int index;
-    int tmp;
-    int partA;
-    int size_partA;
-    int partB;
-    int size_partB;
-    int remainderA;
-    int remainderB;
-    int* tmpA = NULL;
-    int* tmpB = NULL;
-    int* tmpC = NULL;
-    int* MatrixBtr = NULL;
-    int NextProc;
-    int PrevProc;
+    int* tmpA = NULL, *tmpB = NULL, *tmpC = NULL;
+    int flag = 0;
+    int index = 0;
+    int tmp = 0;
+    int partA = 0;
+    int size_partA = 0;
+    int partB = 0;
+    int size_partB = 0;
+    int size_partC = 0;
+    int remainderA = 0;
+    int remainderB = 0;
+    int NextProc = 0;
+    int PrevProc = 0;
     // variables for line block
     double startTime_l = 0;
     double endTime_l = 0;
@@ -120,28 +119,34 @@ int main(int argc, char *argv[]) {
     static_cast<double>(numProcs)));
     size_partA = partA * Acols;
     size_partB = partB * Brows;
+    size_partC = partA * partB * numProcs;
     remainderA = partA * numProcs - Arows;
     remainderB = partB * numProcs - Bcols;
 
     if (Id == 0) {
         // assignment the memory for matrixes
-        MatrixA = new int[Arows * Acols];
-        MatrixB = new int[Brows * Bcols];
+        MatrixA = new int[partA * numProcs * Acols];
+        MatrixB = new int[Brows * partB * numProcs];
         MatrixC = new int[partA * numProcs * partB * numProcs];
         MatrixC_l = new int[Arows * Bcols];
-        MatrixBtr = new int[Brows * Bcols];
+        MatrixBtr = new int[Brows * partB * numProcs];
 
         // fill the matrixes and transpose matrix B
         FillMatrix(MatrixA, Arows, Acols);
         FillMatrix(MatrixB, Brows, Bcols);
         Transpose(MatrixB, MatrixBtr, Brows, Bcols);
+        for (int i = Arows * Acols; i < partA * numProcs * Acols; i++)
+            MatrixA[i] = 0;
+        for (int i = Brows * Bcols; i < partB * numProcs * Brows; i++)
+            MatrixBtr[i] = 0;
 
         // if matrixes have small size -> print
         if ((Acols < 4) && (Arows < 4) && (Bcols < 4) && (Brows < 4)) {
             std::cout << "Matrix A:" << std::endl;
-            Print(MatrixA, Arows, Acols);
+            Print(MatrixA, Arows, Acols, 0, 0);
             std::cout << "Matrix B:" << std::endl;
-            Print(MatrixB, Brows, Bcols);
+            Print(MatrixB, Brows, Bcols, 0, 0);
+            std::cout << "Matrix Btr:" << std::endl;
         }
 
 // LINE BLOCK
@@ -153,7 +158,7 @@ int main(int argc, char *argv[]) {
         std::cout << std::endl << "===LINE===" << std::endl;
         if ((Arows < 5) && (Bcols < 5)) {
             std::cout << "Matrix C:" << std::endl;
-            Print(MatrixC_l, Arows, Bcols);
+            Print(MatrixC_l, Arows, Bcols, 0, 0);
         }
         Time_l = endTime_l - startTime_l;
         std::cout << "Time: " << Time_l << " sec" << std::endl;
@@ -164,12 +169,12 @@ int main(int argc, char *argv[]) {
     }
     tmpA = new int[size_partA];
     tmpB = new int[size_partB];
-    tmpC = new int[partA * Bcols];
+    tmpC = new int[size_partC];
     for (int i = 0; i < size_partA; i++)
         tmpA[i] = 0;
     for (int i = 0; i < size_partB; i++)
         tmpB[i] = 0;
-    for (int i = 0; i < partA * Bcols; i++)
+    for (int i = 0; i < size_partC; i++)
         tmpC[i] = 0;
 
     MPI_Scatter(MatrixA, size_partA, MPI_INT, tmpA, size_partA,
@@ -178,25 +183,12 @@ int main(int argc, char *argv[]) {
              MPI_INT, 0, MPI_COMM_WORLD);
 
     // calculation of elements on the main diagonal
-    if (Id != numProcs - 1) {
-        for (int i = 0; i < partA; i++) {
-            for (int j = 0; j < partB; j++) {
-                tmpC[i * Bcols + j + partA * Id] = 0;
-                for (int k = 0; k < Acols; k++) {
-                    tmpC[i * Bcols + j + partA * Id] +=
-                                tmpA[i * Acols + k] * tmpB[j * Brows + k];
-                }
-            }
-        }
-    } else {
-        for (int i = 0; i < (partA - remainderA); i++) {
-            for (int j = 0; j < (partB - remainderB); j++) {
-                tmpC[i * Bcols + j + (partA - remainderA) *
-                Id + remainderB * Id] = 0;
-                for (int k = 0; k < Acols; k++) {
-                    tmpC[i * Bcols + j + (partA - remainderA) * Id + remainderB
-                    * Id] += tmpA[i * Acols+k] * tmpB[j * Brows + k];
-                }
+    for (int i = 0; i < partA; i++) {
+        for (int j = 0; j < partB; j++) {
+            tmpC[i * partB * numProcs + j + partB * Id] = 0;
+            for (int k = 0; k < Acols; k++) {
+                tmpC[i * partB * numProcs + j + partB * Id] +=
+                        tmpA[i * Acols + k] * tmpB[j * Brows + k];
             }
         }
     }
@@ -211,71 +203,21 @@ int main(int argc, char *argv[]) {
     for (int nm = 1; nm < numProcs; nm++) {
         MPI_Sendrecv_replace(tmpB, size_partB, MPI_INT, NextProc, 0,
             PrevProc, 0, MPI_COMM_WORLD, &status);
-        if (Id != numProcs - 1) {
-            if (nm - Id != 1) {
-                for (int i = 0; i < partA; i++) {
-                    for (int j = 0; j < partB; j++) {
-                        tmp = 0;
-                        for (int k = 0; k < Acols; k++)
-                            tmp += tmpA[i * Acols + k] * tmpB[j * Brows + k];
-                        if (Id - nm >= 0)
-                            index = Id - nm;
-                        else
-                            index = (numProcs + Id - nm);
-                        tmpC[i * Bcols + j + index * (partA - remainderA) +
-                                index * remainderB] = tmp;
-                    }
-                }
-            } else {
-                for (int i = 0; i < partA; i++) {
-                    for (int j = 0; j < (partB - remainderB); j++) {
-                        tmp = 0;
-                        for (int k = 0; k < Acols; k++)
-                            tmp += tmpA[i * Acols + k] * tmpB[j * Brows + k];
-                        if (Id - nm >= 0)
-                            index = Id - nm;
-                        else
-                            index = (numProcs + Id - nm);
-                        tmpC[i * Bcols + j + index * (partA - remainderA) +
-                                        index * remainderB] = tmp;
-                    }
-                }
-            }
-        } else {
-            if (nm - Id != 1) {
-                for (int i = 0; i < (partA - remainderA); i++) {
-                    for (int j = 0; j < partB; j++) {
-                        tmp = 0;
-                        for (int k = 0; k < Acols; k++)
-                            tmp += tmpA[i * Acols + k] * tmpB[j * Brows + k];
-                        if (Id - nm >= 0)
-                            index = Id - nm;
-                        else
-                            index = (numProcs - nm + Id);
-                        tmpC[i * Brows + j + index * (partA - remainderA) +
-                                        index * remainderB] = tmp;
-                    }
-                }
-            } else {
-                for (int i = 0; i < (partA - remainderA); i++) {
-                    for (int j = 0; j < (partB - remainderB); j++) {
-                        tmp = 0;
-                        for (int k = 0; k < Acols; k++)
-                            tmp += tmpA[i * Acols + k] * tmpB[j * Brows + k];
-                        if (Id - nm >= 0)
-                            index = Id - nm;
-                        else
-                            index = (numProcs - nm + Id);
-                        tmpC[i * Brows + j + index * (partA - remainderA) +
-                                                    index * remainderB] = tmp;
-                    }
-                }
+        for (int i = 0; i < partA; i++) {
+            for (int j = 0; j < partB; j++) {
+                tmp = 0;
+                for (int k = 0; k < Acols; k++)
+                    tmp += tmpA[i * Acols + k] * tmpB[j * Brows + k];
+                if (Id - nm >= 0)
+                    index = Id - nm;
+                else
+                    index = (Id - nm + numProcs);
+                tmpC[i * partB * numProcs + j + index * partB] = tmp;
             }
         }
     }
-
     // assembly of the resulting matrix
-    MPI_Gather(tmpC, partA * Bcols, MPI_INT, MatrixC, partA * Bcols,
+    MPI_Gather(tmpC, size_partC, MPI_INT, MatrixC, size_partC,
     MPI_INT, 0, MPI_COMM_WORLD);
     // Parallel results
     if (Id == 0) {
@@ -283,17 +225,17 @@ int main(int argc, char *argv[]) {
         std::cout << std::endl <<"===PARALLEL===" << std::endl;
         if ((Arows < 5) && (Bcols < 5)) {
             std::cout << "Matrix C:" << std::endl;
-            Print(MatrixC, Arows, Bcols);
+            Print(MatrixC, Arows, Bcols, remainderA, remainderB);
         }
         Time = endTime - startTime;
         std::cout << "Time: " << Time << " sec" << std::endl;
         std::cout << "==============";
-        CheckResults(MatrixC_l, MatrixC, Arows*Bcols);
+        CheckResults(MatrixC_l, MatrixC, Arows, Bcols, remainderB);
     }
+    MPI_Finalize();
     if (tmpA != NULL ) delete []tmpA;
     if (tmpB != NULL ) delete []tmpB;
     if (tmpC != NULL ) delete []tmpC;
-    MPI_Finalize();
 // END PARALLEL BLOCK
     if (MatrixA != NULL ) delete []MatrixA;
     if (MatrixB != NULL ) delete []MatrixB;

@@ -17,8 +17,14 @@ host::host(int rank, int size) {
 host::~host() {
 }
 
+template<class T>
+const T& minself(const T& a, const T& b)
+{
+    return (a < b) ? a : b;
+}
+
 void host::generate_packet(int src, int dst, std::string msg) {
-  size_t len = std::min(MAX_DATA_SIZE - 1, msg.length());
+  size_t len = minself(MAX_DATA_SIZE - 1, msg.length());
 
   pkt.src = src;
   pkt.dst = dst;

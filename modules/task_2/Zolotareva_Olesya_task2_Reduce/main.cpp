@@ -253,7 +253,7 @@ MPI_Comm_size(comm, &ProcNum);
           MPI_Recv(sendbuf, count, type, j, 0, comm, &st);
     for (int i = 0; i < count; i++) {
        if (j == root) {
-          (static_cast<int*>(recvbuf_)[i] = (static_cast<int*>(sendbuf))[i];
+          (static_cast<int*>(recvbuf))[i] = (static_cast<int*>(sendbuf))[i];
 } else {
 (static_cast<int*>(recvbuf))[i] =
 (static_cast<int*>(recvbuf))[i] + (static_cast<int*>(sendbuf))[i];
@@ -435,23 +435,36 @@ srand(static_cast<int>(time(NULL)));
         for (int i = 0; i < n; i++) {
            mas[i] = 10 + std::rand() % 1000 + ProcRank;
 }
-if (ProcRank == 0) {
-  Time_my1 = MPI_Wtime();
-  MY_MPI_Reduce(mas, mas_r, n, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-  Time_my2 = MPI_Wtime();
-  Time_tree1 = MPI_Wtime();
+if (!ProcRank) {
+    Time_my1 = MPI_Wtime();
+}
+MY_MPI_Reduce(mas, mas_r, n, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+Time_my2 = MPI_Wtime();
+   // = MPI_Wtime();
+  /* if (!ProcRank) {
+     Time_tree1 = MPI_Wtime();
+  }
   Tree(mas, mas_r, n, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-  Time_tree2 = MPI_Wtime();
+  Time_tree2 = MPI_Wtime();*/
+
+if (!ProcRank) {
   Time_MPI1 = MPI_Wtime();
-  MPI_Reduce(mas, mas_r, n, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-  Time_MPI2 = MPI_Wtime();
+}
+MPI_Reduce(mas, mas_r, n, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+Time_MPI2 = MPI_Wtime();
+  //
+  //
+
+
+if (ProcRank == 0) {
+
 std::cout << "reduce realisation MPI: t =  " <<
- Time_MPI2 - Time_MPI1 << std::endl;
-std::cout << "reduce realisation my tree: t =  " <<
- Time_tree2 - Time_tree1 << std::endl;
+Time_MPI2 - Time_MPI1 << std::endl;
+  // std::cout << "reduce realisation my tree: t =  " <<
+   // Time_tree2 - Time_tree1 << std::endl;
 std::cout << "reduce realisation my: t =  " << Time_my2 - Time_my1 << std::endl;
 }
 
-  MPI_Finalize();
-  return 0;
+   MPI_Finalize();
+   return 0;
 }

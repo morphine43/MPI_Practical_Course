@@ -426,7 +426,7 @@ int main(int argc, char* argv[]) {
   int *mas_r = new int[n];
   int ProcRank, ProcNum;
     double Time_my1 = 0, Time_my2 = 0;
-    //double Time_tree1 = 0, Time_tree2 = 0;
+    // double Time_tree1 = 0, Time_tree2 = 0;
     double Time_MPI1 = 0, Time_MPI2 = 0;
           MPI_Init(&argc, &argv);
           MPI_Comm_size(MPI_COMM_WORLD, &ProcNum);

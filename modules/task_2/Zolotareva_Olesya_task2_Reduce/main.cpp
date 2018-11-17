@@ -426,7 +426,7 @@ int main(int argc, char* argv[]) {
   int *mas_r = new int[n];
   int ProcRank, ProcNum;
     double Time_my1 = 0, Time_my2 = 0;
-    double Time_tree1 = 0, Time_tree2 = 0;
+    //double Time_tree1 = 0, Time_tree2 = 0;
     double Time_MPI1 = 0, Time_MPI2 = 0;
           MPI_Init(&argc, &argv);
           MPI_Comm_size(MPI_COMM_WORLD, &ProcNum);
@@ -440,7 +440,6 @@ if (!ProcRank) {
 }
 MY_MPI_Reduce(mas, mas_r, n, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 Time_my2 = MPI_Wtime();
-   // = MPI_Wtime();
   /* if (!ProcRank) {
      Time_tree1 = MPI_Wtime();
   }
@@ -457,7 +456,6 @@ Time_MPI2 = MPI_Wtime();
 
 
 if (ProcRank == 0) {
-
 std::cout << "reduce realisation MPI: t =  " <<
 Time_MPI2 - Time_MPI1 << std::endl;
   // std::cout << "reduce realisation my tree: t =  " <<
@@ -465,6 +463,6 @@ Time_MPI2 - Time_MPI1 << std::endl;
 std::cout << "reduce realisation my: t =  " << Time_my2 - Time_my1 << std::endl;
 }
 
-   MPI_Finalize();
-   return 0;
+  MPI_Finalize();
+  return 0;
 }

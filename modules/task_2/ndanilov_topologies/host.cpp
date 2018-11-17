@@ -5,6 +5,7 @@
 #include <cstring>
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 #include "include/host.h"
 
@@ -17,10 +18,13 @@ host::~host() {
 }
 
 void host::generate_packet(int src, int dst, std::string msg) {
+  size_t len = std::min(MAX_DATA_SIZE - 1, msg.length());
+
   pkt.src = src;
   pkt.dst = dst;
-  for (size_t i = 0; i < MAX_DATA_SIZE; ++i)
+  for (size_t i = 0; i < len; i++)
     pkt.data[i] = msg[i];
+  pkt.data[len] = '\0';
 }
 
 MPI_Datatype register_mpi_type(packet const&pkt) {
@@ -45,8 +49,9 @@ ring_host::ring_host(int rank, int size) : host(rank, size) {
   pkt.src = -1;
   pkt.dst = -1;
 
-  for (size_t i = 0; i < MAX_DATA_SIZE; ++i)
-    pkt.data[i] = '0';
+  for (size_t i = 0; i < MAX_DATA_SIZE - 1; ++i)
+    pkt.data[i] = ' ';
+  pkt.data[MAX_DATA_SIZE - 1] = '\0';
 }
 
 ring_host::~ring_host() {
@@ -75,7 +80,7 @@ void ring_host::xmit() {
   MPI_Status status;
 
   type = register_mpi_type(pkt);
-  std::ios_base:: sync_with_stdio(false);
+  std::ios_base::sync_with_stdio(false);
 
   while (done != 1) {
     if (pkt.src != -1) {

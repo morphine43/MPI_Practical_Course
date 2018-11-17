@@ -22,11 +22,11 @@ int main(int argc, char* argv[]) {
   } else {
     source = -1;
     destination = -1;
-    msg = "Hi";
+    msg = std::string("Hi");
   }
 
-  assert(source >= 0);
-  assert(destination >= 0);
+  //assert(source >= 0);
+  //assert(destination >= 0);
 
   /* Mpi init block */
   MPI_Init(&argc, &argv);
@@ -38,12 +38,15 @@ int main(int argc, char* argv[]) {
   ring_host *test_host = new ring_host(rank, size);
 
   if (source == rank) {
-    assert(msg != std::string() || msg.size() < 255);
+    //assert(msg != std::string() || msg.size() < 255);
     test_host->generate_packet(source, destination, msg);
   }
 
+  //std::cout << "rank = " << rank << " before xmit()" << std::endl;
   MPI_Barrier(MPI_COMM_WORLD);
   test_host->xmit();
+
+  MPI_Finalize();
 
   return 0;
 }

@@ -201,11 +201,11 @@ int main(int argc, char** argv) {
       }
     t2 = MPI_Wtime();
     std::cout << "Sequential Time: " << t2 - t1 << std::endl;
-    t1 = MPI_Wtime();
-    dataIN = new uchar[portion + 2*cols*ksize + remain_size];
+    dataIN = new uchar[portion + 2*cols*ksize + remain_rows*cols];
     dataOUT = new uchar[image_size];
   }
-
+  MPI_Barrier(MPI_COMM_WORLD);
+  t1 = MPI_Wtime();
   MPI_Bcast(&remain_rows, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
   MPI_Bcast(&rows_to_one_proc, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
   MPI_Bcast(&portion, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
@@ -255,9 +255,9 @@ int main(int argc, char** argv) {
   scounts[0] = portion + remain_size;
   MPI_Gatherv(p, scounts[rank], MPI_UNSIGNED_CHAR, dataOUT, scounts,
     displs, MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
-
+  MPI_Barrier(MPI_COMM_WORLD);
+  t2 = MPI_Wtime();
     if (rank == MainProc) {
-      t2 = MPI_Wtime();
       procImgP = img(cv::Mat(origImg.rows, origImg.cols, CV_8U, dataOUT));
       std::cout << "Parallel Time:   " << t2 - t1 << std::endl;
 

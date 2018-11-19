@@ -65,7 +65,7 @@ script:
   # - mpirun -np 4 ./modules/task_2/Gaidaichuk_Yuri_task2_Bubble_sorting/Gaidaichuk_Yuri_task2_Bubble_sorting 9
   - mpirun -np 4 ./modules/task_2/Perov_Dima_task2_ProducerConsumer/Perov_Dima_task2_ProducerConsumer 10 5 5 1 2
   - mpirun -np 4 ./modules/task_2/Yakovlev_Pavel_mul_matr_vect/Yakovlev_Pavel_mul_matr_vect 50 50
-  - mpirun -np 5 ./modules/task_2/Vdovin_Eugene_task2_Readers_and_Writers/Vdovin_Eugene_task2_Readers_and_Writers 2 60
+  - mpirun -np 5 ./modules/task_2/Vdovin_Eugene_task2_Readers_and_Writers/Vdovin_Eugene_task2_Readers_and_Writers 2
   - mpirun -np 4 ./modules/task_2/Repin_Vladimir_Gaussian_Elimination/Repin_Vladimir_Gaussian_Elimination 500
   - mpirun -np 4 ./modules/task_2/Vikhrev_Ivan_task2_ImageProcessing/Vikhrev_Ivan_task2_ImageProcessing -x=1000 -y=1000
   - mpirun -np 2 ./modules/task_2/Yunin_Ivan_task2_mult_matrix_vector_div_on_tapes/Yunin_Ivan_task2_mult_matrix_vector_div_on_tapes 1000 1000 0

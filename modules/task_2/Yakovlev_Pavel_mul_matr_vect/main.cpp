@@ -127,10 +127,11 @@ int main(int argc, char* argv[]) {
       MPI_SUM, 0, MPI_COMM_WORLD);
 
   if (rank == 0) {
-    if (Err > 0)  //  if rows not divisible by the number of processes
+    if (Err > 0) {  //  if rows not divisible by the number of processes
       for (int k = cols - Err; k < cols; k++)
         for (int j = 0; j < rows; j++)
           Result[j] += vect[k] * matrix[j + rows * k];
+    }
     std::cout << std::endl << "Parallel time: ";
     std::cout << MPI_Wtime() - Time_begin << std::endl;
     std::cout << "check = " <<

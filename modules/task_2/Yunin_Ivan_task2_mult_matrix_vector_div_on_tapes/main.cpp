@@ -104,7 +104,7 @@ int main(int argc, char*argv[]) {
     for (int i = 0; i < sub_row_num; i++)
         sub_parallel_res[i] = 0.0;
 //  end memory alloc for all processes
-
+    MPI_Barrier(MPI_COMM_WORLD);
     if (proc_id == 0) {
         int tail = proc_num*sub_row_num-row_num;
         /* tail-> if the quantity rows is divided between the processes 
@@ -176,7 +176,7 @@ is not entirely (for correct work Gather() )*/
             }
         }
 
-        std::cout << '\n' << "Parralel time: " 
+        std::cout << '\n' << "Parralel time: "
             << p_time_finish - p_time_start  << '\n';
         if (check(serial_res, parallel_res, row_num))
             std::cout << "Error: vectors are not equal" << '\n';

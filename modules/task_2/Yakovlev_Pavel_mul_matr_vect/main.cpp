@@ -9,8 +9,10 @@
 int check(double *a, double *b, int size) {
   int i = 0;
   while (i < size && a[i] == b[i]) i++;
-  if (i == size) return 1;
-  else return 0;
+  if (i == size)
+    return 1;
+  else
+    return 0;
 }
 
 int main(int argc, char* argv[]) {
@@ -49,7 +51,6 @@ int main(int argc, char* argv[]) {
   double *subMatr = NULL;
   double *subVect = NULL;
 
-	
   int submit_num = static_cast<int>(ceil(cols / CountP));
   int Err = cols - submit_num*CountP;
   tempRes = new double[Result_size];
@@ -126,13 +127,14 @@ int main(int argc, char* argv[]) {
       MPI_SUM, 0, MPI_COMM_WORLD);
 
   if (rank == 0) {
-    if (Err > 0) //  if rows not divisible by the number of processes
+    if (Err > 0)  //  if rows not divisible by the number of processes
       for (int k = cols - Err; k < cols; k++)
         for (int j = 0; j < rows; j++)
           Result[j] += vect[k] * matrix[j + rows * k];
     std::cout << std::endl << "Parallel time: ";
     std::cout << MPI_Wtime() - Time_begin << std::endl;
-    std::cout << "check = " << check(Result, Result_l, Result_size) << std::endl;
+    std::cout << "check = " <<
+                    check(Result, Result_l, Result_size) << std::endl;
     if (rows < 11 && cols < 11) {
       std::cout << "Parallel_Result: " << std::endl;
       for (int i = 0; i < Result_size; i++)
@@ -141,13 +143,13 @@ int main(int argc, char* argv[]) {
       std::cout << std::endl;
     }
 
-  if (vect != NULL) 	delete[]vect;
-  if (matrix != NULL) 	delete[]matrix;
-  if (subMatr != NULL) 	delete[]subMatr;
-  if (subVect != NULL) 	delete[]subVect;
-  if (Result != NULL) 	delete[]Result;
+  if (vect != NULL) delete[]vect;
+  if (matrix != NULL) delete[]matrix;
+  if (subMatr != NULL) delete[]subMatr;
+  if (subVect != NULL) delete[]subVect;
+  if (Result != NULL) delete[]Result;
   if (Result_l != NULL) delete[]Result_l;
-  if (tempRes != NULL) 	delete[]tempRes;
+  if (tempRes != NULL) delete[]tempRes;
 
   MPI_Finalize();
 

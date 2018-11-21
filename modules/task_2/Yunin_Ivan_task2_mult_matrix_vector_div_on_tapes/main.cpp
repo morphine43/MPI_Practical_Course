@@ -68,7 +68,8 @@ int main(int argc, char*argv[]) {
     double *serial_res = NULL;
     double *parallel_res = NULL;
     double *sub_parallel_res = NULL;
-    double serial_time = 0.0, parallel_time = 0.0;
+    double s_time_start = 0.0, p_time_start = 0.0;
+    double s_time_finish = 0.0, p_time_finish = 0.0;
     std::srand(static_cast<int>(time(0)));
 
     if (argc > 2) {
@@ -103,7 +104,7 @@ int main(int argc, char*argv[]) {
     for (int i = 0; i < sub_row_num; i++)
         sub_parallel_res[i] = 0.0;
 //  end memory alloc for all processes
-
+    MPI_Barrier(MPI_COMM_WORLD);
     if (proc_id == 0) {
         int tail = proc_num*sub_row_num-row_num;
         /* tail-> if the quantity rows is divided between the processes 
@@ -131,17 +132,17 @@ is not entirely (for correct work Gather() )*/
         }
         // end init vector and matrix (memory and values)
         // serial multiplication
-        serial_time = MPI_Wtime();
+        s_time_start = MPI_Wtime();
         for (int i = 0; i < row_num; i++) {
             serial_res[i] = scal_mult(vector, matrix+col_num*i, col_num);
             // (*) look description
         }
-        serial_time = MPI_Wtime() - serial_time;
-        std::cout << "serial time: " << serial_time << '\n';
+        s_time_finish = MPI_Wtime();
+        std::cout << "serial time: " << s_time_finish - s_time_start << '\n';
         // serial multiplication end
-        parallel_time = MPI_Wtime();
     }
-
+    MPI_Barrier(MPI_COMM_WORLD);
+    p_time_start = MPI_Wtime();
     // (#)(start) code executed by all processes
     MPI_Bcast(vector, col_num, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     // MPI_Bcast send vector to all procceses
@@ -161,9 +162,9 @@ is not entirely (for correct work Gather() )*/
     part of result_vector, part had dim [sub_row_num x 1])*/
 
     // (#)(finish) code executed by all processes
-
+    MPI_Barrier(MPI_COMM_WORLD);
+    p_time_finish = MPI_Wtime();
     if (proc_id == 0) {
-        parallel_time = MPI_Wtime() - parallel_time;
         if (flag_out) {
             std::cout << "Serial result vector" << '\n';
             for (int i = 0; i < row_num; i++) {
@@ -175,16 +176,17 @@ is not entirely (for correct work Gather() )*/
             }
         }
 
-        std::cout << '\n' << "Parralel time: " << parallel_time << '\n';
+        std::cout << '\n' << "Parralel time: "
+            << p_time_finish - p_time_start  << '\n';
         if (check(serial_res, parallel_res, row_num))
             std::cout << "Error: vectors are not equal" << '\n';
     }
-    if (matrix       != NULL ) {      delete[]matrix;           }
-    if (serial_res   != NULL ) {      delete[]serial_res;   }
-    if (parallel_res != NULL ) {      delete[]parallel_res; }
-    if ( sub_parallel_res != NULL) { delete[]sub_parallel_res; }
-    if ( vector != NULL) {           delete[]vector; }
-    if ( sub_matrix != NULL) {       delete[]sub_matrix; }
+    if ( matrix           != NULL ) { delete[]matrix;           }
+    if ( serial_res       != NULL ) { delete[]serial_res;       }
+    if ( parallel_res     != NULL ) { delete[]parallel_res;     }
+    if ( sub_parallel_res != NULL ) { delete[]sub_parallel_res; }
+    if ( vector           != NULL ) { delete[]vector;           }
+    if ( sub_matrix       != NULL ) { delete[]sub_matrix;       }
     MPI_Finalize();
     return 0;
 }

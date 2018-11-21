@@ -343,7 +343,8 @@ int main(int argc, char** argv) {
               scounts[0] = portion;
 
             MPI_Scatterv(origImg.pic.data, scounts, displs, MPI_UNSIGNED_CHAR,
-             dataIN, scounts[rank], MPI_UNSIGNED_CHAR, MainProc, MPI_COMM_WORLD);
+             dataIN, scounts[rank], MPI_UNSIGNED_CHAR, MainProc,
+               MPI_COMM_WORLD);
 
             cv::Mat tmp(scounts[rank] / cols, cols, CV_8U, dataIN);
             if (filter == 1) {

@@ -322,7 +322,7 @@ int main(int argc, char** argv) {
           dataIN = new uchar[portion + 2 * cols*ksize + remain_rows * cols];
           dataOUT = new uchar[image_size];
           MPI_Bcast(&remain_rows, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
-          MPI_Bcast(&rows_to_one_proc, 1, MPI_UNSIGNED, MainProc, 
+          MPI_Bcast(&rows_to_one_proc, 1, MPI_UNSIGNED, MainProc,
             MPI_COMM_WORLD);
           MPI_Bcast(&portion, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
           MPI_Bcast(&cols, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
@@ -342,8 +342,8 @@ int main(int argc, char** argv) {
             if (size == 1)
               scounts[0] = portion;
 
-            MPI_Scatterv(origImg.pic.data, scounts, displs, MPI_UNSIGNED_CHAR, 
-             dataIN,scounts[rank], MPI_UNSIGNED_CHAR, MainProc, MPI_COMM_WORLD);
+            MPI_Scatterv(origImg.pic.data, scounts, displs, MPI_UNSIGNED_CHAR,
+             dataIN, scounts[rank], MPI_UNSIGNED_CHAR, MainProc, MPI_COMM_WORLD);
 
             cv::Mat tmp(scounts[rank] / cols, cols, CV_8U, dataIN);
             if (filter == 1) {
@@ -375,7 +375,7 @@ int main(int argc, char** argv) {
           }
       } else {
           MPI_Bcast(&remain_rows, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
-          MPI_Bcast(&rows_to_one_proc, 1, MPI_UNSIGNED, MainProc, 
+          MPI_Bcast(&rows_to_one_proc, 1, MPI_UNSIGNED, MainProc,
             MPI_COMM_WORLD);
           MPI_Bcast(&portion, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
           MPI_Bcast(&cols, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
@@ -399,7 +399,8 @@ int main(int argc, char** argv) {
               scounts[0] = portion;
 
             MPI_Scatterv(origImg.pic.data, scounts, displs, MPI_UNSIGNED_CHAR,
-              dataIN, scounts[rank], MPI_UNSIGNED_CHAR, MainProc, MPI_COMM_WORLD);
+              dataIN, scounts[rank], MPI_UNSIGNED_CHAR, MainProc,
+                MPI_COMM_WORLD);
 
             cv::Mat tmp(scounts[rank] / cols, cols, CV_8U, dataIN);
             if (filter == 1) {

@@ -155,7 +155,7 @@ int main(int argc, char** argv) {
     MPI_Finalize();
     return 0;
   }
-  
+
   if (!parser.get<bool>("v")) {
       if (rank == MainProc) {
           if (parser.has("i")) {
@@ -166,8 +166,7 @@ int main(int argc, char** argv) {
                   std::cout << "Cant load image" << std::endl;
                   MPI_Abort(MPI_COMM_WORLD, 1);
               }
-          }
-          else {
+          } else {
               if (parser.get<bool>("r")) {
                   std::cout << "Random Image" << std::endl;
                   rows = parser.get<unsigned int>("y");
@@ -196,13 +195,11 @@ int main(int argc, char** argv) {
           t1 = MPI_Wtime();
 
           if (filter == 1) {
-              applyFilter1(&procImgS.pic, ksize);
-          }
-          else {
+            applyFilter1(&procImgS.pic, ksize);
+          } else {
               if (filter == 2) {
-                  applyFilter2(&procImgS.pic, ksize);
-              }
-              else {
+                applyFilter2(&procImgS.pic, ksize);
+              } else {
                   applyFilter3(&procImgS.pic, ksize);
               }
           }
@@ -241,13 +238,11 @@ int main(int argc, char** argv) {
       cv::Mat tmp(scounts[rank] / cols, cols, CV_8U, dataIN);
 
       if (filter == 1) {
-          applyFilter1(&tmp, ksize);
-      }
-      else {
+        applyFilter1(&tmp, ksize);
+      } else {
           if (filter == 2) {
-              applyFilter2(&tmp, ksize);
-          }
-          else {
+            applyFilter2(&tmp, ksize);
+          } else {
               applyFilter3(&tmp, ksize);
           }
       }
@@ -327,7 +322,8 @@ int main(int argc, char** argv) {
           dataIN = new uchar[portion + 2 * cols*ksize + remain_rows * cols];
           dataOUT = new uchar[image_size];
           MPI_Bcast(&remain_rows, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
-          MPI_Bcast(&rows_to_one_proc, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
+          MPI_Bcast(&rows_to_one_proc, 1, MPI_UNSIGNED, MainProc, 
+            MPI_COMM_WORLD);
           MPI_Bcast(&portion, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
           MPI_Bcast(&cols, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
           MPI_Bcast(&filter, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
@@ -346,9 +342,9 @@ int main(int argc, char** argv) {
             if (size == 1)
               scounts[0] = portion;
 
-            MPI_Scatterv(origImg.pic.data, scounts, displs, MPI_UNSIGNED_CHAR, dataIN,
-                scounts[rank], MPI_UNSIGNED_CHAR, MainProc, MPI_COMM_WORLD);
-            
+            MPI_Scatterv(origImg.pic.data, scounts, displs, MPI_UNSIGNED_CHAR, 
+             dataIN,scounts[rank], MPI_UNSIGNED_CHAR, MainProc, MPI_COMM_WORLD);
+
             cv::Mat tmp(scounts[rank] / cols, cols, CV_8U, dataIN);
             if (filter == 1) {
               applyFilter1(&tmp, ksize);
@@ -379,7 +375,8 @@ int main(int argc, char** argv) {
           }
       } else {
           MPI_Bcast(&remain_rows, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
-          MPI_Bcast(&rows_to_one_proc, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
+          MPI_Bcast(&rows_to_one_proc, 1, MPI_UNSIGNED, MainProc, 
+            MPI_COMM_WORLD);
           MPI_Bcast(&portion, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
           MPI_Bcast(&cols, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
           MPI_Bcast(&filter, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
@@ -401,8 +398,8 @@ int main(int argc, char** argv) {
             if (size == 1)
               scounts[0] = portion;
 
-            MPI_Scatterv(origImg.pic.data, scounts, displs, MPI_UNSIGNED_CHAR, dataIN,
-              scounts[rank], MPI_UNSIGNED_CHAR, MainProc, MPI_COMM_WORLD);
+            MPI_Scatterv(origImg.pic.data, scounts, displs, MPI_UNSIGNED_CHAR,
+              dataIN, scounts[rank], MPI_UNSIGNED_CHAR, MainProc, MPI_COMM_WORLD);
 
             cv::Mat tmp(scounts[rank] / cols, cols, CV_8U, dataIN);
             if (filter == 1) {

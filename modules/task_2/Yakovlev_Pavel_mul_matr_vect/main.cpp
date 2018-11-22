@@ -52,7 +52,6 @@ int main(int argc, char* argv[]) {
   double *subVect = NULL;
 
   int submit_num = static_cast<int>(ceil(cols / CountP));
-  int Err = cols - submit_num * CountP;
   tempRes = new double[Result_size];
   subMatr = new double[submit_num*rows];
   subVect = new double[submit_num];

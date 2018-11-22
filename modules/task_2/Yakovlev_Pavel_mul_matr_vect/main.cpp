@@ -52,7 +52,6 @@ int main(int argc, char* argv[]) {
   double *subVect = NULL;
 
   int submit_num = static_cast<int>(ceil(cols / CountP));
-  int Err = cols - submit_num*CountP;
   tempRes = new double[Result_size];
   subMatr = new double[submit_num*rows];
   subVect = new double[submit_num];
@@ -68,14 +67,14 @@ int main(int argc, char* argv[]) {
     matrix = new double[Matrix_size];
     Result = new double[Result_size];
     Result_l = new double[Result_size];
-    //  -----------------Initialization-----------------
+    //   -----------------Initialization-----------------
     for (int i = 0; i < Matrix_size; i++) {
       if (i < Vect_size) vect[i] = std::rand() % 10 - 5;
       if (i < Result_size) Result[i] = 0.0;
       if (i < Result_size) Result_l[i] = 0.0;
       matrix[i] = std::rand() % 10 - 5;
     }
-  //  -----------Print-----------------
+    //   -----------Print-----------------
     if (rows < 11 && cols < 11) {
       std::cout << "Vector:" << std::endl;
       for (int i = 0; i < Vect_size; i++)
@@ -99,7 +98,7 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < cols; j++)
         Result_l[i] += matrix[i + rows * j] * vect[j];
-    }
+        }
     Time_end = MPI_Wtime();
     std::cout << "Line_Time = " << Time_end - Time_begin << std::endl;
     if (rows < 11 && cols < 11) {
@@ -108,41 +107,41 @@ int main(int argc, char* argv[]) {
       std::cout << Result_l[i] << std::endl;
     }
     std::cout << std::endl;
-    // --------------  Parrallel  -------------
-    if (CountP > 1) {
-      Time_begin = MPI_Wtime();
-    }
   }
+
+  MPI_Barrier(MPI_COMM_WORLD);
+  Time_begin = MPI_Wtime();
+
   //  Send
   MPI_Scatter(vect, submit_num, MPI_DOUBLE,
         subVect, submit_num, MPI_DOUBLE, 0, MPI_COMM_WORLD);
   MPI_Scatter(matrix, submit_num*rows, MPI_DOUBLE,
         subMatr, submit_num*rows, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
   //  Work
   for (int k = 0; k < submit_num; k++)
     for (int j = 0; j < rows; j++)
       tempRes[j] += subVect[k] * subMatr[j + rows * k];
+
   //  Sum result
   MPI_Reduce(tempRes, Result, Result_size, MPI_DOUBLE,
       MPI_SUM, 0, MPI_COMM_WORLD);
 
+  MPI_Barrier(MPI_COMM_WORLD);
+  Time_end = MPI_Wtime();
+
   if (rank == 0) {
-    if (Err > 0) {  //  if rows not divisible by the number of processes
-      for (int k = cols - Err; k < cols; k++)
-        for (int j = 0; j < rows; j++)
-          Result[j] += vect[k] * matrix[j + rows * k];
-    }
     std::cout << std::endl << "Parallel time: ";
-    std::cout << MPI_Wtime() - Time_begin << std::endl;
+    std::cout << Time_end - Time_begin << std::endl;
     std::cout << "check = " <<
-                    check(Result, Result_l, Result_size) << std::endl;
+        check(Result, Result_l, Result_size) << std::endl;
     if (rows < 11 && cols < 11) {
-      std::cout << "Parallel_Result: " << std::endl;
-      for (int i = 0; i < Result_size; i++)
-        std::cout << Result[i] << std::endl;
-      }
-      std::cout << std::endl;
+    std::cout << "Parallel_Result: " << std::endl;
+    for (int i = 0; i < Result_size; i++)
+      std::cout << Result[i] << std::endl;
     }
+    std::cout << std::endl;
+  }
 
   if (vect != NULL) delete[]vect;
   if (matrix != NULL) delete[]matrix;

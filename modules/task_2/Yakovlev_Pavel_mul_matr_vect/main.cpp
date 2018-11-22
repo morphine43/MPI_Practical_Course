@@ -68,14 +68,14 @@ int main(int argc, char* argv[]) {
     matrix = new double[Matrix_size];
     Result = new double[Result_size];
     Result_l = new double[Result_size];
-    //  -----------------Initialization-----------------
+    //   -----------------Initialization-----------------
     for (int i = 0; i < Matrix_size; i++) {
       if (i < Vect_size) vect[i] = std::rand() % 10 - 5;
       if (i < Result_size) Result[i] = 0.0;
       if (i < Result_size) Result_l[i] = 0.0;
       matrix[i] = std::rand() % 10 - 5;
     }
-   //  -----------Print-----------------
+    //   -----------Print-----------------
     if (rows < 11 && cols < 11) {
       std::cout << "Vector:" << std::endl;
       for (int i = 0; i < Vect_size; i++)
@@ -99,7 +99,7 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < cols; j++)
         Result_l[i] += matrix[i + rows * j] * vect[j];
-	}
+        }
     Time_end = MPI_Wtime();
     std::cout << "Line_Time = " << Time_end - Time_begin << std::endl;
     if (rows < 11 && cols < 11) {

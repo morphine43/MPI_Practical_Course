@@ -6,31 +6,23 @@
 #include <limits.h>
 
 #define N 1000000
+#define DEBUG 0
 
+#if DEBUG
 void print_info(int id, char *m);
-void print_vector(int *v, int vector_size, int id);
+#endif
 int *merge(int *v1, int n1, int *v2, int n2);
 void swap(int *v, int i, int j);
 void quick_sort(int *v, int left, int right);
 
 double start_time, stop_time;
 
+#if DEBUG
 void print_info(int id, char *m)
 {
     printf("%d: %s %f secs\n", id, m, (clock() - start_time) / CLOCKS_PER_SEC);
 }
-
-void print_vector(int *v, int vector_size, int id)
-{
-    int i;
-
-    printf("%d: ", id);
-
-    for (i = 0; i < vector_size; i++)
-        printf("%d ", v[i]);
-    putchar('\n');
-}
-
+#endif
 int *merge(int *v1, int n1, int *v2, int n2)
 {
     int *result;
@@ -113,9 +105,9 @@ int main(int argc, char **argv)
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &id);
     MPI_Comm_size(MPI_COMM_WORLD, &proc_number);
-
+#if DEBUG
     print_info(id, "MPI setup complete");
-
+#endif
     if (id == 0) {
         int extra_elements;
         srandom(clock());
@@ -127,7 +119,8 @@ int main(int argc, char **argv)
          * increase the size of the array so that
          * it is divided without a balance by the number of processors
          */
-        data = (int *)malloc((vector_size + chunk_size - extra_elements) * sizeof(int));
+        data = (int *)malloc((vector_size + chunk_size - extra_elements) *
+                             sizeof(int));
 
         /* fill main elements of vector
          * random() + random() can give overflow int,
@@ -143,32 +136,40 @@ int main(int argc, char **argv)
          * you know which extra elements need to be thrown out
          */
         if (extra_elements != 0) {
-            for (i = vector_size; i < vector_size + chunk_size - extra_elements; i++)
-                data[i] = INT_MIN;
+            for (i = vector_size;
+                 i < vector_size + chunk_size - extra_elements;
+                 i++)
+                data[i] = INT_MAX;
             chunk_size++;
         }
-
+#if DEBUG
         print_info(id, "generated the random numbers");
-
+#endif
         MPI_Bcast(&chunk_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
         chunk = (int *)malloc(chunk_size * sizeof(int));
-        MPI_Scatter(data, chunk_size, MPI_INT, chunk, chunk_size, MPI_INT, 0, MPI_COMM_WORLD);
+        MPI_Scatter(data, chunk_size, MPI_INT, chunk, chunk_size, MPI_INT,
+                    0, MPI_COMM_WORLD);
 
+#if DEBUG
         print_info(id, "scattered data");
-
+#endif
         quick_sort(chunk, 0, chunk_size - 1);
-
+#if DEBUG
         print_info(id, "sorted");
+#endif
+
     } else {
         MPI_Bcast(&chunk_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
         chunk = (int *)malloc(chunk_size * sizeof(int));
-        MPI_Scatter(data, chunk_size, MPI_INT, chunk, chunk_size, MPI_INT, 0, MPI_COMM_WORLD);
-
-        print_info(id, "got data");
-
+        MPI_Scatter(data, chunk_size, MPI_INT, chunk, chunk_size, MPI_INT,
+                    0, MPI_COMM_WORLD);
+#if DEBUG
+       print_info(id, "got data");
+#endif
         quick_sort(chunk, 0, chunk_size - 1);
-
+#if DEBUG
         print_info(id, "sorted");
+#endif
     }
 
     step = 1;
@@ -176,19 +177,27 @@ int main(int argc, char **argv)
     while (step < proc_number) {
         if (id % (2 * step) == 0) {
             if (id + step < proc_number) {
-                MPI_Recv(&m, 1, MPI_INT, id + step, 0, MPI_COMM_WORLD, &status);
+                MPI_Recv(&m, 1, MPI_INT, id + step, 0, MPI_COMM_WORLD,
+                         &status);
                 other = (int *)malloc(m * sizeof(int));
-                MPI_Recv(other, m, MPI_INT, id + step, 0, MPI_COMM_WORLD, &status);
+                MPI_Recv(other, m, MPI_INT, id + step, 0, MPI_COMM_WORLD,
+                         &status);
+#if DEBUG
                 print_info(id, "got merge data");
+#endif
                 chunk = merge(chunk, chunk_size, other, m);
+#if DEBUG
                 print_info(id, "merged data");
+#endif
                 chunk_size += m;
             } 
         } else {
             int near = id - step;
             MPI_Send(&chunk_size, 1, MPI_INT, near, 0, MPI_COMM_WORLD);
             MPI_Send(chunk, chunk_size, MPI_INT, near, 0, MPI_COMM_WORLD);
+#if DEBUG
             print_info(id, "sent merge data");
+#endif
             break;
         }
         step *= 2;
@@ -200,15 +209,21 @@ int main(int argc, char **argv)
         FILE *fout;
 
         stop_time = clock();
-        printf("\nSort completed!\n\tVector size: %d\n\tNumber of processors: %d\n\tTime: %f secs\n\n", vector_size, proc_number, (stop_time - start_time) / CLOCKS_PER_SEC);
+        printf("\nSort completed!\n\tVector size: %d\n\tNumber of processors: "
+               "%d\n\tTime: %f secs\n\n", vector_size, proc_number,
+               (stop_time - start_time) / CLOCKS_PER_SEC);
 
+#if DEBUG
         print_info(id, "opening out file");
+#endif
         fout = fopen("result", "w");
         for (i = 0; i < vector_size; i++)
-            fprintf(fout, "%d\n", chunk[(chunk_size - vector_size) + i]);
+            fprintf(fout, "%d\n", chunk[i]);
 
         fclose(fout);
+#if DEBUG
         print_info(id, "closed out file");
+#endif
     }
 
     MPI_Finalize();

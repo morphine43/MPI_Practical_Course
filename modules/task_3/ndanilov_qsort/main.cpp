@@ -6,6 +6,7 @@
 #include <limits.h>
 #include <memory.h>
 #include <cstdlib>
+#include <cstddef>
 #include <ctime>
 #include <iostream>
 #include <string>
@@ -89,10 +90,12 @@ void quick_sort(int *v, int left, int right) {
 }
 
 int main(int argc, char **argv) {
-    double seq_time, par_time;
+    double seq_time = 0,
+           par_time = 0;
     int m, vector_size = N;
     int id, proc_number;
-    int *data, *datacp;
+    int *data   = nullptr,
+        *datacp = nullptr;
     MPI_Status status;
     int chunk_size;
     int *chunk;

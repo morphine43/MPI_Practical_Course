@@ -11,6 +11,9 @@
 #include <iostream>
 #include <string>
 
+/* define for "smart" MSVC */
+#define _CRT_SECURE_NO_DEPRECATE
+
 #define N 1000000
 #define DEBUG 0
 #define MASTER_PROCESS 0

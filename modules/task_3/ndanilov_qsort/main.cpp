@@ -124,8 +124,9 @@ int main(int argc, char **argv) {
         std::srand(unsigned(std::time(NULL)));
 
         extra_elements = vector_size % proc_number;
-        data_size = vector_size + extra_elements;
         chunk_size = vector_size / proc_number;
+        data_size = vector_size + ((extra_elements == 0) ? 0 :
+                    proc_number - extra_elements);
 
         /* allocate memory for vector
          * increase the size of the array so that

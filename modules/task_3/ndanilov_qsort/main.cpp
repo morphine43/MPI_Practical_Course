@@ -11,9 +11,6 @@
 #include <iostream>
 #include <string>
 
-/* define for "smart" MSVC */
-#define _CRT_SECURE_NO_WARNINGS
-
 #define N 1000000
 #define DEBUG 0
 #define MASTER_PROCESS 0
@@ -253,24 +250,7 @@ int main(int argc, char **argv) {
                " %d\n\tTime: %f secs\n\n", vector_size, proc_number,
                par_time);
 
-        if (vector_size > 20) {
-            FILE *fout;
-
-#if DEBUG
-            print_info(id, "Opening out file");
-#endif
-
-            fout = fopen("result", "w");
-            for (i = 0; i < vector_size; i++)
-                fprintf(fout, "%d\n", chunk[i]);
-
-            fclose(fout);
-
-#if DEBUG
-            print_info(id, "Closed out file");
-#endif
-
-        } else {
+        if (vector_size <= 20) {
             printf("Vector after sort: \n");
             print_vector(chunk, vector_size);
         }

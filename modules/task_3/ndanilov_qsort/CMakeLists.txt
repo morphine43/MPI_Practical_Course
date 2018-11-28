@@ -2,11 +2,9 @@ cmake_minimum_required( VERSION 2.8 )
 
 project( ndanilov_qsort )
 
-set (CMAKE_CXX_STANDARD 11)
-
 message( STATUS "-- " ${PROJECT_NAME} )
 include_directories(${PROJECT_SOURCE_DIR})
-add_executable( ${PROJECT_NAME} main.c)
+add_executable( ${PROJECT_NAME} main.cpp)
 
 find_package( MPI REQUIRED )
 if( MPI_FOUND )

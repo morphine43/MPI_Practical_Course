@@ -295,7 +295,7 @@ int main(int argc, char **argv)
             print_vector(datacp, vector_size);
         }
 
-        printf("\nAcceleration was: %f\n", seq_time / par_time);
+        printf("\nAcceleration was: %f%%\n", ((seq_time / par_time) -1 ) * 100);
     }
     return 0;
 }

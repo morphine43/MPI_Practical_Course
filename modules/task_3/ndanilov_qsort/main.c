@@ -112,17 +112,19 @@ int main(int argc, char **argv)
 #endif
     if (id == MASTER_PROCESS) {
         int extra_elements;
+        int data_size;
+
         srand(time(NULL) + clock());
 
         chunk_size = vector_size / proc_number;
         extra_elements = vector_size % proc_number;
+        data_size = vector_size + extra_elements;
 
         /* alloc memory for vector
          * increase the size of the array so that
          * it is divided without a balance by the number of processors
          */
-        data = (int *)malloc((vector_size + chunk_size - extra_elements) *
-                             sizeof(int));
+        data = (int *)malloc(data_size * sizeof(int));
 
         /* fill main elements of vector
          * rand() + rand() can give overflow int,
@@ -134,16 +136,20 @@ int main(int argc, char **argv)
             data[i] = rand() + rand();
 
         /* fill extra elements of vector
-         * fill in the minimum number so that after sorting
+         * fill in the maximum number so that after sorting
          * you know which extra elements need to be thrown out
          */
         if (extra_elements != 0) {
             for (i = vector_size;
-                 i < vector_size + chunk_size - extra_elements;
+                 i < data_size;
                  i++)
                 data[i] = INT_MAX;
             chunk_size++;
         }
+
+        if (vector_size <= 20)
+            print_vector(data, data_size);
+
 #if DEBUG
         print_info(id, "Generated the random numbers");
 #endif
@@ -165,6 +171,7 @@ int main(int argc, char **argv)
         chunk = (int *)malloc(chunk_size * sizeof(int));
         MPI_Scatter(data, chunk_size, MPI_INT, chunk, chunk_size, MPI_INT,
                     MASTER_PROCESS, MPI_COMM_WORLD);
+
 #if DEBUG
        print_info(id, "Got data");
 #endif

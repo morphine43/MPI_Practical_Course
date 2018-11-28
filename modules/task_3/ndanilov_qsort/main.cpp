@@ -12,7 +12,7 @@
 #include <string>
 
 /* define for "smart" MSVC */
-#define _CRT_SECURE_NO_DEPRECATE
+#define _CRT_SECURE_NO_WARNINGS
 
 #define N 1000000
 #define DEBUG 0

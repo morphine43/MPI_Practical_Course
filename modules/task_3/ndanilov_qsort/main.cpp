@@ -107,8 +107,6 @@ int main(int argc, char **argv) {
         vector_size = atoi(argv[1]);
     }
 
-    start_time = clock();
-
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &id);
     MPI_Comm_size(MPI_COMM_WORLD, &proc_number);
@@ -167,6 +165,8 @@ int main(int argc, char **argv) {
 #if DEBUG
         print_info(id, "Generated the random numbers");
 #endif
+
+        start_time = clock();
 
         MPI_Bcast(&chunk_size, 1, MPI_INT, MASTER_PROCESS, MPI_COMM_WORLD);
         chunk = new int[chunk_size];

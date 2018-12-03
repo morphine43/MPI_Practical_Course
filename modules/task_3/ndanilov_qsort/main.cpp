@@ -103,10 +103,10 @@ int main(int argc, char **argv) {
     int step;
     int i;
 
-    auto comp = [] (const void* a, const void* b) {
-        int arg1 = *static_cast<const int*>(a);
-        int arg2 = *static_cast<const int*>(b);
- 
+    auto comp = [] (const void *a, const void *b) {
+        int arg1 = *static_cast<const int *>(a);
+        int arg2 = *static_cast<const int *>(b);
+
         if (arg1 < arg2) return -1;
         if (arg1 > arg2) return 1;
         return 0;
@@ -277,7 +277,8 @@ int main(int argc, char **argv) {
             print_vector(datacp, vector_size);
         }
 
-        printf("\nVector after sort are %s\n", (!memcmp(chunk, datacp, vector_size)) ? "equal" : "not equal");
+        printf("\nVector after sort are %s\n",
+               (!memcmp(chunk, datacp, vector_size)) ? "equal" : "not equal");
         printf("Acceleration was: %f\n", (seq_time / par_time));
 
         delete[] data;

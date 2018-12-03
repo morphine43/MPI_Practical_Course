@@ -149,7 +149,7 @@ int main(int argc, char **argv) {
          * rand() returns non-negative numbers
          */
         for (i = 0; i < vector_size; i++)
-            data[i] = std::rand() + std::rand();
+            data[i] = (std::rand() % 201) - 100;
 
         /* copy data to another array for sequential sorting */
         memcpy(datacp, data, vector_size * sizeof(int));
@@ -277,7 +277,7 @@ int main(int argc, char **argv) {
             print_vector(datacp, vector_size);
         }
 
-        printf("\nVector after sort are %s\n",
+        printf("\nVectors after sort are %s\n",
                (!memcmp(chunk, datacp, vector_size)) ? "equal" : "not equal");
         printf("Acceleration was: %f\n", (seq_time / par_time));
 

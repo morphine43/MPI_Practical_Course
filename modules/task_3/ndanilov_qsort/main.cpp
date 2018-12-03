@@ -90,18 +90,27 @@ void quick_sort(int *v, int left, int right) {
 }
 
 int main(int argc, char **argv) {
-    double seq_time = 0,
-           par_time = 0;
     int m, vector_size = N;
-    int id, proc_number;
     int *data   = nullptr,
         *datacp = nullptr;
+    double seq_time = 0,
+           par_time = 0;
+    int id, proc_number;
     MPI_Status status;
     int chunk_size;
     int *chunk;
     int *other;
     int step;
     int i;
+
+    auto comp = [] (const void* a, const void* b) {
+        int arg1 = *static_cast<const int*>(a);
+        int arg2 = *static_cast<const int*>(b);
+ 
+        if (arg1 < arg2) return -1;
+        if (arg1 > arg2) return 1;
+        return 0;
+    };
 
     if (argc > 1) {
         vector_size = atoi(argv[1]);
@@ -166,7 +175,7 @@ int main(int argc, char **argv) {
         print_info(id, "Generated the random numbers");
 #endif
 
-        start_time = clock();
+        start_time = MPI_Wtime();
 
         MPI_Bcast(&chunk_size, 1, MPI_INT, MASTER_PROCESS, MPI_COMM_WORLD);
         chunk = new int[chunk_size];
@@ -177,7 +186,7 @@ int main(int argc, char **argv) {
         print_info(id, "Scattered data");
 #endif
 
-        quick_sort(chunk, 0, chunk_size - 1);
+        std::qsort(chunk, chunk_size, sizeof(int), comp);
 
 #if DEBUG
         print_info(id, "Sorted");
@@ -193,7 +202,7 @@ int main(int argc, char **argv) {
        print_info(id, "Got data");
 #endif
 
-        quick_sort(chunk, 0, chunk_size - 1);
+        std::qsort(chunk, chunk_size, sizeof(int), comp);
 
 #if DEBUG
         print_info(id, "Sorted");
@@ -240,11 +249,9 @@ int main(int argc, char **argv) {
         step *= 2;
     }
 
-    MPI_Barrier(MPI_COMM_WORLD);
-
     if (id == MASTER_PROCESS) {
-        stop_time = clock();
-        par_time = (stop_time - start_time) / CLOCKS_PER_SEC;
+        stop_time = MPI_Wtime();
+        par_time = (stop_time - start_time);
         printf("\nParallel algorithm:\n");
         printf("\nSort completed!\n\tVector size: %d\n\tNumber of processors:"
                " %d\n\tTime: %f secs\n\n", vector_size, proc_number,
@@ -254,17 +261,11 @@ int main(int argc, char **argv) {
             printf("Vector after sort: \n");
             print_vector(chunk, vector_size);
         }
-    }
 
-    delete[] chunk;
-
-    MPI_Finalize();
-
-    if (id == MASTER_PROCESS) {
-        start_time = clock();
-        quick_sort(datacp, 0, vector_size - 1);
-        stop_time = clock();
-        seq_time = (stop_time - start_time) / CLOCKS_PER_SEC;
+        start_time = MPI_Wtime();
+        std::qsort(datacp, vector_size, sizeof(int), comp);
+        stop_time = MPI_Wtime();
+        seq_time = (stop_time - start_time);
 
         printf("\nSequential algorithm:\n");
         printf("\nSort completed!\n\tVector size: %d\n\t"
@@ -276,10 +277,16 @@ int main(int argc, char **argv) {
             print_vector(datacp, vector_size);
         }
 
-        printf("\nAcceleration was: %f\n", (seq_time / par_time));
+        printf("\nVector after sort are %s\n", (!memcmp(chunk, datacp, vector_size)) ? "equal" : "not equal");
+        printf("Acceleration was: %f\n", (seq_time / par_time));
 
-        delete[] datacp;
         delete[] data;
+        delete[] datacp;
     }
+
+    delete[] chunk;
+
+    MPI_Finalize();
+
     return 0;
 }
